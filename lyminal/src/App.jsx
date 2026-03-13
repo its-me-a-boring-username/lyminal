@@ -330,7 +330,7 @@ export default function GoalChart() {
   const DevReset = () => (
     <button
       onClick={() => { localStorage.removeItem("goalchart_state"); sessionStorage.removeItem("gc_unlocked"); location.reload(); }}
-      className="fixed bottom-4 right-4 text-xs px-3 py-2 hover:opacity-100 transition-opacity z-50"
+      className="fixed top-4 right-4 text-xs px-3 py-2 hover:opacity-100 transition-opacity z-50"
       style={{background:"rgba(0,0,0,0.55)", color:"rgba(255,255,255,0.9)", borderRadius:"4px"}}
     >
       🛠 Reset
@@ -617,7 +617,7 @@ export default function GoalChart() {
         )}
 
         <div className="flex gap-3">
-          <button onClick={goPrev} className="px-6 py-3 text-sm font-medium transition-colors hover:text-gray-900" style={{color:"#5c4e40", background:"transparent", border:"1px solid #d4c9bb"}}>
+          <button onClick={goPrev} className="px-6 py-3 text-sm font-medium transition-colors" style={{color:"#faf8f5", background:"#2c1f14", border:"1px solid #2c1f14"}}>
             ← Back
           </button>
           <button
