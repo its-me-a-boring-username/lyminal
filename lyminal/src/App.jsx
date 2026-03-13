@@ -351,7 +351,7 @@ export default function GoalChart() {
           <h1 className="text-center mb-1" style={{fontFamily:"'Playfair Display', serif", fontSize:"1.6rem", color:"#1c1410", fontWeight:600}}>
             Lyminal
           </h1>
-          <p className="text-center text-sm mb-8" style={{color:"#a89880", fontWeight:300}}>Early access — enter your password to continue</p>
+          <p className="text-center text-sm mb-8" style={{color:"#6e5c4a", fontWeight:300}}>Early access — enter your password to continue</p>
 
           <div className="relative mb-3">
             <input
@@ -383,11 +383,11 @@ export default function GoalChart() {
             ENTER →
           </button>
 
-          <p className="text-center text-xs mt-6" style={{color:"#c8b898"}}>Don't have a password? This app is in private beta.</p>
+          <p className="text-center text-xs mt-6" style={{color:"#8a7455"}}>Don't have a password? This app is in private beta.</p>
           <button
             onClick={() => { localStorage.removeItem("goalchart_state"); sessionStorage.removeItem("gc_unlocked"); location.reload(); }}
             className="w-full text-center text-xs mt-4 hover:opacity-70 transition-opacity"
-            style={{color:"#c8b898", background:"transparent"}}
+            style={{color:"#8a7455", background:"transparent"}}
           >
             🛠 Reset all data (dev only)
           </button>
@@ -416,7 +416,7 @@ export default function GoalChart() {
           <h1 style={{fontFamily:"'Playfair Display', serif", fontSize:"2.4rem", fontWeight:600, color:"#1c1410", lineHeight:1.2, textAlign:"center"}} className="mb-3">
             Build Your <em style={{color:"#b5472a"}}>Goal Chart</em>
           </h1>
-          <p className="text-sm mb-7 leading-relaxed" style={{color:"#6b5c4e", fontWeight:300}}>
+          <p className="text-sm mb-7 leading-relaxed" style={{color:"#4a3828", fontWeight:300}}>
             Map the areas of your life, discover which ones support others, and find where to focus first.
           </p>
           <div className="space-y-2.5 mb-8">
@@ -430,7 +430,7 @@ export default function GoalChart() {
                 <span className="text-xs font-semibold mt-0.5 w-4 flex-shrink-0" style={{color:"#b5472a"}}>{i+1}.</span>
                 <div className="text-sm" style={{color:"#1c1410"}}>
                   <span className="font-medium">{title}</span>
-                  <span style={{color:"#8a7968"}}> — {desc}</span>
+                  <span style={{color:"#5c4e40"}}> — {desc}</span>
                 </div>
               </div>
             ))}
@@ -452,7 +452,7 @@ export default function GoalChart() {
     <div className="min-h-screen px-6 py-16 max-w-2xl mx-auto" style={{background:"#faf8f5",fontFamily:"'Inter', sans-serif"}}>
       <style>{FONTS}</style>
       <DevReset />
-      <div className="mb-2 text-xs uppercase tracking-widest font-medium" style={{color:"#a89880"}}>Step 1 of 3</div>
+      <div className="mb-2 text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 1 of 3</div>
       <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-2">Define your spheres</h2>
       <p className="text-gray-500 mb-8">What are the major areas of your life right now? Add what's relevant to you.</p>
 
@@ -472,7 +472,7 @@ export default function GoalChart() {
           className="absolute right-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
           style={{
             background: newSphere.trim() ? "#b5472a" : "transparent",
-            color: newSphere.trim() ? "white" : "#c8b898",
+            color: newSphere.trim() ? "white" : "#8a7455",
             border: newSphere.trim() ? "none" : "1px solid #d4c9bb",
             letterSpacing: "0.04em"
           }}
@@ -489,7 +489,7 @@ export default function GoalChart() {
             <button
               key={s}
               onClick={() => addSphere(s)}
-              className="px-3 py-1.5 text-xs border transition-colors" style={{borderRadius:"2px", borderColor:"#d4c9bb", color:"#6b5c4e", background:"#f0ebe3"}}
+              className="px-3 py-1.5 text-xs border transition-colors" style={{borderRadius:"2px", borderColor:"#d4c9bb", color:"#4a3828", background:"#f0ebe3"}}
             >
               + {s}
             </button>
@@ -508,7 +508,7 @@ export default function GoalChart() {
       )}
 
       <div className="flex gap-3">
-        <button onClick={() => setStep("welcome")} className="px-6 py-3 text-sm font-medium transition-colors hover:text-gray-900" style={{color:"#8a7968", background:"transparent", border:"1px solid #d4c9bb"}}>
+        <button onClick={() => setStep("welcome")} className="px-6 py-3 text-sm font-medium transition-colors hover:text-gray-900" style={{color:"#5c4e40", background:"transparent", border:"1px solid #d4c9bb"}}>
           ← Back
         </button>
         <button
@@ -534,8 +534,8 @@ export default function GoalChart() {
         {/* Progress bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs uppercase tracking-widest font-medium" style={{color:"#a89880"}}>Step 2 of 3 — Goals</span>
-            <span className="text-xs" style={{color:"#a89880"}}>{goalStep + 1} of {spheres.length}</span>
+            <span className="text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 2 of 3 — Goals</span>
+            <span className="text-xs" style={{color:"#6e5c4a"}}>{goalStep + 1} of {spheres.length}</span>
           </div>
           <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <div
@@ -604,7 +604,7 @@ export default function GoalChart() {
                         <button
                           key={s}
                           onClick={() => addGoal(currentSphere.id, s)}
-                          className="px-3 py-1 text-xs border transition-colors" style={{borderRadius:"2px", borderColor:"#d4c9bb", color:"#6b5c4e", background:"white"}}
+                          className="px-3 py-1 text-xs border transition-colors" style={{borderRadius:"2px", borderColor:"#d4c9bb", color:"#4a3828", background:"white"}}
                         >
                           + {s}
                         </button>
@@ -617,7 +617,7 @@ export default function GoalChart() {
         )}
 
         <div className="flex gap-3">
-          <button onClick={goPrev} className="px-6 py-3 text-sm font-medium transition-colors hover:text-gray-900" style={{color:"#8a7968", background:"transparent", border:"1px solid #d4c9bb"}}>
+          <button onClick={goPrev} className="px-6 py-3 text-sm font-medium transition-colors hover:text-gray-900" style={{color:"#5c4e40", background:"transparent", border:"1px solid #d4c9bb"}}>
             ← Back
           </button>
           <button
@@ -646,8 +646,8 @@ export default function GoalChart() {
         {/* Progress bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs uppercase tracking-widest font-medium" style={{color:"#a89880"}}>Step 3 of 3 — Relationships</span>
-            <span className="text-xs" style={{color:"#a89880"}}>{connStep + 1} of {spheres.length}</span>
+            <span className="text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 3 of 3 — Relationships</span>
+            <span className="text-xs" style={{color:"#6e5c4a"}}>{connStep + 1} of {spheres.length}</span>
           </div>
           <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <div
@@ -690,7 +690,7 @@ export default function GoalChart() {
             )}
 
             {/* Other spheres as selectable cards with peek */}
-            <p className="text-xs mb-3 flex items-center gap-1.5" style={{color:"#a89880"}}>
+            <p className="text-xs mb-3 flex items-center gap-1.5" style={{color:"#6e5c4a"}}>
               <span>Tap the goal pill on any sphere to preview its goals before connecting.</span>
             </p>
             <div className="space-y-2 mb-8">
@@ -710,7 +710,7 @@ export default function GoalChart() {
         )}
 
         <div className="flex gap-3">
-          <button onClick={goPrev} className="px-6 py-3 text-sm font-medium transition-colors hover:text-gray-900" style={{color:"#8a7968", background:"transparent", border:"1px solid #d4c9bb"}}>
+          <button onClick={goPrev} className="px-6 py-3 text-sm font-medium transition-colors hover:text-gray-900" style={{color:"#5c4e40", background:"transparent", border:"1px solid #d4c9bb"}}>
             ← Back
           </button>
           <button
@@ -744,7 +744,7 @@ export default function GoalChart() {
 
             {/* Primary recommendation */}
             <div className="px-8 py-12 text-center" style={{borderBottom:"1px solid #e8e0d5"}}>
-              <p className="mb-4 leading-relaxed" style={{color:"#6b5c4e", fontWeight:300, fontSize:"1.05rem"}}>
+              <p className="mb-4 leading-relaxed" style={{color:"#4a3828", fontWeight:300, fontSize:"1.05rem"}}>
                 Based on how your spheres influence each other, your greatest leverage is in{" "}
                 <span style={{fontFamily:"'Playfair Display', serif", fontWeight:600, fontSize:"1.25rem", color: top?.color || "#b5472a"}}>
                   {top?.name}
@@ -758,7 +758,7 @@ export default function GoalChart() {
             {/* Supporting spheres */}
             {others.length > 0 && (
               <div className="px-8 py-8">
-                <p className="text-xs uppercase tracking-widest mb-4" style={{color:"#a89880", letterSpacing:"0.12em"}}>
+                <p className="text-xs uppercase tracking-widest mb-4" style={{color:"#6e5c4a", letterSpacing:"0.12em"}}>
                   Also worth your attention
                 </p>
                 <div className="space-y-3">
@@ -770,7 +770,7 @@ export default function GoalChart() {
                           {s.name}
                         </span>
                       </div>
-                      <span className="text-xs" style={{color:"#a89880"}}>
+                      <span className="text-xs" style={{color:"#6e5c4a"}}>
                         score {s.score > 0 ? "+" : ""}{s.score}
                       </span>
                     </div>
@@ -815,14 +815,14 @@ export default function GoalChart() {
         <div style={{background:"#faf8f5", borderBottom:"1px solid #e8e0d5"}} className="px-6 py-4 flex items-center justify-between">
           <div>
             <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.25rem", color:"#1c1410"}} className="font-semibold">Your Goal Chart</h2>
-            <p className="text-xs" style={{color:"#a89880"}}>{spheres.length} spheres · {Object.values(connections).flat().length} connections</p>
+            <p className="text-xs" style={{color:"#6e5c4a"}}>{spheres.length} spheres · {Object.values(connections).flat().length} connections</p>
           </div>
           <div className="flex items-center gap-3">
             <button onClick={() => setStep("connections")} className="text-sm font-medium transition-colors hover:opacity-70" style={{color:"#b5693a"}}>← Edit connections</button>
             <button
               onClick={() => { setSpheres([]); setConnections({}); setGoalStep(0); setActiveGoals([]); setSelectedId(null); setStep("spheres"); }}
               className="text-sm font-medium transition-colors hover:opacity-70"
-              style={{color:"#a89880"}}
+              style={{color:"#6e5c4a"}}
             >
               ↺ Redo chart
             </button>
@@ -952,7 +952,7 @@ export default function GoalChart() {
             ) : (
               <div className="p-6" style={{fontFamily:"'Inter', sans-serif"}}>
                 <h3 style={{fontFamily:"'Playfair Display', serif", color:"#1c1410"}} className="font-semibold mb-1">Priority Ranking</h3>
-                <p className="text-xs mb-5" style={{color:"#a89880"}}>High outgoing + low incoming = focus here first</p>
+                <p className="text-xs mb-5" style={{color:"#6e5c4a"}}>High outgoing + low incoming = focus here first</p>
                 <div className="space-y-2">
                   {ranked.map((b, i) => (
                     <button
@@ -1006,11 +1006,11 @@ export default function GoalChart() {
       <div className="min-h-screen px-6 py-12 max-w-2xl mx-auto" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif"}}>
         <style>{FONTS}</style>
       <DevReset />
-        <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#a89880"}}>Focus {roundLabels[focusRound]} sphere</p>
+        <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#6e5c4a"}}>Focus {roundLabels[focusRound]} sphere</p>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">
           {focusRound === 0 ? "Where do you want to start?" : "Pick a new focus sphere"}
         </h2>
-        <p className="text-sm mb-8" style={{color:"#8a7968", fontWeight:300}}>
+        <p className="text-sm mb-8" style={{color:"#5c4e40", fontWeight:300}}>
           {focusRound === 0
             ? "Based on your lines of influence, we recommend starting here. You can override this."
             : "Choose a sphere to focus on next."}
@@ -1024,13 +1024,13 @@ export default function GoalChart() {
               <span style={{fontFamily:"'Playfair Display', serif", fontSize:"1.4rem", color:"#1c1410", fontWeight:600}}>{focusSphere?.name}</span>
               {focusRound === 0 && <span className="text-xs px-2 py-0.5 text-white ml-auto" style={{background:"#b5472a"}}>Recommended</span>}
             </div>
-            <p className="text-xs mb-4" style={{color:"#a89880"}}>
+            <p className="text-xs mb-4" style={{color:"#6e5c4a"}}>
               {counts[focusSphere?.id]?.out || 0} outgoing · {counts[focusSphere?.id]?.in || 0} incoming
             </p>
             {focusSphere?.goals.length > 0 && (
               <div className="space-y-1">
                 {focusSphere.goals.map(g => (
-                  <div key={g.id} className="flex items-center gap-2 text-sm" style={{color:"#6b5c4e"}}>
+                  <div key={g.id} className="flex items-center gap-2 text-sm" style={{color:"#4a3828"}}>
                     <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{background: focusSphere.color}}/>
                     {g.text}
                   </div>
@@ -1047,7 +1047,7 @@ export default function GoalChart() {
           </button>
         ) : (
           <div className="mb-8">
-            <p className="text-xs uppercase tracking-wider mb-3" style={{color:"#a89880"}}>Choose a sphere</p>
+            <p className="text-xs uppercase tracking-wider mb-3" style={{color:"#6e5c4a"}}>Choose a sphere</p>
             <div className="space-y-2">
               {availableSpheres.map(b => (
                 <button
@@ -1061,18 +1061,18 @@ export default function GoalChart() {
                 >
                   <div className="w-3 h-3 rounded-full flex-shrink-0" style={{background: b.color}}/>
                   <span className="font-medium flex-1" style={{color:"#1c1410"}}>{b.name}</span>
-                  <span className="text-xs" style={{color:"#a89880"}}>score {b.score > 0 ? "+" : ""}{b.score}</span>
+                  <span className="text-xs" style={{color:"#6e5c4a"}}>score {b.score > 0 ? "+" : ""}{b.score}</span>
                 </button>
               ))}
             </div>
-            <button onClick={() => { setOverrideSphere(false); setSelectedFocusSphereId(recommended?.id); }} className="text-xs mt-3 hover:opacity-70" style={{color:"#a89880"}}>
+            <button onClick={() => { setOverrideSphere(false); setSelectedFocusSphereId(recommended?.id); }} className="text-xs mt-3 hover:opacity-70" style={{color:"#6e5c4a"}}>
               ← Back to recommendation
             </button>
           </div>
         )}
 
         <div className="flex gap-3">
-          <button onClick={() => setStep(focusRound === 0 ? "chart" : "active")} className="px-6 py-3 text-sm font-medium" style={{color:"#8a7968", border:"1px solid #d4c9bb"}}>
+          <button onClick={() => setStep(focusRound === 0 ? "chart" : "active")} className="px-6 py-3 text-sm font-medium" style={{color:"#5c4e40", border:"1px solid #d4c9bb"}}>
             {focusRound === 0 ? "← Back" : "Skip"}
           </button>
           <button
@@ -1097,10 +1097,10 @@ export default function GoalChart() {
       <DevReset />
         <div className="flex items-center gap-2 mb-2">
           <div className="w-3 h-3 rounded-full" style={{background: focusSphere?.color}}/>
-          <p className="text-xs uppercase tracking-widest" style={{color:"#a89880"}}>{focusSphere?.name}</p>
+          <p className="text-xs uppercase tracking-widest" style={{color:"#6e5c4a"}}>{focusSphere?.name}</p>
         </div>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">Choose a goal to work on</h2>
-        <p className="text-sm mb-8" style={{color:"#8a7968", fontWeight:300}}>Pick one goal to make active. We'll build a plan together in your next step.</p>
+        <p className="text-sm mb-8" style={{color:"#5c4e40", fontWeight:300}}>Pick one goal to make active. We'll build a plan together in your next step.</p>
 
         {/* Goal selection */}
         <div className="space-y-2 mb-8">
@@ -1123,13 +1123,13 @@ export default function GoalChart() {
               <span className="text-sm font-medium" style={{color:"#1c1410"}}>{g.text}</span>
             </button>
             )) : (
-              <p className="text-sm" style={{color:"#a89880"}}>All goals in this sphere are complete. Pick a different sphere.</p>
+              <p className="text-sm" style={{color:"#6e5c4a"}}>All goals in this sphere are complete. Pick a different sphere.</p>
             );
           })()}
         </div>
 
         <div className="flex gap-3">
-          <button onClick={() => setStep("focus")} className="px-6 py-3 text-sm font-medium" style={{color:"#8a7968", border:"1px solid #d4c9bb"}}>← Back</button>
+          <button onClick={() => setStep("focus")} className="px-6 py-3 text-sm font-medium" style={{color:"#5c4e40", border:"1px solid #d4c9bb"}}>← Back</button>
           <button
             disabled={!selectedGoalId}
             onClick={() => {
@@ -1165,9 +1165,9 @@ export default function GoalChart() {
       <div className="min-h-screen px-6 py-12 max-w-2xl mx-auto" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif"}}>
         <style>{FONTS}</style>
       <DevReset />
-        <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#a89880"}}>Your Active Goals</p>
+        <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#6e5c4a"}}>Your Active Goals</p>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">Here's what you're working on</h2>
-        <p className="text-sm mb-8" style={{color:"#8a7968", fontWeight:300}}>
+        <p className="text-sm mb-8" style={{color:"#5c4e40", fontWeight:300}}>
           Select a goal to talk through your plan with Claude, or connect with a live coach.
         </p>
 
@@ -1193,7 +1193,7 @@ export default function GoalChart() {
                   >
                     {completedGoals.has(ag.goalId) && <span className="text-white" style={{fontSize:"10px", fontWeight:"bold"}}>✓</span>}
                   </button>
-                  <p style={{fontFamily:"'Playfair Display', serif", fontSize:"1.1rem", color: completedGoals.has(ag.goalId) ? "#a89880" : "#1c1410", textDecoration: completedGoals.has(ag.goalId) ? "line-through" : "none"}}>{ag.goalText}</p>
+                  <p style={{fontFamily:"'Playfair Display', serif", fontSize:"1.1rem", color: completedGoals.has(ag.goalId) ? "#6e5c4a" : "#1c1410", textDecoration: completedGoals.has(ag.goalId) ? "line-through" : "none"}}>{ag.goalText}</p>
                 </div>
                 {completedGoals.has(ag.goalId) && (
                   <button
@@ -1232,7 +1232,7 @@ export default function GoalChart() {
                           >
                             {checked && <span className="text-white" style={{fontSize:"9px", fontWeight:"bold"}}>✓</span>}
                           </div>
-                          <span className="text-xs" style={{color: checked ? "#a89880" : "#6b5c4e", textDecoration: checked ? "line-through" : "none"}}>
+                          <span className="text-xs" style={{color: checked ? "#6e5c4a" : "#4a3828", textDecoration: checked ? "line-through" : "none"}}>
                             {a.text}
                           </span>
                         </button>
@@ -1240,7 +1240,7 @@ export default function GoalChart() {
                     })}
                   </div>
                 ) : (
-                  <p className="text-xs" style={{color:"#a89880"}}>Talk to Claude to build your action plan.</p>
+                  <p className="text-xs" style={{color:"#6e5c4a"}}>Talk to Claude to build your action plan.</p>
                 )}
               </div>
               {/* CTAs */}
@@ -1286,14 +1286,14 @@ Ask only ONE question. Keep it concise and warm.`,
                 </button>
                 <button
                   className="flex-1 py-2 text-xs font-semibold border"
-                  style={{borderColor:"#d4c9bb", color:"#a89880"}}
+                  style={{borderColor:"#d4c9bb", color:"#6e5c4a"}}
                   onClick={() => alert("Live coaching coming soon!")}
                 >
                   Talk to a Coach ✦
                 </button>
                 <button
                   className="py-2 px-3 text-xs font-semibold border hover:opacity-80 transition-opacity"
-                  style={{borderColor:"#d4c9bb", color:"#a89880"}}
+                  style={{borderColor:"#d4c9bb", color:"#6e5c4a"}}
                   onClick={() => {
                     setActiveGoals(prev => prev.filter(g => g.goalId !== ag.goalId));
                     setSelectedFocusSphereId(ag.sphereId);
@@ -1314,7 +1314,7 @@ Ask only ONE question. Keep it concise and warm.`,
           <div className="p-4 border flex items-center gap-4" style={{borderColor:"#e8e0d5", background:"white"}}>
             <div className="flex-1">
               <p className="text-sm font-semibold mb-0.5" style={{color:"#1c1410"}}>Track more goals</p>
-              <p className="text-xs" style={{color:"#a89880"}}>Upgrade to track up to 3 goals and unlock your goal report.</p>
+              <p className="text-xs" style={{color:"#6e5c4a"}}>Upgrade to track up to 3 goals and unlock your goal report.</p>
             </div>
             <button
               onClick={() => alert("Upgrade coming soon!")}
@@ -1327,7 +1327,7 @@ Ask only ONE question. Keep it concise and warm.`,
           <button
             onClick={() => setStep("chart")}
             className="w-full py-3 text-sm font-medium text-center"
-            style={{color:"#8a7968", border:"1px solid #d4c9bb"}}
+            style={{color:"#5c4e40", border:"1px solid #d4c9bb"}}
           >
             View chart
           </button>
@@ -1417,14 +1417,14 @@ Do not ask follow-up questions after proposing action items unless the user want
           <div className="flex items-center gap-2 flex-1">
             <div className="w-2.5 h-2.5 rounded-full" style={{background: chatContext?.sphereColor}}/>
             <div>
-              <p className="text-xs" style={{color:"#a89880"}}>{chatContext?.sphereName}</p>
+              <p className="text-xs" style={{color:"#6e5c4a"}}>{chatContext?.sphereName}</p>
               <p className="text-sm font-medium" style={{color:"#1c1410"}}>{chatContext?.goalText}</p>
             </div>
           </div>
           <button
             onClick={() => setStep("active")}
             className="text-xs px-4 py-2 font-medium hover:opacity-80 transition-opacity"
-            style={{border:"1px solid #d4c9bb", color:"#8a7968"}}
+            style={{border:"1px solid #d4c9bb", color:"#5c4e40"}}
           >
             Exit conversation
           </button>
@@ -1448,7 +1448,7 @@ Do not ask follow-up questions after proposing action items unless the user want
                 </div>
                 {m.actionItems && (
                   <div className="w-full border p-4" style={{borderColor:"#e8e0d5", background:"white", borderRadius:"8px"}}>
-                    <p className="text-xs uppercase tracking-wider mb-3" style={{color:"#a89880"}}>Your action items</p>
+                    <p className="text-xs uppercase tracking-wider mb-3" style={{color:"#6e5c4a"}}>Your action items</p>
                     <div className="space-y-2 mb-4">
                       {m.actionItems.map(a => (
                         <div key={a.id} className="flex items-start gap-2 text-sm" style={{color:"#1c1410"}}>
@@ -1471,7 +1471,7 @@ Do not ask follow-up questions after proposing action items unless the user want
           ))}
           {chatLoading && (
             <div className="flex justify-start">
-              <div className="px-4 py-3 text-sm" style={{background:"white", border:"1px solid #e8e0d5", borderRadius:"12px 12px 12px 2px", color:"#a89880"}}>
+              <div className="px-4 py-3 text-sm" style={{background:"white", border:"1px solid #e8e0d5", borderRadius:"12px 12px 12px 2px", color:"#6e5c4a"}}>
                 <span className="animate-pulse">Thinking…</span>
               </div>
             </div>
