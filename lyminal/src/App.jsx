@@ -1246,7 +1246,39 @@ export default function GoalChart() {
               {/* CTAs */}
               <div className="px-5 py-3 flex gap-2">
                 <button
-                  onClick={() => { setChatContext(ag); setChatMessages([{role:"assistant", content:`I'm going to help you build a concrete action plan for your goal: ${ag.goalText}. To make this as useful as possible, I have a few quick questions. First — where are you starting from right now?`}]); setStep("chat"); }}
+                  onClick={async () => {
+                    setChatContext(ag);
+                    setChatMessages([]);
+                    setStep("chat");
+                    setChatLoading(true);
+                    try {
+                      const res = await fetch("/api/chat", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          model: "claude-sonnet-4-20250514",
+                          max_tokens: 1000,
+                          system: `You are Lyme, a warm and focused life coach inside the Lyminal app. Your job is to help someone build a concrete action plan for a specific goal.
+
+Context:
+- Sphere: ${ag.sphereName}
+- Goal: ${ag.goalText}
+
+Open the conversation with a single, specific, thoughtful question that gets right to the heart of where this person stands with this goal. Do NOT use a generic opener like "where are you starting from?" — instead, ask something directly relevant to the goal itself. For example, if the goal is "Get a promotion", ask about promotion criteria or manager feedback. If the goal is "Pay down debt", ask which debt they want to tackle first. Make it feel like you already understand the goal and want to understand their situation.
+
+Ask only ONE question. Keep it concise and warm.`,
+                          messages: [{ role: "user", content: "Start the conversation." }]
+                        })
+                      });
+                      const data = await res.json();
+                      const opener = data.content?.find(b => b.type === "text")?.text || `I'm here to help you work toward: ${ag.goalText}. Where are you starting from right now?`;
+                      setChatMessages([{ role: "assistant", content: opener }]);
+                    } catch {
+                      setChatMessages([{ role: "assistant", content: `I'm here to help you work toward: ${ag.goalText}. Where are you starting from right now?` }]);
+                    } finally {
+                      setChatLoading(false);
+                    }
+                  }}
                   className="flex-1 py-2 text-xs font-semibold hover:opacity-90 transition-opacity"
                   style={{background:"#b5472a", color:"white", letterSpacing:"0.04em"}}
                 >
@@ -1318,13 +1350,13 @@ export default function GoalChart() {
       setChatInput("");
       setChatLoading(true);
       try {
-        const res = await fetch("/api/chat", {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify({
             model: "claude-sonnet-4-20250514",
             max_tokens: 1000,
-            system: `You are a focused life coach helping someone build a concrete action plan for a specific goal.
+            system: `You are Lyme, a warm and focused life coach inside the Lyminal app. You are helping someone build a concrete action plan for a specific goal.
 
 Context:
 - Sphere: ${chatContext?.sphereName}
@@ -1446,7 +1478,7 @@ Do not ask follow-up questions after proposing action items unless the user want
           )}
         </div>
 
-        {!pendingItems && (
+        {!pendingItems && !chatLoading && chatMessages.length > 0 && (
           <div className="px-6 py-4 border-t flex gap-3" style={{background:"white", borderColor:"#e8e0d5"}}>
             <input
               className="flex-1 px-4 py-3 text-sm outline-none border"
