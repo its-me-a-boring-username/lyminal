@@ -481,10 +481,9 @@ Themes: 2-4 patterns you notice across ALL goals (not per-sphere). Each theme sh
 }
 
 const SUGGESTED_SPHERES = [
-  "Work", "Health", "Education", "Community",
-  "Entrepreneurship", "Mental Health", "Family", "Creativity",
-  "Spirituality", "Social Life", "Dating", "Fun", "Finances",
-  "Self-Reliance", "Practical Skills"
+  "Finances", "Work", "Family", "Health", "Mental Health",
+  "Social Life", "Creativity", "Fun", "Education", "Community",
+  "Entrepreneurship", "Dating", "Practical Skills", "Self-Reliance", "Spirituality"
 ];
 
 const GOAL_SUGGESTIONS = {
@@ -718,7 +717,7 @@ export default function GoalChart() {
       out: counts[b.id]?.out || 0,
       in: counts[b.id]?.in || 0,
       score: (counts[b.id]?.out || 0) - (counts[b.id]?.in || 0)
-    })).sort((a, b) => b.score - a.score),
+    })).sort((a, b) => b.score - a.score || b.out - a.out),
     [spheres, counts]
   );
 
