@@ -114,6 +114,8 @@ function SphereConnCard({ sphere, isChecked, onToggle }) {
   );
 }
 
+const CORRECT_PASSWORD = "goaldirected";
+
 export default function GoalChart() {
   const [step, setStep] = useState("welcome");
   const [spheres, setSpheres] = useState([]);
@@ -124,7 +126,6 @@ export default function GoalChart() {
   const [selectedId, setSelectedId] = useState(null);
 
   // Password gate
-  const CORRECT_PASSWORD = "goaldirected";
   const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem("gc_unlocked") === "true");
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState(false);
@@ -146,8 +147,6 @@ export default function GoalChart() {
   const [overrideSphere, setOverrideSphere] = useState(false);
   const [selectedFocusSphereId, setSelectedFocusSphereId] = useState(null);
   const [selectedGoalId, setSelectedGoalId] = useState(null);
-  const [actionItems, setActionItems] = useState([]);
-  const [aiLoading, setAiLoading] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
@@ -827,7 +826,7 @@ export default function GoalChart() {
               ↺ Redo chart
             </button>
             <button
-              onClick={() => { setFocusRound(0); setOverrideSphere(false); setSelectedFocusSphereId(ranked[0]?.id || null); setActiveGoals([]); setSelectedGoalId(null); setActionItems([]); setStep("focus"); }}
+              onClick={() => { setFocusRound(0); setOverrideSphere(false); setSelectedFocusSphereId(ranked[0]?.id || null); setActiveGoals([]); setSelectedGoalId(null); setStep("focus"); }}
               className="px-4 py-2 text-sm font-semibold hover:opacity-90 transition-opacity"
               style={{background:"#b5472a", color:"white", letterSpacing:"0.04em"}}
             >
@@ -1076,7 +1075,7 @@ export default function GoalChart() {
             {focusRound === 0 ? "← Back" : "Skip"}
           </button>
           <button
-            onClick={() => { setSelectedGoalId(null); setActionItems([]); setStep("action"); }}
+            onClick={() => { setSelectedGoalId(null); setStep("action"); }}
             className="flex-1 py-3 text-sm font-semibold hover:opacity-90 transition-opacity"
             style={{background:"#b5472a", color:"white"}}
           >
@@ -1172,7 +1171,7 @@ export default function GoalChart() {
         </p>
 
         <div className="space-y-4 mb-8">
-          {activeGoals.map((ag, i) => (
+          {allActive.map((ag, i) => (
             <div key={ag.sphereId} className="border" style={{borderColor:"#e8e0d5", background:"white"}}>
               {/* Header */}
               <div className="px-5 py-4 flex items-center gap-3 border-b" style={{borderColor:"#e8e0d5"}}>
