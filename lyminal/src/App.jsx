@@ -196,7 +196,7 @@ function pdfConnectionsPage(doc, spheres, connections, counts, ranked, pageNum) 
   doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(PC.dark));
   doc.text('Priority Ranking', 40, y); y+=12;
   doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(PC.muted));
-  doc.text('Sorted by net influence (outgoing − incoming)', 40, y); y+=18;
+  doc.text('Sorted by outgoing influence (ties broken by net score)', 40, y); y+=18;
 
   // Table header
   doc.setFillColor(...hexRgb(PC.lightBg)); doc.rect(40, y-10, W-80, 18, 'F');
@@ -755,7 +755,7 @@ export default function GoalChart() {
       out: counts[b.id]?.out || 0,
       in: counts[b.id]?.in || 0,
       score: (counts[b.id]?.out || 0) - (counts[b.id]?.in || 0)
-    })).sort((a, b) => b.score - a.score || b.out - a.out),
+    })).sort((a, b) => b.out - a.out || b.score - a.score),
     [spheres, counts]
   );
 
@@ -1646,7 +1646,7 @@ export default function GoalChart() {
             ) : (
               <div className="p-6" style={{fontFamily:"'Inter', sans-serif"}}>
                 <h3 style={{fontFamily:"'Playfair Display', serif", color:"#1c1410"}} className="font-semibold mb-1">Priority Ranking</h3>
-                <p className="text-xs mb-5" style={{color:"#6e5c4a"}}>High outgoing + low incoming = focus here first</p>
+                <p className="text-xs mb-5" style={{color:"#6e5c4a"}}>Ranked by how many areas each sphere supports</p>
                 <div className="space-y-2">
                   {ranked.map((b, i) => (
                     <button
