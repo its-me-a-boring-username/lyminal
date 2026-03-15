@@ -252,7 +252,7 @@ async function generateChartReport(spheres, connections, counts, ranked) {
   doc.addPage();
   pdfConnectionsPage(doc, spheres, connections, counts, ranked, 3);
 
-  doc.save('lyminal-chart-report.pdf');
+  window.open(doc.output('bloburl'), '_blank');
 }
 
 async function generateFullReport(spheres, connections, counts, ranked, activeGoals, checkedItems, completedGoals) {
@@ -269,7 +269,7 @@ async function generateFullReport(spheres, connections, counts, ranked, activeGo
     });
     const rankData = ranked.map((s,i) => ({rank:i+1, name:s.name, out:counts[s.id].out, in:counts[s.id].in, net:counts[s.id].out-counts[s.id].in}));
 
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch("/api/chat", {
       method:"POST", headers:{"Content-Type":"application/json"},
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514", max_tokens: 1000,
@@ -477,7 +477,7 @@ Themes: 2-4 patterns you notice across ALL goals (not per-sphere). Each theme sh
   });
 
   pdfFooter(doc, 5);
-  doc.save('lyminal-full-report.pdf');
+  window.open(doc.output('bloburl'), '_blank');
 }
 
 const SUGGESTED_SPHERES = [
@@ -1471,19 +1471,6 @@ export default function GoalChart() {
               ↺ Redo chart
             </button>
             <button
-              onClick={async () => {
-                setPdfLoading('chart');
-                try { await generateChartReport(spheres, connections, counts, ranked); }
-                catch(e) { console.error(e); alert('Chart report generation failed: ' + e.message); }
-                setPdfLoading(null);
-              }}
-              disabled={pdfLoading === 'chart'}
-              className="text-sm font-medium transition-colors hover:opacity-70"
-              style={{color:"#4a7a72"}}
-            >
-              {pdfLoading === 'chart' ? 'Generating...' : '↓ Chart Report'}
-            </button>
-            <button
               onClick={() => { setFocusRound(0); setOverrideSphere(false); setSelectedFocusSphereId(ranked[0]?.id || null); setActiveGoals([]); setSelectedGoalId(null); setStep("focus"); }}
               className="px-4 py-2 text-sm font-semibold hover:opacity-90 transition-opacity"
               style={{background:"#b5472a", color:"white", letterSpacing:"0.04em"}}
@@ -1495,7 +1482,7 @@ export default function GoalChart() {
 
         <div className="flex flex-col lg:flex-row" style={{ minHeight: "calc(100vh - 65px)" }}>
           {/* SVG Chart */}
-          <div className="flex-1 flex items-center justify-center p-4" style={{background:"#faf8f5"}}>
+          <div className="flex-1 flex flex-col items-center justify-center p-4" style={{background:"#faf8f5"}}>
             <svg viewBox="0 0 600 520" className="w-full max-w-xl">
               {/* Arrows */}
               {Object.entries(connections).map(([fromId, targets]) =>
@@ -1553,6 +1540,19 @@ export default function GoalChart() {
                 );
               })}
             </svg>
+            <button
+              onClick={async () => {
+                setPdfLoading('chart');
+                try { await generateChartReport(spheres, connections, counts, ranked); }
+                catch(e) { console.error(e); alert('Chart report generation failed: ' + e.message); }
+                setPdfLoading(null);
+              }}
+              disabled={pdfLoading === 'chart'}
+              className="mt-4 px-5 py-2.5 text-xs font-semibold hover:opacity-90 transition-opacity"
+              style={{background:"#4a7a72", color:"white", letterSpacing:"0.04em"}}
+            >
+              {pdfLoading === 'chart' ? 'Generating...' : '↓ DOWNLOAD CHART REPORT'}
+            </button>
           </div>
 
           {/* Side panel */}
@@ -2053,7 +2053,7 @@ export default function GoalChart() {
                     setStep("chat");
                     setChatLoading(true);
                     try {
-                      const res = await fetch("https://api.anthropic.com/v1/messages", {
+                      const res = await fetch("/api/chat", {
                         method: "POST",
                         headers: {"Content-Type": "application/json"},
                         body: JSON.stringify({
@@ -2164,7 +2164,7 @@ Ask only ONE question. Keep it concise and warm.`,
       setChatInput("");
       setChatLoading(true);
       try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", {
+        const res = await fetch("/api/chat", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify({
