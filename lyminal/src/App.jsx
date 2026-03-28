@@ -137,14 +137,25 @@ function pdfChart(doc, spheres, connections, counts, ranked, cx, cy, radius, nod
     doc.setFillColor(255,255,255); doc.setDrawColor(...hexRgb(color)); doc.setLineWidth(2);
     doc.circle(p.x, p.y, nodeR, 'FD');
 
-    // Name
-    let name = s.name; if (name.length > 10) name = name.slice(0,9)+'…';
-    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(color));
-    doc.text(name, p.x, p.y-2, {align:'center'});
+    // Name — wraps on space if needed
+    const name = s.name;
+    const spaceIdx = name.indexOf(' ');
+    doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(color));
+    if (spaceIdx > 0 && name.length > 8) {
+      const line1 = name.slice(0, spaceIdx);
+      const line2 = name.slice(spaceIdx + 1);
+      doc.setFontSize(7.5);
+      doc.text(line1, p.x, p.y-5, {align:'center'});
+      doc.text(line2, p.x, p.y+5, {align:'center'});
+    } else {
+      doc.setFontSize(name.length > 12 ? 7 : 8);
+      doc.text(name, p.x, p.y-2, {align:'center'});
+    }
 
     // Counts
+    const countsY = (spaceIdx > 0 && name.length > 8) ? p.y+14 : p.y+8;
     doc.setFontSize(6.5); doc.setFont('helvetica','normal'); doc.setTextColor(150,150,150);
-    doc.text(`↑${cn.in}  ↓${cn.out}`, p.x, p.y+8, {align:'center'});
+    doc.text(`↑${cn.in}  ↓${cn.out}`, p.x, countsY, {align:'center'});
 
     // #1 badge
     if (isTop) {
@@ -245,7 +256,7 @@ async function generateChartReport(spheres, connections, counts, ranked) {
   let y = pdfSectionTitle(doc, 40, 90, 'Your Goal Chart', PC.accent, 100);
   doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(PC.body));
   doc.text('Your spheres, connections, and goals — all in one view.', 40, y); y+=15;
-  pdfChart(doc, spheres, connections, counts, ranked, W/2, y+190, 140, 28, true);
+  pdfChart(doc, spheres, connections, counts, ranked, W/2, y+200, 160, 36, true);
   pdfFooter(doc, 2);
 
   // Page 3: Connections & Rankings
@@ -320,7 +331,7 @@ Themes: 2-4 patterns you notice across ALL goals (not per-sphere). Each theme sh
   let y = pdfSectionTitle(doc, 40, 90, 'Your Goal Chart', PC.accent, 100);
   doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(PC.body));
   doc.text('Your spheres, connections, and goals — all in one view.', 40, y); y+=15;
-  pdfChart(doc, spheres, connections, counts, ranked, W/2, y+190, 140, 28, true);
+  pdfChart(doc, spheres, connections, counts, ranked, W/2, y+200, 160, 36, true);
   pdfFooter(doc, 2);
 
   // Page 3+: Insights (may overflow to additional pages)
@@ -765,8 +776,6 @@ function SphereConnCard({ sphere, isChecked, onToggle }) {
   );
 }
 
-const CORRECT_PASSWORD = "goaldirected";
-
 export default function GoalChart() {
   const [step, setStep] = useState("welcome");
   const [spheres, setSpheres] = useState([]);
@@ -775,22 +784,9 @@ export default function GoalChart() {
   const [goalStep, setGoalStep] = useState(0);
   const [newGoal, setNewGoal] = useState("");
   const [selectedId, setSelectedId] = useState(null);
-
-  // Password gate
-  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem("gc_unlocked") === "true");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
-
-  const submitPassword = () => {
-    if (passwordInput.trim().toLowerCase() === CORRECT_PASSWORD) {
-      sessionStorage.setItem("gc_unlocked", "true");
-      setUnlocked(true);
-      setPasswordError(false);
-    } else {
-      setPasswordError(true);
-      setPasswordInput("");
-    }
-  };
+  const [dragOffsets, setDragOffsets] = useState({}); // {sphereId: {dx, dy}}
+  const [dragging, setDragging] = useState(null); // sphereId being dragged
+  const [didDrag, setDidDrag] = useState(false);
 
   // Post-chart flow state
   const [activeGoals, setActiveGoals] = useState([]); // [{sphereId, sphereName, sphereColor, goalId, goalText, actionItems}]
@@ -918,8 +914,8 @@ export default function GoalChart() {
     const pos = {};
     const n = spheres.length;
     if (n === 0) return pos;
-    const cx = 300, cy = 260;
-    const r = n <= 3 ? 130 : n <= 6 ? 170 : 210;
+    const cx = 350, cy = 300;
+    const r = n <= 3 ? 150 : n <= 6 ? 190 : 230;
     spheres.forEach((b, i) => {
       const a = (i / n) * Math.PI * 2 - Math.PI / 2;
       pos[b.id] = { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r };
@@ -944,12 +940,13 @@ export default function GoalChart() {
   );
 
   // SVG curved arrow
-  const Arrow = ({ fromId, toId }) => {
-    const f = positions[fromId], t = positions[toId];
+  const Arrow = ({ fromId, toId, posOverride }) => {
+    const pos = posOverride || positions;
+    const f = pos[fromId], t = pos[toId];
     if (!f || !t) return null;
     const fromSphere = spheres.find(b => b.id === fromId);
     const color = fromSphere?.color || "#6366f1";
-    const R = 34;
+    const R = 42;
     const dx = t.x - f.x, dy = t.y - f.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
     if (dist < 1) return null;
@@ -982,72 +979,13 @@ export default function GoalChart() {
   // ── PASSWORD GATE ──
   const DevReset = () => (
     <button
-      onClick={() => { localStorage.removeItem("goalchart_state"); sessionStorage.removeItem("gc_unlocked"); location.reload(); }}
+      onClick={() => { localStorage.removeItem("goalchart_state"); location.reload(); }}
       className="fixed right-4 text-xs px-3 py-2 hover:opacity-100 transition-opacity z-50"
       style={{bottom:"76px", background:"#2c1f14", color:"#faf8f5", opacity:0.5, borderRadius:"4px"}}
     >
       🛠 Reset
     </button>
   );
-
-  if (!unlocked) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-6" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeIn 0.45s ease-out"}}>
-        <style>{FONTS}</style>
-      <DevReset />
-        <div style={{width:"100%", maxWidth:"420px"}}>
-          {/* Logo */}
-          <div className="flex justify-center mb-6">
-            <TriangleLogo size={52} />
-          </div>
-
-          <h1 className="text-center mb-1" style={{fontFamily:"'Playfair Display', serif", fontSize:"1.6rem", color:"#1c1410", fontWeight:600}}>
-            Lyminal
-          </h1>
-          <p className="text-center text-sm mb-8" style={{color:"#6e5c4a", fontWeight:300}}>Early access — enter your password to continue</p>
-
-          <div className="relative mb-3">
-            <input
-              type="password"
-              className="w-full px-4 py-3 text-sm outline-none border"
-              style={{
-                borderColor: passwordError ? "#b5472a" : "#d4c9bb",
-                background: "white",
-                color: "#1c1410",
-                letterSpacing: "0.05em"
-              }}
-              placeholder="Password"
-              value={passwordInput}
-              onChange={e => { setPasswordInput(e.target.value); setPasswordError(false); }}
-              onKeyDown={e => e.key === "Enter" && submitPassword()}
-              autoFocus
-            />
-          </div>
-
-          {passwordError && (
-            <p className="text-xs mb-3" style={{color:"#b5472a"}}>That password didn't work. Try again.</p>
-          )}
-
-          <button
-            onClick={submitPassword}
-            className="w-full py-3 text-sm font-semibold hover:opacity-90 transition-opacity"
-            style={{background:"#b5472a", color:"white", letterSpacing:"0.08em"}}
-          >
-            ENTER →
-          </button>
-
-          <p className="text-center text-xs mt-6" style={{color:"#8a7455"}}>Don't have a password? This app is in private beta.</p>
-          <button
-            onClick={() => { localStorage.removeItem("goalchart_state"); sessionStorage.removeItem("gc_unlocked"); location.reload(); }}
-            className="w-full text-center text-xs mt-4 hover:opacity-70 transition-opacity"
-            style={{color:"#8a7455", background:"transparent"}}
-          >
-            🛠 Reset all data (dev only)
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   if (step === "welcome") return (
     <>
@@ -1642,6 +1580,57 @@ export default function GoalChart() {
     const selected = spheres.find(b => b.id === selectedId);
     const selectedCounts = selectedId ? counts[selectedId] : null;
 
+    // Compute drag-adjusted positions
+    const chartPos = {};
+    Object.entries(positions).forEach(([id, p]) => {
+      const offset = dragOffsets[id] || { dx: 0, dy: 0 };
+      chartPos[id] = { x: p.x + offset.dx, y: p.y + offset.dy };
+    });
+
+    // SVG drag handlers
+    const getSvgPoint = (e, svg) => {
+      const pt = svg.createSVGPoint();
+      const touch = e.touches ? e.touches[0] : e;
+      pt.x = touch.clientX;
+      pt.y = touch.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    };
+
+    const onDragStart = (e, sphereId) => {
+      e.stopPropagation();
+      const svg = e.currentTarget.closest('svg');
+      const pt = getSvgPoint(e, svg);
+      const pos = chartPos[sphereId];
+      setDragging(sphereId);
+      setDidDrag(false);
+      // Store the offset between cursor and center
+      svg._dragStart = { ox: pt.x - pos.x, oy: pt.y - pos.y };
+      svg._dragSphere = sphereId;
+    };
+
+    const onDragMove = (e) => {
+      const svg = e.currentTarget;
+      if (!svg._dragSphere) return;
+      e.preventDefault();
+      setDidDrag(true);
+      const pt = getSvgPoint(e, svg);
+      const basePos = positions[svg._dragSphere];
+      setDragOffsets(prev => ({
+        ...prev,
+        [svg._dragSphere]: {
+          dx: pt.x - svg._dragStart.ox - basePos.x,
+          dy: pt.y - svg._dragStart.oy - basePos.y,
+        }
+      }));
+    };
+
+    const onDragEnd = (e) => {
+      const svg = e.currentTarget;
+      svg._dragSphere = null;
+      svg._dragStart = null;
+      setDragging(null);
+    };
+
     return (
       <div className="min-h-screen" style={{background:"#faf8f5",fontFamily:"'Inter', sans-serif", animation:"fadeIn 0.4s ease-out"}}>
         <style>{FONTS}</style>
@@ -1653,16 +1642,25 @@ export default function GoalChart() {
             <p className="text-xs" style={{color:"#6e5c4a"}}>{spheres.length} spheres · {Object.values(connections).flat().length} connections</p>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={() => setStep("connections")} className="text-sm font-medium transition-colors hover:opacity-70" style={{color:"#b5693a"}}>← Edit connections</button>
+            <button onClick={() => { setDragOffsets({}); setStep("connections"); }} className="text-sm font-medium transition-colors hover:opacity-70" style={{color:"#b5693a"}}>← Edit connections</button>
             <button
-              onClick={() => { setSpheres([]); setConnections({}); setGoalStep(0); setActiveGoals([]); setSelectedId(null); setStep("spheres"); }}
+              onClick={() => { setDragOffsets({}); setSpheres([]); setConnections({}); setGoalStep(0); setActiveGoals([]); setSelectedId(null); setStep("spheres"); }}
               className="text-sm font-medium transition-colors hover:opacity-70"
               style={{color:"#6e5c4a"}}
             >
               ↺ Redo chart
             </button>
+            {Object.keys(dragOffsets).length > 0 && (
+              <button
+                onClick={() => setDragOffsets({})}
+                className="text-sm font-medium transition-colors hover:opacity-70"
+                style={{color:"#4a7a72"}}
+              >
+                ↺ Reset layout
+              </button>
+            )}
             <button
-              onClick={() => { setFocusRound(0); setOverrideSphere(false); setSelectedFocusSphereId(ranked[0]?.id || null); setActiveGoals([]); setSelectedGoalId(null); setStep("focus"); }}
+              onClick={() => { setDragOffsets({}); setFocusRound(0); setOverrideSphere(false); setSelectedFocusSphereId(ranked[0]?.id || null); setActiveGoals([]); setSelectedGoalId(null); setStep("focus"); }}
               className="px-4 py-2 text-sm font-semibold hover:opacity-90 transition-opacity"
               style={{background:"#b5472a", color:"white", letterSpacing:"0.04em"}}
             >
@@ -1674,46 +1672,65 @@ export default function GoalChart() {
         <div className="flex flex-col lg:flex-row" style={{ minHeight: "calc(100vh - 65px)" }}>
           {/* SVG Chart */}
           <div className="flex-1 flex flex-col items-center justify-center p-4" style={{background:"#faf8f5"}}>
-            <svg viewBox="0 0 600 520" className="w-full max-w-xl">
+            <svg viewBox="0 0 700 600" className="w-full max-w-xl"
+              style={{cursor: dragging ? 'grabbing' : 'default', touchAction: 'none'}}
+              onMouseMove={onDragMove}
+              onMouseUp={onDragEnd}
+              onMouseLeave={onDragEnd}
+              onTouchMove={onDragMove}
+              onTouchEnd={onDragEnd}
+            >
               {/* Arrows */}
               {Object.entries(connections).map(([fromId, targets]) =>
                 (targets || []).map(toId => (
-                  <Arrow key={`${fromId}-${toId}`} fromId={fromId} toId={toId} />
+                  <Arrow key={`${fromId}-${toId}`} fromId={fromId} toId={toId} posOverride={chartPos} />
                 ))
               )}
               {/* Nodes */}
               {spheres.map(b => {
-                const pos = positions[b.id];
+                const pos = chartPos[b.id];
                 if (!pos) return null;
                 const c = counts[b.id] || { out: 0, in: 0 };
                 const isSelected = selectedId === b.id;
                 const isTop = ranked[0]?.id === b.id;
                 return (
-                  <g key={b.id} onClick={() => setSelectedId(selectedId === b.id ? null : b.id)} style={{ cursor: "pointer" }}>
+                  <g key={b.id} 
+                    onClick={() => { if (!didDrag) setSelectedId(selectedId === b.id ? null : b.id); }}
+                    onMouseDown={(e) => onDragStart(e, b.id)}
+                    onTouchStart={(e) => onDragStart(e, b.id)}
+                    style={{ cursor: dragging === b.id ? 'grabbing' : 'grab' }}
+                  >
                     {/* Glow ring for top priority */}
                     {isTop && (
-                      <circle cx={pos.x} cy={pos.y} r={42} fill="none" stroke={b.color} strokeWidth="2.5" strokeOpacity="0.25" strokeDasharray="4 3" />
+                      <circle cx={pos.x} cy={pos.y} r={52} fill="none" stroke={b.color} strokeWidth="2.5" strokeOpacity="0.25" strokeDasharray="4 3" />
                     )}
                     {/* Node circle */}
                     <circle
-                      cx={pos.x} cy={pos.y} r={34}
+                      cx={pos.x} cy={pos.y} r={42}
                       fill={isSelected ? b.color : "white"}
                       stroke={b.color}
                       strokeWidth={isSelected ? 0 : 2.5}
                       filter={isSelected ? "drop-shadow(0 0 8px " + b.color + "80)" : "drop-shadow(0 2px 4px rgba(0,0,0,0.08))"}
                     />
-                    {/* Name */}
-                    <text
-                      x={pos.x} y={pos.y - 4}
-                      textAnchor="middle" dominantBaseline="middle"
-                      fontSize="10.5" fontWeight="700"
-                      fill={isSelected ? "white" : b.color}
-                    >
-                      {b.name.length > 9 ? b.name.slice(0, 8) + "…" : b.name}
-                    </text>
+                    {/* Name — wraps on space if needed */}
+                    {(() => {
+                      const name = b.name;
+                      const spaceIdx = name.indexOf(' ');
+                      if (spaceIdx > 0 && name.length > 8) {
+                        const line1 = name.slice(0, spaceIdx);
+                        const line2 = name.slice(spaceIdx + 1);
+                        return (<>
+                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize="10" fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
+                          <text x={pos.x} y={pos.y + 4} textAnchor="middle" dominantBaseline="middle" fontSize="10" fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
+                        </>);
+                      }
+                      return (
+                        <text x={pos.x} y={pos.y - 4} textAnchor="middle" dominantBaseline="middle" fontSize={name.length > 12 ? "9" : "11"} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
+                      );
+                    })()}
                     {/* Counts */}
                     <text
-                      x={pos.x} y={pos.y + 11}
+                      x={pos.x} y={pos.y + (b.name.indexOf(' ') > 0 && b.name.length > 8 ? 17 : 11)}
                       textAnchor="middle" dominantBaseline="middle"
                       fontSize="9" fontWeight="500"
                       fill={isSelected ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.35)"}
@@ -1723,8 +1740,8 @@ export default function GoalChart() {
                     {/* Top badge */}
                     {isTop && (
                       <g>
-                        <circle cx={pos.x + 28} cy={pos.y - 28} r={10} fill={b.color} />
-                        <text x={pos.x + 28} y={pos.y - 28} textAnchor="middle" dominantBaseline="middle" fontSize="9" fill="white" fontWeight="bold">★</text>
+                        <circle cx={pos.x + 34} cy={pos.y - 34} r={10} fill={b.color} />
+                        <text x={pos.x + 34} y={pos.y - 34} textAnchor="middle" dominantBaseline="middle" fontSize="9" fill="white" fontWeight="bold">★</text>
                       </g>
                     )}
                   </g>
@@ -2275,7 +2292,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                   className="flex-1 py-2 text-xs font-semibold hover:opacity-90 transition-opacity"
                   style={{background:"#b5472a", color:"white", letterSpacing:"0.04em"}}
                 >
-                  Talk to Claude
+                  Talk to Lyme
                 </button>
                 <button
                   className="flex-1 py-2 text-xs font-semibold border"

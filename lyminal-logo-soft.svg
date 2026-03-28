@@ -1,0 +1,16 @@
+<svg width="240" height="230" viewBox="-10 0 240 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="-10" y="0" width="240" height="230" rx="12" fill="#b5472a"/>
+  <!-- Triangle lines -->
+  <line x1="110" y1="36" x2="36" y2="170" stroke="#e8d5c4" stroke-width="5"/>
+  <line x1="110" y1="36" x2="184" y2="170" stroke="#e8d5c4" stroke-width="5"/>
+  <line x1="36" y1="170" x2="184" y2="170" stroke="#e8d5c4" stroke-width="5"/>
+  <!-- Top node -->
+  <circle cx="110" cy="36" r="20" fill="#b5472a" stroke="#e8d5c4" stroke-width="5.6"/>
+  <!-- Bottom-left node -->
+  <circle cx="36" cy="170" r="20" fill="#b5472a" stroke="#e8d5c4" stroke-width="5.6"/>
+  <!-- Bottom-right outer ring -->
+  <circle cx="184" cy="170" r="38" fill="none" stroke="#e8d5c4" stroke-width="3.6" stroke-opacity="0.3"/>
+  <!-- Bottom-right filled node -->
+  <circle cx="184" cy="170" r="25" fill="#e8d5c4"/>
+</svg>
