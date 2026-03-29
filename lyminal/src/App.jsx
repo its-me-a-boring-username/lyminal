@@ -2163,9 +2163,11 @@ function GoalChart() {
     const roundLabels = ["first", "second", "third"];
 
     return (
-      <div className="min-h-screen px-6 py-12 max-w-2xl mx-auto" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
+      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
         <style>{FONTS}</style>
         <DevReset />
+        <div className="hidden lg:block flex-shrink-0" style={{width:"7px", background:"#b5472a"}} />
+        <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
         <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#6e5c4a"}}>Focus {roundLabels[focusRound]} sphere</p>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">
           {focusRound === 0 ? "Choose a sphere to focus on" : "Pick a new focus sphere"}
@@ -2236,9 +2238,11 @@ function GoalChart() {
     const focusSphere = spheres.find(b => b.id === selectedFocusSphereId) || ranked[0];
 
     return (
-      <div className="min-h-screen px-6 py-12 max-w-2xl mx-auto" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
+      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
         <style>{FONTS}</style>
-      <DevReset />
+        <DevReset />
+        <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"7px", background: focusSphere?.color || "#b5472a"}} />
+        <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-3 h-3 rounded-full" style={{background: focusSphere?.color}}/>
           <p className="text-xs uppercase tracking-widest" style={{color:"#6e5c4a"}}>{focusSphere?.name}</p>
@@ -2351,9 +2355,11 @@ function GoalChart() {
       : activeGoals.slice(0, 1);
 
     return (
-      <div className="min-h-screen px-6 py-12 max-w-2xl mx-auto" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
+      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
         <style>{FONTS}</style>
-      <DevReset />
+        <DevReset />
+        <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"7px", background: allActive[0]?.sphereColor || "#b5472a"}} />
+        <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
         <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#6e5c4a"}}>Your Active Goals</p>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">Here's what you're working on</h2>
         <p className="text-sm mb-8" style={{color:"#5c4e40", fontWeight:300}}>
