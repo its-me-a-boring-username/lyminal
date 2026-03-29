@@ -28,7 +28,8 @@ const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Di
 @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeSlideLeft { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeScaleIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }`;
+@keyframes fadeScaleIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+@keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
 
 // ═══════════════════════════════════════════════════
 // PDF REPORT GENERATION (jsPDF)
@@ -914,8 +915,8 @@ export default function GoalChart() {
     const pos = {};
     const n = spheres.length;
     if (n === 0) return pos;
-    const cx = 350, cy = 300;
-    const r = n <= 3 ? 150 : n <= 6 ? 190 : 230;
+    const cx = 350, cy = 310;
+    const r = n <= 3 ? 160 : n <= 6 ? 200 : 240;
     spheres.forEach((b, i) => {
       const a = (i / n) * Math.PI * 2 - Math.PI / 2;
       pos[b.id] = { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r };
@@ -946,7 +947,7 @@ export default function GoalChart() {
     if (!f || !t) return null;
     const fromSphere = spheres.find(b => b.id === fromId);
     const color = fromSphere?.color || "#6366f1";
-    const R = 42;
+    const R = 48;
     const dx = t.x - f.x, dy = t.y - f.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
     if (dist < 1) return null;
@@ -1672,7 +1673,7 @@ export default function GoalChart() {
         <div className="flex flex-col lg:flex-row" style={{ minHeight: "calc(100vh - 65px)" }}>
           {/* SVG Chart */}
           <div className="flex-1 flex flex-col items-center justify-center p-4" style={{background:"#faf8f5"}}>
-            <svg viewBox="0 0 700 600" className="w-full max-w-xl"
+            <svg viewBox="0 0 700 620" className="w-full max-w-xl"
               style={{cursor: dragging ? 'grabbing' : 'default', touchAction: 'none'}}
               onMouseMove={onDragMove}
               onMouseUp={onDragEnd}
@@ -1702,11 +1703,13 @@ export default function GoalChart() {
                   >
                     {/* Glow ring for top priority */}
                     {isTop && (
-                      <circle cx={pos.x} cy={pos.y} r={52} fill="none" stroke={b.color} strokeWidth="2.5" strokeOpacity="0.25" strokeDasharray="4 3" />
+                      <circle cx={pos.x} cy={pos.y} r={58} fill="none" stroke={b.color} strokeWidth="2.5" strokeOpacity="0.25" strokeDasharray="4 3"
+                        style={{transformOrigin: `${pos.x}px ${pos.y}px`, animation: 'spinRing 20s linear infinite'}}
+                      />
                     )}
                     {/* Node circle */}
                     <circle
-                      cx={pos.x} cy={pos.y} r={42}
+                      cx={pos.x} cy={pos.y} r={48}
                       fill={isSelected ? b.color : "white"}
                       stroke={b.color}
                       strokeWidth={isSelected ? 0 : 2.5}
@@ -1720,19 +1723,19 @@ export default function GoalChart() {
                         const line1 = name.slice(0, spaceIdx);
                         const line2 = name.slice(spaceIdx + 1);
                         return (<>
-                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize="10" fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
-                          <text x={pos.x} y={pos.y + 4} textAnchor="middle" dominantBaseline="middle" fontSize="10" fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
+                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
+                          <text x={pos.x} y={pos.y + 6} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
                         </>);
                       }
                       return (
-                        <text x={pos.x} y={pos.y - 4} textAnchor="middle" dominantBaseline="middle" fontSize={name.length > 12 ? "9" : "11"} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
+                        <text x={pos.x} y={pos.y - 2} textAnchor="middle" dominantBaseline="middle" fontSize={name.length > 12 ? "11" : "13"} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
                       );
                     })()}
                     {/* Counts */}
                     <text
-                      x={pos.x} y={pos.y + (b.name.indexOf(' ') > 0 && b.name.length > 8 ? 17 : 11)}
+                      x={pos.x} y={pos.y + (b.name.indexOf(' ') > 0 && b.name.length > 8 ? 20 : 14)}
                       textAnchor="middle" dominantBaseline="middle"
-                      fontSize="9" fontWeight="500"
+                      fontSize="10" fontWeight="500"
                       fill={isSelected ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.35)"}
                     >
                       ↑{c.in} ↓{c.out}
@@ -1740,8 +1743,8 @@ export default function GoalChart() {
                     {/* Top badge */}
                     {isTop && (
                       <g>
-                        <circle cx={pos.x + 34} cy={pos.y - 34} r={10} fill={b.color} />
-                        <text x={pos.x + 34} y={pos.y - 34} textAnchor="middle" dominantBaseline="middle" fontSize="9" fill="white" fontWeight="bold">★</text>
+                        <circle cx={pos.x + 38} cy={pos.y - 38} r={11} fill={b.color} />
+                        <text x={pos.x + 38} y={pos.y - 38} textAnchor="middle" dominantBaseline="middle" fontSize="10" fill="white" fontWeight="bold">★</text>
                       </g>
                     )}
                   </g>
