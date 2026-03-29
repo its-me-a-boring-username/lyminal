@@ -1202,7 +1202,7 @@ function GoalChart() {
       <style>{FONTS}</style>
       <DevReset />
       {/* Left color strip — decorative only, hidden on mobile */}
-      <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#b5472a"}} />
+      <div className="hidden lg:block flex-shrink-0" style={{width:"7px", background:"#b5472a"}} />
       {/* Content — identical to original on all screen sizes */}
       <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
         <div className="mb-2 text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 1 of 3</div>
@@ -1275,7 +1275,7 @@ function GoalChart() {
       <style>{FONTS}</style>
       <DevReset />
       {/* Left color strip — changes to sphere color, hidden on mobile */}
-      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"350px", background: currentSphere?.color || "#b5472a"}} />
+      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"7px", background: currentSphere?.color || "#b5472a"}} />
       {/* Content — identical to original on all screen sizes */}
       <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
         <div className="mb-8">
@@ -1368,7 +1368,7 @@ function GoalChart() {
       <style>{FONTS}</style>
       <DevReset />
       {/* Left color strip — changes to sphere color, hidden on mobile */}
-      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"350px", background: fromSphere?.color || "#4a7a72"}} />
+      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"7px", background: fromSphere?.color || "#4a7a72"}} />
       {/* Content — identical to original on all screen sizes */}
       <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
         <div className="mb-8">
@@ -1640,7 +1640,7 @@ function GoalChart() {
                 ↺ Reset layout
               </button>
             )}
-            {activeGoals.length > 0 && (
+            {activeGoals.length > 0 ? (
               <button
                 onClick={() => setStep("active")}
                 className="text-xs px-4 py-2 font-medium hover:opacity-80 transition-opacity"
@@ -1648,7 +1648,311 @@ function GoalChart() {
               >
                 Exit chart
               </button>
+            ) : (
+              <button
+                onClick={() => { setDragOffsets({}); setFocusRound(0); setOverrideSphere(false); setSelectedFocusSphereId(ranked[0]?.id || null); setSelectedGoalId(null); setStep("focus"); }}
+                className="px-4 py-2 text-sm font-semibold hover:opacity-90 transition-opacity"
+                style={{background:"#b5472a", color:"white", letterSpacing:"0.04em"}}
+              >
+                Choose My Focus →
+              </button>
             )}
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row" style={{ minHeight: "calc(100vh - 65px)" }}>
+          {/* SVG Chart */}
+          <div className="flex-1 flex flex-col items-center justify-center p-4" style={{background:"#faf8f5"}}>
+            <svg viewBox="0 0 700 620" className="w-full max-w-xl"
+              style={{cursor: dragging ? 'grabbing' : 'default', touchAction: 'none'}}
+              onMouseMove={onDragMove}
+              onMouseUp={onDragEnd}
+              onMouseLeave={onDragEnd}
+              onTouchEnd={onDragEnd}
+              ref={el => {
+                if (!el) return;
+                // Attach touchmove as non-passive so preventDefault works
+                el.removeEventListener('touchmove', el._onTouchMove);
+                el._onTouchMove = (e) => onDragMove(e);
+                el.addEventListener('touchmove', el._onTouchMove, { passive: false });
+              }}
+            >
+              {/* Arrows */}
+              {Object.entries(connections).map(([fromId, targets]) =>
+                (targets || []).map(toId => (
+                  <Arrow key={`${fromId}-${toId}`} fromId={fromId} toId={toId} posOverride={chartPos} />
+                ))
+              )}
+              {/* Nodes */}
+              {spheres.map(b => {
+                const pos = chartPos[b.id];
+                if (!pos) return null;
+                const c = counts[b.id] || { out: 0, in: 0 };
+                const isSelected = selectedId === b.id;
+                const isTop = ranked[0]?.id === b.id;
+                return (
+                  <g key={b.id} 
+                    onClick={() => { if (!didDrag) setSelectedId(selectedId === b.id ? null : b.id); }}
+                    onMouseDown={(e) => onDragStart(e, b.id)}
+                    onTouchStart={(e) => onDragStart(e, b.id)}
+                    style={{ cursor: dragging === b.id ? 'grabbing' : 'grab' }}
+                  >
+                    {/* Glow ring for top priority */}
+                    {isTop && (
+                      <circle cx={pos.x} cy={pos.y} r={58} fill="none" stroke={b.color} strokeWidth="2.5" strokeOpacity="0.25" strokeDasharray="4 3"
+                        style={{transformOrigin: `${pos.x}px ${pos.y}px`, animation: 'spinRing 20s linear infinite'}}
+                      />
+                    )}
+                    {/* Node circle */}
+                    <circle
+                      cx={pos.x} cy={pos.y} r={48}
+                      fill={isSelected ? b.color : "white"}
+                      stroke={b.color}
+                      strokeWidth={isSelected ? 0 : 2.5}
+                      filter={isSelected ? "drop-shadow(0 0 8px " + b.color + "80)" : "drop-shadow(0 2px 4px rgba(0,0,0,0.08))"}
+                    />
+                    {/* Name — wraps on space if needed */}
+                    {(() => {
+                      const name = b.name;
+                      const spaceIdx = name.indexOf(' ');
+                      if (spaceIdx > 0 && name.length > 8) {
+                        const line1 = name.slice(0, spaceIdx);
+                        const line2 = name.slice(spaceIdx + 1);
+                        return (<>
+                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
+                          <text x={pos.x} y={pos.y + 6} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
+                        </>);
+                      }
+                      return (
+                        <text x={pos.x} y={pos.y - 2} textAnchor="middle" dominantBaseline="middle" fontSize={name.length > 12 ? "11" : "13"} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
+                      );
+                    })()}
+                    {/* Counts */}
+                    <text
+                      x={pos.x} y={pos.y + (b.name.indexOf(' ') > 0 && b.name.length > 8 ? 20 : 14)}
+                      textAnchor="middle" dominantBaseline="middle"
+                      fontSize="10" fontWeight="500"
+                      fill={isSelected ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.35)"}
+                    >
+                      ↑{c.in} ↓{c.out}
+                    </text>
+                    {/* Top badge */}
+                    {isTop && (
+                      <g>
+                        <circle cx={pos.x + 38} cy={pos.y - 38} r={11} fill={b.color} />
+                        <text x={pos.x + 38} y={pos.y - 38} textAnchor="middle" dominantBaseline="middle" fontSize="10" fill="white" fontWeight="bold">★</text>
+                      </g>
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+            <button
+              onClick={async () => {
+                setPdfLoading('chart');
+                try { await generateChartReport(spheres, connections, counts, ranked); }
+                catch(e) { console.error(e); alert('Chart report generation failed: ' + e.message); }
+                setPdfLoading(null);
+              }}
+              disabled={pdfLoading === 'chart'}
+              className="mt-4 px-5 py-2.5 text-xs font-semibold hover:opacity-90 transition-opacity"
+              style={{background:"#4a7a72", color:"white", letterSpacing:"0.04em"}}
+            >
+              {pdfLoading === 'chart' ? 'Generating...' : '↓ DOWNLOAD SIMPLE CHART'}
+            </button>
+          </div>
+
+          {/* Side panel */}
+          <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l overflow-y-auto" style={{background:"#faf8f5", borderColor:"#e8e0d5"}}>
+            {selected ? (
+              <div className="p-6" style={{fontFamily:"'Inter', sans-serif"}}>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-4 h-4 rounded-full" style={{ background: selected.color }} />
+                  <h3 className="text-xl font-bold" style={{ color: selected.color }}>{selected.name}</h3>
+                  <button onClick={() => setSelectedId(null)} className="ml-auto text-gray-300 hover:text-gray-500 text-sm">✕</button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <div className="text-2xl font-bold text-gray-900">{selectedCounts?.out || 0}</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Outgoing</div>
+                    <div className="text-xs text-gray-400">supports others</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <div className="text-2xl font-bold text-gray-900">{selectedCounts?.in || 0}</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Incoming</div>
+                    <div className="text-xs text-gray-400">needs support</div>
+                  </div>
+                </div>
+
+                {/* Supports */}
+                {(connections[selected.id] || []).length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-medium">Supports</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(connections[selected.id] || []).map(toId => {
+                        const b = spheres.find(b => b.id === toId);
+                        return b ? <Pill key={toId} b={b} /> : null;
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Goals */}
+                {selected.goals.length > 0 && (
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-medium">Goals ({selected.goals.length})</p>
+                    <div className="space-y-1.5">
+                      {selected.goals.map(g => (
+                        <div key={g.id} className="flex items-start gap-2 text-sm text-gray-700 py-1.5 border-b border-gray-50">
+                          <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: selected.color }} />
+                          {g.text}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-6" style={{fontFamily:"'Inter', sans-serif"}}>
+                <h3 style={{fontFamily:"'Playfair Display', serif", color:"#1c1410"}} className="font-semibold mb-1">Priority Ranking</h3>
+                <p className="text-xs mb-5" style={{color:"#6e5c4a"}}>Ranked by how many areas each sphere supports</p>
+                <div className="space-y-2">
+                  {ranked.map((b, i) => (
+                    <button
+                      key={b.id}
+                      onClick={() => setSelectedId(b.id)}
+                      className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left border border-transparent hover:border-gray-100"
+                    >
+                      <div
+                        className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                        style={{ background: i === 0 ? b.color : b.color + "60" }}
+                      >
+                        {i + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-gray-800 truncate">{b.name}</div>
+                        <div className="text-xs text-gray-400">↓{b.out} out · ↑{b.in} in</div>
+                      </div>
+                      {i === 0 && (
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white flex-shrink-0" style={{ background: b.color }}>
+                          Focus
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-6 p-4 rounded-sm" style={{background:"#f0ebe3", border:"1px solid #ddd3c5"}}>
+                  <p className="text-xs font-semibold mb-1" style={{color:"#6b4a2a"}}>How to read this</p>
+                  <p className="text-xs leading-relaxed" style={{color:"#8a6040"}}>
+                    The top-ranked sphere has the most outgoing connections — improving it creates the most downstream benefits. Start there.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+  // ── CHART VIEW (from active goals) ──
+  if (step === "chart-view") {
+    const selected = spheres.find(b => b.id === selectedId);
+    const selectedCounts = selectedId ? counts[selectedId] : null;
+
+    // Compute drag-adjusted positions
+    const chartPos = {};
+    Object.entries(positions).forEach(([id, p]) => {
+      const offset = dragOffsets[id] || { dx: 0, dy: 0 };
+      chartPos[id] = { x: p.x + offset.dx, y: p.y + offset.dy };
+    });
+
+    // SVG drag handlers
+    const getSvgPoint = (e, svg) => {
+      const pt = svg.createSVGPoint();
+      // touches[0] is empty on touchend — use changedTouches as fallback
+      const touch = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]) || e;
+      pt.x = touch.clientX;
+      pt.y = touch.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    };
+
+    const onDragStart = (e, sphereId) => {
+      e.stopPropagation();
+      const svg = e.currentTarget.closest('svg');
+      if (!svg) return;
+      const pt = getSvgPoint(e, svg);
+      const pos = chartPos[sphereId];
+      if (!pos) return;
+      setDragging(sphereId);
+      setDidDrag(false);
+      svg._dragStart = { ox: pt.x - pos.x, oy: pt.y - pos.y };
+      svg._dragSphere = sphereId;
+    };
+
+    const onDragMove = (e) => {
+      const svg = e.currentTarget;
+      // Guard: bail if drag state was cleared
+      if (!svg._dragSphere || !svg._dragStart) return;
+      e.preventDefault();
+      setDidDrag(true);
+      const pt = getSvgPoint(e, svg);
+      const basePos = positions[svg._dragSphere];
+      if (!basePos) return;
+      setDragOffsets(prev => ({
+        ...prev,
+        [svg._dragSphere]: {
+          dx: pt.x - svg._dragStart.ox - basePos.x,
+          dy: pt.y - svg._dragStart.oy - basePos.y,
+        }
+      }));
+    };
+
+    const onDragEnd = (e) => {
+      const svg = e.currentTarget;
+      svg._dragSphere = null;
+      svg._dragStart = null;
+      setDragging(null);
+    };
+
+    return (
+      <div className="min-h-screen" style={{background:"#faf8f5",fontFamily:"'Inter', sans-serif", animation:"fadeIn 0.4s ease-out"}}>
+        <style>{FONTS}</style>
+      <DevReset />
+        {/* Header */}
+        <div style={{background:"#faf8f5", borderBottom:"1px solid #e8e0d5"}} className="px-6 py-4 flex items-center justify-between">
+          <div>
+            <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.25rem", color:"#1c1410"}} className="font-semibold">Your Goal Chart</h2>
+            <p className="text-xs" style={{color:"#6e5c4a"}}>{spheres.length} spheres · {Object.values(connections).flat().length} connections</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={() => { setDragOffsets({}); setStep("connections"); }} className="text-sm font-medium transition-colors hover:opacity-70" style={{color:"#b5693a"}}>← Edit connections</button>
+            <button
+              onClick={() => { setDragOffsets({}); setSpheres([]); setConnections({}); setGoalStep(0); setActiveGoals([]); setSelectedId(null); setStep("spheres"); }}
+              className="text-sm font-medium transition-colors hover:opacity-70"
+              style={{color:"#6e5c4a"}}
+            >
+              ↺ Redo chart
+            </button>
+            {Object.keys(dragOffsets).length > 0 && (
+              <button
+                onClick={() => setDragOffsets({})}
+                className="text-sm font-medium transition-colors hover:opacity-70"
+                style={{color:"#4a7a72"}}
+              >
+                ↺ Reset layout
+              </button>
+            )}
+            <button
+                onClick={() => setStep("active")}
+                className="text-xs px-4 py-2 font-medium hover:opacity-80 transition-opacity"
+                style={{border:"1px solid #d4c9bb", color:"#5c4e40"}}
+              >
+                Exit chart
+              </button>
           </div>
         </div>
 
@@ -2310,7 +2614,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
             {pdfLoading === 'full' ? 'Generating your report...' : '↓ DOWNLOAD FULL REPORT'}
           </button>
           <button
-            onClick={() => setStep("chart")}
+            onClick={() => setStep("chart-view")}
             className="w-full py-3 text-sm font-medium text-center"
             style={{color:"#5c4e40", border:"1px solid #d4c9bb"}}
           >
