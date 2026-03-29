@@ -1198,7 +1198,7 @@ function GoalChart() {
   );
 
   if (step === "spheres") return (
-    <div className="min-h-screen flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
+    <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
       <style>{FONTS}</style>
       <DevReset />
       {/* Left ochre panel */}
@@ -1208,7 +1208,7 @@ function GoalChart() {
         <p style={{color:"rgba(255,255,255,0.75)", fontWeight:300, fontSize:"0.95rem", lineHeight:1.7}}>What are the major areas of your life right now? Add what's relevant to you.</p>
       </div>
       {/* Right content panel */}
-      <div className="flex-1 flex flex-col justify-center px-8 lg:px-14 py-16 max-w-xl w-full mx-auto lg:mx-0">
+      <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:flex-1 lg:flex lg:flex-col lg:justify-center lg:px-14 lg:max-w-xl lg:mx-0">
         {/* Mobile header */}
         <div className="lg:hidden mb-6">
           <div className="mb-1 text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 1 of 3</div>
@@ -1281,7 +1281,7 @@ function GoalChart() {
     const goPrev = () => goalStep === 0 ? setStep("spheres") : setGoalStep(g => g - 1);
 
     return (
-      <div className="min-h-screen flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
+      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
       <style>{FONTS}</style>
       <DevReset />
       {/* Left panel */}
@@ -1300,7 +1300,7 @@ function GoalChart() {
         <p className="text-xs mt-2" style={{color:"rgba(255,255,255,0.5)"}}>{goalStep + 1} of {spheres.length}</p>
       </div>
       {/* Right panel */}
-      <div className="flex-1 flex flex-col justify-center px-8 lg:px-14 py-16 max-w-xl w-full mx-auto lg:mx-0">
+      <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:flex-1 lg:flex lg:flex-col lg:justify-center lg:px-14 lg:max-w-xl lg:mx-0">
         {/* Mobile header */}
         <div className="lg:hidden mb-6">
           <div className="mb-1 text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 2 of 3 — {goalStep + 1}/{spheres.length}</div>
@@ -1378,7 +1378,7 @@ function GoalChart() {
     const goPrev = () => connStep === 0 ? (setGoalStep(spheres.length - 1), setStep("goals")) : setConnStep(s => s - 1);
 
     return (
-      <div className="min-h-screen flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
+      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
       <style>{FONTS}</style>
       <DevReset />
       {/* Left panel */}
@@ -1409,7 +1409,7 @@ function GoalChart() {
         <p className="text-xs mt-2" style={{color:"rgba(255,255,255,0.5)"}}>{connStep + 1} of {spheres.length}</p>
       </div>
       {/* Right panel */}
-      <div className="flex-1 flex flex-col justify-center px-8 lg:px-14 py-16 max-w-xl w-full mx-auto lg:mx-0">
+      <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:flex-1 lg:flex lg:flex-col lg:justify-center lg:px-14 lg:max-w-xl lg:mx-0">
         {/* Mobile header */}
         <div className="lg:hidden mb-6">
           <div className="mb-1 text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 3 of 3 — {connStep + 1}/{spheres.length}</div>
