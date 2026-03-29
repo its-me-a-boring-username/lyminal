@@ -2229,6 +2229,7 @@ function GoalChart() {
             Focus on {focusSphere?.name} →
           </button>
         </div>
+        </div>
       </div>
     );
   }
@@ -2298,6 +2299,7 @@ function GoalChart() {
           >
             Confirm & see my plan →
           </button>
+        </div>
         </div>
       </div>
     );
@@ -2626,6 +2628,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
           >
             View your chart
           </button>
+        </div>
         </div>
       </div>
     );
