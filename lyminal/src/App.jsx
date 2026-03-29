@@ -1202,7 +1202,7 @@ function GoalChart() {
       <style>{FONTS}</style>
       <DevReset />
       {/* Left color strip — decorative only, hidden on mobile */}
-      <div className="hidden lg:block flex-shrink-0" style={{width:"200px", background:"#b5472a"}} />
+      <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#b5472a"}} />
       {/* Content — identical to original on all screen sizes */}
       <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
         <div className="mb-2 text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 1 of 3</div>
@@ -1275,7 +1275,7 @@ function GoalChart() {
       <style>{FONTS}</style>
       <DevReset />
       {/* Left color strip — changes to sphere color, hidden on mobile */}
-      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"7px", background: currentSphere?.color || "#b5472a"}} />
+      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"350px", background: currentSphere?.color || "#b5472a"}} />
       {/* Content — identical to original on all screen sizes */}
       <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
         <div className="mb-8">
@@ -1368,7 +1368,7 @@ function GoalChart() {
       <style>{FONTS}</style>
       <DevReset />
       {/* Left color strip — changes to sphere color, hidden on mobile */}
-      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"7px", background: fromSphere?.color || "#4a7a72"}} />
+      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"350px", background: fromSphere?.color || "#4a7a72"}} />
       {/* Content — identical to original on all screen sizes */}
       <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
         <div className="mb-8">
