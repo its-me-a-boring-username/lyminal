@@ -810,6 +810,12 @@ function GoalChart() {
   const [dragOffsets, setDragOffsets] = useState({}); // {sphereId: {dx, dy}}
   const [dragging, setDragging] = useState(null); // sphereId being dragged
   const [didDrag, setDidDrag] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1024);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
 
   // Post-chart flow state
   const [activeGoals, setActiveGoals] = useState([]); // [{sphereId, sphereName, sphereColor, goalId, goalText, actionItems}]
@@ -1171,13 +1177,10 @@ function GoalChart() {
           Map the <em style={{color:"#4a7a72"}}>influence</em>
         </h2>
         <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
-          Some areas of your life naturally support others. Progress in your <strong style={{fontWeight:500}}>career</strong> can improve your <strong style={{fontWeight:500}}>finances</strong>. Stronger <strong style={{fontWeight:500}}>finances</strong> might mean more freedom to spend on <strong style={{fontWeight:500}}>fun</strong>.
-        </p>
-        <p className="text-sm leading-relaxed mb-3" style={{color:"#5c4e40", fontWeight:300}}>
-          Think about your specific goals in each sphere — a goal like "get a promotion" supports your finances differently than "learn a hard skill" might.
+          Think about your specific goals in each sphere and how they might support other areas of your life. A goal like "get a promotion" will influence your finances differently than learning a new hard skill.
         </p>
         <p className="text-sm leading-relaxed mb-8" style={{color:"#5c4e40", fontWeight:300}}>
-          For each sphere, select which other areas it directly supports based on what you're actually working toward. We'll use these connections to find where focusing first creates the biggest ripple effect.
+          For each sphere, select which other areas it directly impacts based on what you're actually working toward. We'll use these connections to find where focusing first creates the biggest ripple effect.
         </p>
         <button
           onClick={() => setStep("connections")}
@@ -1699,13 +1702,13 @@ function GoalChart() {
                   >
                     {/* Glow ring for top priority */}
                     {isTop && (
-                      <circle cx={pos.x} cy={pos.y} r={58} fill="none" stroke={b.color} strokeWidth="2.5" strokeOpacity="0.25" strokeDasharray="4 3"
+                      <circle cx={pos.x} cy={pos.y} r={isMobile ? 72 : 58} fill="none" stroke={b.color} strokeWidth="2.5" strokeOpacity="0.25" strokeDasharray="4 3"
                         style={{transformOrigin: `${pos.x}px ${pos.y}px`, animation: 'spinRing 20s linear infinite'}}
                       />
                     )}
                     {/* Node circle */}
                     <circle
-                      cx={pos.x} cy={pos.y} r={48}
+                      cx={pos.x} cy={pos.y} r={isMobile ? 60 : 48}
                       fill={isSelected ? b.color : "white"}
                       stroke={b.color}
                       strokeWidth={isSelected ? 0 : 2.5}
@@ -1714,24 +1717,25 @@ function GoalChart() {
                     {/* Name — wraps on space if needed */}
                     {(() => {
                       const name = b.name;
+                      const nr = isMobile ? 60 : 48;
                       const spaceIdx = name.indexOf(' ');
                       if (spaceIdx > 0 && name.length > 8) {
                         const line1 = name.slice(0, spaceIdx);
                         const line2 = name.slice(spaceIdx + 1);
                         return (<>
-                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
-                          <text x={pos.x} y={pos.y + 6} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
+                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "15" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
+                          <text x={pos.x} y={pos.y + 8} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "15" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
                         </>);
                       }
                       return (
-                        <text x={pos.x} y={pos.y - 2} textAnchor="middle" dominantBaseline="middle" fontSize={name.length > 12 ? "11" : "13"} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
+                        <text x={pos.x} y={pos.y - 2} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? (name.length > 12 ? "13" : "16") : (name.length > 12 ? "11" : "13")} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
                       );
                     })()}
                     {/* Counts */}
                     <text
-                      x={pos.x} y={pos.y + (b.name.indexOf(' ') > 0 && b.name.length > 8 ? 20 : 14)}
+                      x={pos.x} y={pos.y + (b.name.indexOf(' ') > 0 && b.name.length > 8 ? (isMobile ? 26 : 20) : (isMobile ? 20 : 14))}
                       textAnchor="middle" dominantBaseline="middle"
-                      fontSize="10" fontWeight="500"
+                      fontSize={isMobile ? "12" : "10"} fontWeight="500"
                       fill={isSelected ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.35)"}
                     >
                       ↑{c.in} ↓{c.out}
@@ -1739,8 +1743,8 @@ function GoalChart() {
                     {/* Top badge */}
                     {isTop && (
                       <g>
-                        <circle cx={pos.x + 38} cy={pos.y - 38} r={11} fill={b.color} />
-                        <text x={pos.x + 38} y={pos.y - 38} textAnchor="middle" dominantBaseline="middle" fontSize="10" fill="white" fontWeight="bold">★</text>
+                        <circle cx={pos.x + (isMobile ? 48 : 38)} cy={pos.y - (isMobile ? 48 : 38)} r={isMobile ? 14 : 11} fill={b.color} />
+                        <text x={pos.x + (isMobile ? 48 : 38)} y={pos.y - (isMobile ? 48 : 38)} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "12" : "10"} fill="white" fontWeight="bold">★</text>
                       </g>
                     )}
                   </g>
@@ -1995,13 +1999,13 @@ function GoalChart() {
                   >
                     {/* Glow ring for top priority */}
                     {isTop && (
-                      <circle cx={pos.x} cy={pos.y} r={58} fill="none" stroke={b.color} strokeWidth="2.5" strokeOpacity="0.25" strokeDasharray="4 3"
+                      <circle cx={pos.x} cy={pos.y} r={isMobile ? 72 : 58} fill="none" stroke={b.color} strokeWidth="2.5" strokeOpacity="0.25" strokeDasharray="4 3"
                         style={{transformOrigin: `${pos.x}px ${pos.y}px`, animation: 'spinRing 20s linear infinite'}}
                       />
                     )}
                     {/* Node circle */}
                     <circle
-                      cx={pos.x} cy={pos.y} r={48}
+                      cx={pos.x} cy={pos.y} r={isMobile ? 60 : 48}
                       fill={isSelected ? b.color : "white"}
                       stroke={b.color}
                       strokeWidth={isSelected ? 0 : 2.5}
@@ -2010,24 +2014,25 @@ function GoalChart() {
                     {/* Name — wraps on space if needed */}
                     {(() => {
                       const name = b.name;
+                      const nr = isMobile ? 60 : 48;
                       const spaceIdx = name.indexOf(' ');
                       if (spaceIdx > 0 && name.length > 8) {
                         const line1 = name.slice(0, spaceIdx);
                         const line2 = name.slice(spaceIdx + 1);
                         return (<>
-                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
-                          <text x={pos.x} y={pos.y + 6} textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
+                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "15" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
+                          <text x={pos.x} y={pos.y + 8} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "15" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
                         </>);
                       }
                       return (
-                        <text x={pos.x} y={pos.y - 2} textAnchor="middle" dominantBaseline="middle" fontSize={name.length > 12 ? "11" : "13"} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
+                        <text x={pos.x} y={pos.y - 2} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? (name.length > 12 ? "13" : "16") : (name.length > 12 ? "11" : "13")} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
                       );
                     })()}
                     {/* Counts */}
                     <text
-                      x={pos.x} y={pos.y + (b.name.indexOf(' ') > 0 && b.name.length > 8 ? 20 : 14)}
+                      x={pos.x} y={pos.y + (b.name.indexOf(' ') > 0 && b.name.length > 8 ? (isMobile ? 26 : 20) : (isMobile ? 20 : 14))}
                       textAnchor="middle" dominantBaseline="middle"
-                      fontSize="10" fontWeight="500"
+                      fontSize={isMobile ? "12" : "10"} fontWeight="500"
                       fill={isSelected ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.35)"}
                     >
                       ↑{c.in} ↓{c.out}
@@ -2035,8 +2040,8 @@ function GoalChart() {
                     {/* Top badge */}
                     {isTop && (
                       <g>
-                        <circle cx={pos.x + 38} cy={pos.y - 38} r={11} fill={b.color} />
-                        <text x={pos.x + 38} y={pos.y - 38} textAnchor="middle" dominantBaseline="middle" fontSize="10" fill="white" fontWeight="bold">★</text>
+                        <circle cx={pos.x + (isMobile ? 48 : 38)} cy={pos.y - (isMobile ? 48 : 38)} r={isMobile ? 14 : 11} fill={b.color} />
+                        <text x={pos.x + (isMobile ? 48 : 38)} y={pos.y - (isMobile ? 48 : 38)} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "12" : "10"} fill="white" fontWeight="bold">★</text>
                       </g>
                     )}
                   </g>
