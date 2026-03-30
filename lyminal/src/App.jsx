@@ -1723,19 +1723,19 @@ function GoalChart() {
                         const line1 = name.slice(0, spaceIdx);
                         const line2 = name.slice(spaceIdx + 1);
                         return (<>
-                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "15" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
-                          <text x={pos.x} y={pos.y + 8} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "15" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
+                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "17" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
+                          <text x={pos.x} y={pos.y + 8} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "17" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
                         </>);
                       }
                       return (
-                        <text x={pos.x} y={pos.y - 2} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? (name.length > 12 ? "13" : "16") : (name.length > 12 ? "11" : "13")} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
+                        <text x={pos.x} y={pos.y - 2} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? (name.length > 12 ? "15" : "18") : (name.length > 12 ? "11" : "13")} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
                       );
                     })()}
                     {/* Counts */}
                     <text
                       x={pos.x} y={pos.y + (b.name.indexOf(' ') > 0 && b.name.length > 8 ? (isMobile ? 26 : 20) : (isMobile ? 20 : 14))}
                       textAnchor="middle" dominantBaseline="middle"
-                      fontSize={isMobile ? "12" : "10"} fontWeight="500"
+                      fontSize={isMobile ? "14" : "10"} fontWeight="500"
                       fill={isSelected ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.35)"}
                     >
                       ↑{c.in} ↓{c.out}
@@ -2020,19 +2020,19 @@ function GoalChart() {
                         const line1 = name.slice(0, spaceIdx);
                         const line2 = name.slice(spaceIdx + 1);
                         return (<>
-                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "15" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
-                          <text x={pos.x} y={pos.y + 8} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "15" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
+                          <text x={pos.x} y={pos.y - 10} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "17" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line1}</text>
+                          <text x={pos.x} y={pos.y + 8} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? "17" : "12"} fontWeight="700" fill={isSelected ? "white" : b.color}>{line2}</text>
                         </>);
                       }
                       return (
-                        <text x={pos.x} y={pos.y - 2} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? (name.length > 12 ? "13" : "16") : (name.length > 12 ? "11" : "13")} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
+                        <text x={pos.x} y={pos.y - 2} textAnchor="middle" dominantBaseline="middle" fontSize={isMobile ? (name.length > 12 ? "15" : "18") : (name.length > 12 ? "11" : "13")} fontWeight="700" fill={isSelected ? "white" : b.color}>{name}</text>
                       );
                     })()}
                     {/* Counts */}
                     <text
                       x={pos.x} y={pos.y + (b.name.indexOf(' ') > 0 && b.name.length > 8 ? (isMobile ? 26 : 20) : (isMobile ? 20 : 14))}
                       textAnchor="middle" dominantBaseline="middle"
-                      fontSize={isMobile ? "12" : "10"} fontWeight="500"
+                      fontSize={isMobile ? "14" : "10"} fontWeight="500"
                       fill={isSelected ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.35)"}
                     >
                       ↑{c.in} ↓{c.out}
