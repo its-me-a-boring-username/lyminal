@@ -2,32 +2,32 @@ import React from "react";
 
 const OCHRE = "#b5472a";
 const MUTED = "#8a7455";
+const MUTED_LIGHT = "#c4b8a8";
 const BORDER = "#e8e0d5";
 const BG = "#faf8f5";
 
-// SVG icons — outlined, 20x20 viewBox
 const Icons = {
   home: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" />
       <path d="M7 18v-6h6v6" />
     </svg>
   ),
   plan: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="4" width="14" height="13" rx="1.5" />
       <path d="M7 2v4M13 2v4M3 8h14" />
       <path d="M7 12h2M7 15h4" />
     </svg>
   ),
   progress: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 15l4-5 3 3 3-4 4 4" />
       <path d="M3 17h14" />
     </svg>
   ),
   chart: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="5" cy="10" r="2.5" />
       <circle cx="15" cy="5" r="2.5" />
       <circle cx="15" cy="15" r="2.5" />
@@ -37,7 +37,7 @@ const Icons = {
     </svg>
   ),
   account: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="10" cy="7" r="3" />
       <path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5" />
     </svg>
@@ -45,53 +45,32 @@ const Icons = {
 };
 
 const TABS = [
-  { id: "active",   label: "Home",     icon: "home" },
-  { id: "plan",     label: "Plan",     icon: "plan",     locked: true },
-  { id: "progress", label: "Progress", icon: "progress" },
+  { id: "active",     label: "Home",     icon: "home" },
+  { id: "plan",       label: "Plan",     icon: "plan",    locked: true },
+  { id: "progress",   label: "Progress", icon: "progress" },
   { id: "chart-view", label: "My Chart", icon: "chart" },
-  { id: "account",  label: "Account",  icon: "account" },
+  { id: "account",    label: "Account",  icon: "account" },
 ];
 
-/**
- * Nav — persistent tab navigation
- *
- * Props:
- *   step: string — current app step
- *   setStep: fn — navigate to a step
- *   isMobile: bool
- *   isPaid: bool — used to show lock on Plan tab
- *   activeGoals: array — needed to gate chart-view
- */
 export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [] }) {
-  const navSteps = ["active", "plan", "progress", "chart-view", "account"];
-  const isNavVisible = navSteps.includes(step) ||
-    ["chat"].includes(step); // keep nav visible in chat too
+  const navSteps = ["active", "plan", "progress", "chart-view", "account", "chat"];
+  if (!navSteps.includes(step)) return null;
 
-  if (!isNavVisible) return null;
-
-  const handleTab = (tab) => {
-    if (tab.id === "plan" && !isPaid) {
-      // Will trigger upgrade prompt — for now just navigate and let the page handle it
-      setStep("plan");
-      return;
-    }
-    setStep(tab.id);
-  };
+  const handleTab = (tab) => setStep(tab.id);
 
   const isActive = (tab) => {
     if (tab.id === "active" && (step === "active" || step === "chat")) return true;
-    if (tab.id === "chart-view" && step === "chart-view") return true;
     return step === tab.id;
   };
 
-  // ── DESKTOP: top bar inside content panel ──
+  // ── DESKTOP: compact top bar ──
   if (!isMobile) {
     return (
       <div style={{
-        display: "flex", alignItems: "center",
+        display: "flex", alignItems: "stretch",
         borderBottom: `1px solid ${BORDER}`,
         background: BG,
-        paddingLeft: "1.5rem",
+        paddingLeft: "0.5rem",
       }}>
         {TABS.map(tab => {
           const active = isActive(tab);
@@ -100,28 +79,24 @@ export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [] }) {
               key={tab.id}
               onClick={() => handleTab(tab)}
               style={{
-                display: "flex", alignItems: "center", gap: "0.4rem",
-                padding: "0.875rem 1.25rem",
+                display: "flex", alignItems: "center", gap: "0.35rem",
+                padding: "0 1rem",
+                height: "44px",
                 background: "none", border: "none", cursor: "pointer",
-                borderBottom: active ? `2px solid ${OCHRE}` : "2px solid transparent",
-                marginBottom: "-1px",
+                borderBottom: active ? `3px solid ${OCHRE}` : "3px solid transparent",
                 color: active ? OCHRE : MUTED,
-                fontSize: "0.75rem", fontWeight: active ? 600 : 400,
+                fontSize: "0.72rem",
+                fontWeight: active ? 600 : 400,
                 fontFamily: "'Inter', sans-serif",
-                letterSpacing: "0.02em",
+                letterSpacing: active ? "0.03em" : "0.01em",
                 transition: "color 0.15s, border-color 0.15s",
+                whiteSpace: "nowrap",
               }}
             >
-              <span style={{
-                color: active ? OCHRE : MUTED,
-                display: "flex", alignItems: "center",
-                transition: "color 0.15s",
-              }}>
-                {React.cloneElement(Icons[tab.icon], { stroke: active ? OCHRE : MUTED })}
-              </span>
+              {React.cloneElement(Icons[tab.icon], { stroke: active ? OCHRE : MUTED_LIGHT })}
               {tab.label}
               {tab.locked && !isPaid && (
-                <span style={{ fontSize: "0.65rem", marginLeft: "0.1rem" }}>🔒</span>
+                <span style={{ fontSize: "0.6rem", opacity: 0.7 }}>🔒</span>
               )}
             </button>
           );
@@ -130,7 +105,7 @@ export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [] }) {
     );
   }
 
-  // ── MOBILE: bottom bar, full width ──
+  // ── MOBILE: fixed bottom bar ──
   return (
     <div style={{
       position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 100,
@@ -138,7 +113,7 @@ export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [] }) {
       background: BG,
       borderTop: `1px solid ${BORDER}`,
       paddingBottom: "env(safe-area-inset-bottom, 0px)",
-      boxShadow: "0 -2px 12px rgba(0,0,0,0.06)",
+      boxShadow: "0 -4px 16px rgba(0,0,0,0.07)",
     }}>
       {TABS.map(tab => {
         const active = isActive(tab);
@@ -149,24 +124,24 @@ export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [] }) {
             style={{
               flex: 1, display: "flex", flexDirection: "column",
               alignItems: "center", justifyContent: "center",
-              gap: "0.2rem",
-              padding: "0.6rem 0.25rem 0.5rem",
+              gap: "3px",
+              padding: "8px 4px 6px",
               background: "none", border: "none", cursor: "pointer",
-              borderTop: active ? `2px solid ${OCHRE}` : "2px solid transparent",
+              borderTop: active ? `3px solid ${OCHRE}` : "3px solid transparent",
               color: active ? OCHRE : MUTED,
               transition: "color 0.15s, border-color 0.15s",
             }}
           >
-            <span style={{ color: active ? OCHRE : MUTED, display: "flex", transition: "color 0.15s" }}>
-              {React.cloneElement(Icons[tab.icon], { stroke: active ? OCHRE : MUTED })}
-            </span>
+            {React.cloneElement(Icons[tab.icon], { stroke: active ? OCHRE : MUTED_LIGHT })}
             <span style={{
-              fontSize: "0.6rem", fontWeight: active ? 600 : 400,
-              fontFamily: "'Inter', sans-serif", letterSpacing: "0.03em",
+              fontSize: "0.58rem",
+              fontWeight: active ? 600 : 400,
+              fontFamily: "'Inter', sans-serif",
+              letterSpacing: "0.02em",
               lineHeight: 1,
+              color: active ? OCHRE : MUTED,
             }}>
-              {tab.label}
-              {tab.locked && !isPaid && " 🔒"}
+              {tab.label}{tab.locked && !isPaid ? " 🔒" : ""}
             </span>
           </button>
         );
