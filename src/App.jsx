@@ -2413,7 +2413,8 @@ function GoalChart() {
         <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#6e5c4a"}}>Your Active Goals</p>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">Here's what you're working on</h2>
         <p className="text-sm mb-8" style={{color:"#5c4e40", fontWeight:300}}>
-          Select a goal to talk through your plan with Lyme, connect with a live coach, or add action items yourself.
+          Select a goal to talk through your plan with Lyme, or add action items yourself.
+          {/* V3: connect with a live coach, or add action items yourself. */}
         </p>
 
         <div className="space-y-4 mb-8">
@@ -2629,6 +2630,15 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                 >
                   Talk to Lyme
                 </button>
+                {/* V3: Talk to a Coach button — re-enable when coaching network is live
+                <button
+                  className="flex-1 py-2 text-xs font-semibold border"
+                  style={{borderColor:"#d4c9bb", color:"#6e5c4a"}}
+                  onClick={() => alert("Live coaching coming soon!")}
+                >
+                  Talk to a Coach ✦
+                </button>
+                */}
                 <button
                   className="py-2 px-3 text-xs font-semibold border hover:opacity-80 transition-opacity"
                   style={{borderColor:"#d4c9bb", color:"#6e5c4a"}}
