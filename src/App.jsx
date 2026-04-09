@@ -834,12 +834,6 @@ function GoalChart() {
     if (session && authPrompt) setAuthPrompt(null);
   }, [session, authPrompt]);
 
-  // Chat auto-scroll
-  const messagesEndRef = React.useRef(null);
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatMessages, chatLoading]);
-
   // Auth overlay — position:fixed, renders on top of any step
   const AuthOverlay = () => authPrompt ? (
     <MagicLinkAuth
@@ -865,6 +859,12 @@ function GoalChart() {
   const [chatContext, setChatContext] = useState(null); // the active goal being discussed
   const [checkedItems, setCheckedItems] = useState({}); // { goalId: Set of checked action item ids }
   const [completedGoals, setCompletedGoals] = useState(new Set()); // set of completed goalIds
+
+  // Chat auto-scroll
+  const messagesEndRef = React.useRef(null);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages, chatLoading]);
 
   // LocalStorage save/restore
   useEffect(() => {
