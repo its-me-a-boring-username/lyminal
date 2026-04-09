@@ -332,8 +332,6 @@ function GoalChart() {
         connections={connections} setConnections={setConnections}
         setSelectedId={setSelectedId}
         setStep={setStep}
-        SUGGESTED_SPHERES={SUGGESTED_SPHERES}
-        GOAL_SUGGESTIONS={GOAL_SUGGESTIONS}
         DevReset={DevReset}
       />
     );

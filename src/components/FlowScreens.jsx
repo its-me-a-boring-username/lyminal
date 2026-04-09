@@ -1,5 +1,6 @@
 import React from "react";
 import { SphereConnCard } from "./SphereConnCard.jsx";
+import { SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE } from "../constants.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -25,13 +26,11 @@ export function FlowScreens({
   connections, setConnections,
   setSelectedId,
   setStep,
-  SUGGESTED_SPHERES, GOAL_SUGGESTIONS,
   DevReset,
 }) {
   const addSphere = (name) => {
     const n = name.trim();
     if (!n || spheres.some(b => b.name.toLowerCase() === n.toLowerCase())) return;
-    const PALETTE = ["#b5693a","#4a7c8e","#6b8f71","#c4973a","#7a6b8f","#8f4a6b","#4a8f7a","#8f6b4a","#6b8f4a","#8f4a4a"];
     setSpheres(prev => [...prev, { id: `b${Date.now()}`, name: n, color: PALETTE[prev.length % PALETTE.length], goals: [] }]);
     setNewSphere("");
   };
