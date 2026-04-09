@@ -4,6 +4,10 @@ import { MagicLinkAuth } from "./components/MagicLinkAuth.jsx";
 import { Nav } from "./components/Nav.jsx";
 import { ChartView } from "./components/ChartView.jsx";
 import { ActiveScreen } from "./components/ActiveScreen.jsx";
+import { IntroScreens } from "./components/IntroScreens.jsx";
+import { FlowScreens } from "./components/FlowScreens.jsx";
+import { ResultsFlow } from "./components/ResultsFlow.jsx";
+import { ChatScreen } from "./components/ChatScreen.jsx";
 
 function TriangleLogo({ size = 80 }) {
   const s = size;
@@ -179,57 +183,6 @@ function GoalChart() {
     }
   }, [spheres, connections, activeGoals, step, completedGoals, checkedItems]);
 
-  // --- Sphere ops ---
-  const addSphere = (name) => {
-    const n = name.trim();
-    if (!n || spheres.some(b => b.name.toLowerCase() === n.toLowerCase())) return;
-    setSpheres(p => [...p, {
-      id: `b${Date.now()}`,
-      name: n,
-      goals: [],
-      color: PALETTE[p.length % PALETTE.length]
-    }]);
-    setNewSphere("");
-  };
-
-  const removeSphere = (id) => {
-    setSpheres(p => p.filter(b => b.id !== id));
-    setConnections(p => {
-      const n = { ...p };
-      delete n[id];
-      Object.keys(n).forEach(k => { n[k] = (n[k] || []).filter(t => t !== id); });
-      return n;
-    });
-  };
-
-  // --- Goal ops ---
-  const addGoal = (sphereId, text) => {
-    const t = text.trim();
-    if (!t) return;
-    setSpheres(p => p.map(b =>
-      b.id === sphereId
-        ? { ...b, goals: [...b.goals, { id: `g${Date.now()}`, text: t }] }
-        : b
-    ));
-    setNewGoal("");
-  };
-
-  const removeGoal = (sphereId, goalId) => {
-    setSpheres(p => p.map(b =>
-      b.id === sphereId ? { ...b, goals: b.goals.filter(g => g.id !== goalId) } : b
-    ));
-  };
-
-  // --- Connection ops ---
-  const toggleConn = (fromId, toId) => {
-    setConnections(p => {
-      const curr = p[fromId] || [];
-      return {
-        ...p,
-        [fromId]: curr.includes(toId) ? curr.filter(t => t !== toId) : [...curr, toId]
-      };
-    });
-  };
 
   // --- Computed ---
   const counts = useMemo(() => {
@@ -348,501 +301,70 @@ function GoalChart() {
     </>
   );
 
-  // ── INTERSTITIAL: INTRO TO SPHERES ──
-  if (step === "intro-spheres") return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
-      <style>{FONTS}</style>
-      <DevReset />
-      <div style={{maxWidth:"480px"}} className="w-full">
-        {/* Decorative element */}
-        <div className="flex justify-center mb-6">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <circle cx="25" cy="40" r="16" fill="#b5693a" opacity="0.25"/>
-            <circle cx="45" cy="28" r="16" fill="#4a7c8e" opacity="0.25"/>
-            <circle cx="50" cy="50" r="16" fill="#6b8f71" opacity="0.25"/>
-            <circle cx="35" cy="55" r="12" fill="#c4973a" opacity="0.2"/>
-          </svg>
-        </div>
-        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{color:"#b5472a", letterSpacing:"0.12em"}}>Step 1 of 3</p>
-        <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.8rem", fontWeight:600, color:"#1c1410", lineHeight:1.3}} className="mb-4">
-          Start with your <em style={{color:"#b5472a"}}>spheres</em>
-        </h2>
-        <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
-          Your life is made up of different areas — we call them <strong style={{fontWeight:500}}>spheres</strong>. Career, health, relationships, creativity, finances...
-        </p>
-        <p className="text-sm leading-relaxed mb-8" style={{color:"#5c4e40", fontWeight:300}}>
-          Name the ones that matter most to you right now. You'll need at least three to build a meaningful chart.
-        </p>
-        <button
-          onClick={() => setStep("spheres")}
-          style={{background:"#b5472a", color:"#faf8f5", fontWeight:500, letterSpacing:"0.06em", fontSize:"0.8rem"}}
-          className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3"
-        >
-          DEFINE MY SPHERES →
-        </button>
-        <button
-          onClick={() => setStep("welcome")}
-          className="text-xs transition-opacity hover:opacity-70"
-          style={{color:"#8a7455"}}
-        >
-          ← Back
-        </button>
-      </div>
-    </div>
-  );
-
-  // ── INTERSTITIAL: INTRO TO GOALS ──
-  if (step === "intro-goals") return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
-      <style>{FONTS}</style>
-      <DevReset />
-      <div style={{maxWidth:"480px"}} className="w-full">
-        {/* Decorative element — target/bullseye */}
-        <div className="flex justify-center mb-6">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <circle cx="40" cy="40" r="28" stroke="#b5472a" strokeWidth="1.5" opacity="0.2"/>
-            <circle cx="40" cy="40" r="18" stroke="#b5472a" strokeWidth="1.5" opacity="0.35"/>
-            <circle cx="40" cy="40" r="8" fill="#b5472a" opacity="0.5"/>
-          </svg>
-        </div>
-        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{color:"#b5472a", letterSpacing:"0.12em"}}>Step 2 of 3</p>
-        <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.8rem", fontWeight:600, color:"#1c1410", lineHeight:1.3}} className="mb-4">
-          Now set your <em style={{color:"#b5472a"}}>goals</em>
-        </h2>
-        <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
-          For each sphere, you'll add goals — concrete things you want to achieve. These don't have to be perfect.
-        </p>
-        <p className="text-sm leading-relaxed mb-8" style={{color:"#5c4e40", fontWeight:300}}>
-          Think about what progress looks like in each area. We'll suggest some ideas to get you started.
-        </p>
-        <button
-          onClick={() => setStep("goals")}
-          style={{background:"#b5472a", color:"#faf8f5", fontWeight:500, letterSpacing:"0.06em", fontSize:"0.8rem"}}
-          className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3"
-        >
-          ADD MY GOALS →
-        </button>
-        <button
-          onClick={() => setStep("spheres")}
-          className="text-xs transition-opacity hover:opacity-70"
-          style={{color:"#8a7455"}}
-        >
-          ← Back to spheres
-        </button>
-      </div>
-    </div>
-  );
-
-  // ── INTERSTITIAL: INTRO TO CONNECTIONS ──
-  if (step === "intro-connections") return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
-      <style>{FONTS}</style>
-      <DevReset />
-      <div style={{maxWidth:"480px"}} className="w-full">
-        {/* Decorative element — connected nodes */}
-        <div className="flex justify-center mb-6">
-          <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
-            <line x1="25" y1="30" x2="50" y2="50" stroke="#4a7a72" strokeWidth="1.5" opacity="0.4"/>
-            <line x1="50" y1="50" x2="75" y2="25" stroke="#4a7a72" strokeWidth="1.5" opacity="0.4"/>
-            <line x1="25" y1="30" x2="75" y2="25" stroke="#4a7a72" strokeWidth="1.5" opacity="0.25"/>
-            <line x1="50" y1="50" x2="60" y2="65" stroke="#4a7a72" strokeWidth="1.5" opacity="0.3"/>
-            <circle cx="25" cy="30" r="8" fill="#b5693a" opacity="0.7"/>
-            <circle cx="75" cy="25" r="8" fill="#4a7c8e" opacity="0.7"/>
-            <circle cx="50" cy="50" r="8" fill="#6b8f71" opacity="0.7"/>
-            <circle cx="60" cy="65" r="6" fill="#c4973a" opacity="0.6"/>
-          </svg>
-        </div>
-        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{color:"#4a7a72", letterSpacing:"0.12em"}}>Step 3 of 3</p>
-        <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.8rem", fontWeight:600, color:"#1c1410", lineHeight:1.3}} className="mb-4">
-          Map the <em style={{color:"#4a7a72"}}>influence</em>
-        </h2>
-        <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
-          Think about your specific goals in each sphere and how they might support other areas of your life. A goal like "get a promotion" will influence your finances differently than learning a new hard skill.
-        </p>
-        <p className="text-sm leading-relaxed mb-8" style={{color:"#5c4e40", fontWeight:300}}>
-          For each sphere, select which other areas it directly impacts based on what you're actually working toward. We'll use these connections to find where focusing first creates the biggest ripple effect.
-        </p>
-        <button
-          onClick={() => setStep("connections")}
-          style={{background:"#4a7a72", color:"#faf8f5", fontWeight:500, letterSpacing:"0.06em", fontSize:"0.8rem"}}
-          className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3"
-        >
-          MAP CONNECTIONS →
-        </button>
-        <button
-          onClick={() => { setGoalStep(spheres.length - 1); setStep("goals"); }}
-          className="text-xs transition-opacity hover:opacity-70"
-          style={{color:"#8a7455"}}
-        >
-          ← Back to goals
-        </button>
-      </div>
-    </div>
-  );
-
-  if (step === "spheres") return (
-    <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
-      <style>{FONTS}</style>
-      <DevReset />
-      {/* Left color strip — decorative only, hidden on mobile */}
-      <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#b5472a"}} />
-      {/* Content — identical to original on all screen sizes */}
-      <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
-        <div className="mb-2 text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 1 of 3</div>
-        <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-2">Define your spheres</h2>
-        <p className="text-gray-500 mb-8">What are the major areas of your life right now? Add what's relevant to you.</p>
-        <div className="relative flex items-center mb-4">
-          <input
-            className="w-full border-2 border-gray-200 focus:border-amber-600 rounded-xl px-4 py-3 pr-20 text-base outline-none transition-colors"
-            placeholder="Type a sphere name..."
-            value={newSphere}
-            onChange={e => setNewSphere(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && addSphere(newSphere)}
-            style={{background:"#faf8f5"}}
-          />
-          <button
-            onClick={() => addSphere(newSphere)}
-            disabled={!newSphere.trim()}
-            className="absolute right-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
-            style={{
-              background: newSphere.trim() ? "#b5472a" : "transparent",
-              color: newSphere.trim() ? "white" : "#8a7455",
-              border: newSphere.trim() ? "none" : "1px solid #d4c9bb",
-              letterSpacing: "0.04em"
-            }}
-          >
-            ADD
-          </button>
-        </div>
-        <div className="mb-6">
-          <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-medium">Suggestions</p>
-          <div className="flex flex-wrap gap-2">
-            {SUGGESTED_SPHERES.filter(s => !spheres.some(b => b.name.toLowerCase() === s.toLowerCase())).map(s => (
-              <button key={s} onClick={() => addSphere(s)} className="px-3 py-1.5 text-xs border transition-colors" style={{borderRadius:"2px", borderColor:"#d4c9bb", color:"#4a3828", background:"#f0ebe3"}}>
-                + {s}
-              </button>
-            ))}
-          </div>
-        </div>
-        {spheres.length > 0 && (
-          <div className="mb-8">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-3 font-medium">Your spheres ({spheres.length})</p>
-            <div className="flex flex-wrap gap-2">
-              {spheres.map(b => <Pill key={b.id} b={b} onRemove={() => removeSphere(b.id)} />)}
-            </div>
-          </div>
-        )}
-        <div className="flex gap-3">
-          <button onClick={() => setStep("welcome")} className="px-6 py-3 text-sm font-medium transition-colors" style={{color:"#5c4e40", border:"1px solid #d4c9bb"}}>
-            ← Back
-          </button>
-          <button
-            onClick={() => { setGoalStep(0); setStep("intro-goals"); }}
-            disabled={spheres.length < 3}
-            style={{background:"#b5472a", color:"white", fontWeight:500}} className="flex-1 hover:opacity-90 disabled:opacity-30 py-3 rounded-sm transition-opacity"
-          >
-            {spheres.length < 3 ? `Add at least ${3 - spheres.length} more sphere${3 - spheres.length === 1 ? "" : "s"} to continue` : `Continue with ${spheres.length} spheres →`}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  if (step === "goals") {
-    const isLast = goalStep === spheres.length - 1;
-    const goNext = () => setGoalStep(g => g + 1);
-    const goPrev = () => goalStep === 0 ? setStep("spheres") : setGoalStep(g => g - 1);
-
+  // ── INTRO SCREENS ──
+  if (["intro-spheres","intro-goals","intro-connections","intro-results","intro-active"].includes(step)) {
     return (
-      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
-      <style>{FONTS}</style>
-      <DevReset />
-      {/* Left color strip — changes to sphere color, hidden on mobile */}
-      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"350px", background: currentSphere?.color || "#b5472a"}} />
-      {/* Content — identical to original on all screen sizes */}
-      <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 2 of 3 — Goals</span>
-            <span className="text-xs" style={{color:"#6e5c4a"}}>{goalStep + 1} of {spheres.length}</span>
-          </div>
-          <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full rounded-full transition-all duration-500" style={{ width: `${((goalStep + 1) / spheres.length) * 100}%`, background: currentSphere?.color || "#6366f1" }} />
-          </div>
-          <div className="flex gap-1 mt-2">
-            {spheres.map((b, i) => (
-              <div key={b.id} className="h-1 rounded-full flex-1 transition-all duration-300" style={{ background: i <= goalStep ? b.color : b.color + "25" }} />
-            ))}
-          </div>
-        </div>
-        {currentSphere && (
-          <div key={`goal-${goalStep}`} style={{animation:"fadeSlideLeft 0.35s ease-out"}}>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-4 h-4 rounded-full" style={{ background: currentSphere.color }} />
-              <h2 style={{ color: currentSphere.color, fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600 }}>{currentSphere.name}</h2>
-            </div>
-            <p className="text-gray-500 mb-8">What do you want to achieve in this area? Add as many goals as you like, or skip ahead.</p>
-            <div className="border-2 rounded-2xl p-6 mb-6" style={{ borderColor: currentSphere.color + "40", background: currentSphere.color + "06" }}>
-              {currentSphere.goals.length > 0 && (
-                <div className="mb-4 space-y-2">
-                  {currentSphere.goals.map(g => (
-                    <div key={g.id} className="flex items-center justify-between bg-white rounded-lg px-4 py-2.5 border border-gray-100 shadow-sm">
-                      <span className="text-gray-700 text-sm">{g.text}</span>
-                      <button onClick={() => removeGoal(currentSphere.id, g.id)} className="text-gray-300 hover:text-gray-500 ml-3 text-xs">✕</button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div className="flex gap-2">
-                <input
-                  className="flex-1 border-2 border-gray-200 focus:border-amber-600 rounded-xl px-4 py-2.5 text-sm outline-none transition-colors bg-white"
-                  placeholder={`Add a goal for ${currentSphere.name}...`}
-                  value={newGoal}
-                  onChange={e => setNewGoal(e.target.value)}
-                  onKeyDown={e => { if (e.key === "Enter") { addGoal(currentSphere.id, newGoal); }}}
-                />
-                <button onClick={() => addGoal(currentSphere.id, newGoal)} className="text-white font-bold px-4 rounded-xl transition-colors text-sm" style={{ background: currentSphere.color }}>
-                  Add
-                </button>
-              </div>
-              {GOAL_SUGGESTIONS[currentSphere.name] && (
-                <div className="mt-4">
-                  <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-medium">Suggestions</p>
-                  <div className="flex flex-wrap gap-2">
-                    {GOAL_SUGGESTIONS[currentSphere.name]
-                      .filter(s => !currentSphere.goals.some(g => g.text.toLowerCase() === s.toLowerCase()))
-                      .map(s => (
-                        <button key={s} onClick={() => addGoal(currentSphere.id, s)} className="px-3 py-1 text-xs border transition-colors" style={{borderRadius:"2px", borderColor:"#d4c9bb", color:"#4a3828", background:"white"}}>
-                          + {s}
-                        </button>
-                      ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-        <div className="flex gap-3">
-          <button onClick={goPrev} className="px-6 py-3 text-sm font-medium transition-colors" style={{color:"#faf8f5", background:"#2c1f14", border:"1px solid #2c1f14"}}>
-            ← Back
-          </button>
-          <button
-            onClick={() => isLast ? (setGoalStep(0), setStep("intro-connections")) : goNext()}
-            className="flex-1 text-white font-bold py-3 rounded-xl transition-colors"
-            style={{ background: currentSphere?.color || "#6366f1" }}
-          >
-            {isLast ? "Map relationships →" : `Next: ${spheres[goalStep + 1]?.name} →`}
-          </button>
-        </div>
-      </div>
-      </div>
+      <>
+        <IntroScreens
+          screen={step}
+          setStep={setStep}
+          spheres={spheres}
+          setGoalStep={setGoalStep}
+          setFocusRound={setFocusRound}
+          setOverrideSphere={setOverrideSphere}
+          setSelectedFocusSphereId={setSelectedFocusSphereId}
+          setSelectedGoalId={setSelectedGoalId}
+          DevReset={DevReset}
+        />
+      </>
     );
   }
 
-  if (step === "connections") {
-    const [connStep, setConnStep] = [goalStep, setGoalStep];
-    const fromSphere = spheres[connStep];
-    const isLast = connStep === spheres.length - 1;
-    const goNext = () => isLast ? (setSelectedId(null), setStep("intro-results")) : setConnStep(s => s + 1);
-    const goPrev = () => connStep === 0 ? (setGoalStep(spheres.length - 1), setStep("goals")) : setConnStep(s => s - 1);
-
+  // ── FLOW SCREENS (spheres / goals / connections) ──
+  if (["spheres","goals","connections"].includes(step)) {
     return (
-      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
-      <style>{FONTS}</style>
-      <DevReset />
-      {/* Left color strip — changes to sphere color, hidden on mobile */}
-      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"350px", background: fromSphere?.color || "#4a7a72"}} />
-      {/* Content — identical to original on all screen sizes */}
-      <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs uppercase tracking-widest font-medium" style={{color:"#6e5c4a"}}>Step 3 of 3 — Relationships</span>
-            <span className="text-xs" style={{color:"#6e5c4a"}}>{connStep + 1} of {spheres.length}</span>
-          </div>
-          <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full rounded-full transition-all duration-500" style={{ width: `${((connStep + 1) / spheres.length) * 100}%`, background: fromSphere?.color || "#6366f1" }} />
-          </div>
-          <div className="flex gap-1 mt-2">
-            {spheres.map((b, i) => (
-              <div key={b.id} className="h-1 rounded-full flex-1 transition-all duration-300" style={{ background: i <= connStep ? b.color : b.color + "25" }} />
-            ))}
-          </div>
-        </div>
-        {fromSphere && (
-          <div key={`conn-${connStep}`} style={{animation:"fadeSlideLeft 0.35s ease-out"}}>
-            <div className="flex items-center gap-3 mb-1">
-              <div className="w-4 h-4 rounded-full" style={{ background: fromSphere.color }} />
-              <h2 style={{ color: fromSphere.color, fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600 }}>{fromSphere.name}</h2>
-            </div>
-            <p className="text-gray-500 mb-5">Which other areas does improving <strong>{fromSphere.name}</strong> directly support?</p>
-            {fromSphere.goals.length > 0 && (
-              <div className="mb-6 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-                <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-medium">Your {fromSphere.name} goals</p>
-                <div className="flex flex-wrap gap-2">
-                  {fromSphere.goals.map(g => (
-                    <span key={g.id} className="text-xs px-2.5 py-1 rounded-full font-medium" style={{ background: fromSphere.color + "15", color: fromSphere.color }}>
-                      {g.text}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            <p className="text-xs mb-3" style={{color:"#6e5c4a"}}>Tap the goal pill on any sphere to preview its goals before connecting.</p>
-            <div className="space-y-2 mb-8">
-              {spheres.filter(b => b.id !== fromSphere.id).map(to => {
-                const isChecked = (connections[fromSphere.id] || []).includes(to.id);
-                return (
-                  <SphereConnCard key={to.id} sphere={to} isChecked={isChecked} onToggle={() => toggleConn(fromSphere.id, to.id)} />
-                );
-              })}
-            </div>
-          </div>
-        )}
-        <div className="flex gap-3">
-          <button onClick={goPrev} className="px-6 py-3 text-sm font-medium transition-colors hover:text-gray-900" style={{color:"#5c4e40", background:"transparent", border:"1px solid #d4c9bb"}}>
-            ← Back
-          </button>
-          <button onClick={goNext} className="flex-1 text-white font-bold py-3 rounded-xl transition-colors" style={{ background: fromSphere?.color || "#6366f1" }}>
-            {isLast ? "See my chart →" : `Next: ${spheres[connStep + 1]?.name} →`}
-          </button>
-        </div>
-      </div>
-      </div>
+      <FlowScreens
+        step={step}
+        spheres={spheres} setSpheres={setSpheres}
+        newSphere={newSphere} setNewSphere={setNewSphere}
+        newGoal={newGoal} setNewGoal={setNewGoal}
+        goalStep={goalStep} setGoalStep={setGoalStep}
+        connections={connections} setConnections={setConnections}
+        setSelectedId={setSelectedId}
+        setStep={setStep}
+        SUGGESTED_SPHERES={SUGGESTED_SPHERES}
+        GOAL_SUGGESTIONS={GOAL_SUGGESTIONS}
+        DevReset={DevReset}
+      />
     );
   }
 
-  // ── INTERSTITIAL: INTRO TO RESULTS ──
-  if (step === "intro-results") return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
-      <style>{FONTS}</style>
-      <DevReset />
-      <div style={{maxWidth:"480px"}} className="w-full">
-        {/* Decorative element — chart with star */}
-        <div className="flex justify-center mb-6">
-          <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
-            <rect x="15" y="40" width="12" height="30" rx="2" fill="#4a7a72" opacity="0.3"/>
-            <rect x="33" y="25" width="12" height="45" rx="2" fill="#4a7a72" opacity="0.45"/>
-            <rect x="51" y="10" width="12" height="60" rx="2" fill="#4a7a72" opacity="0.6"/>
-            <rect x="69" y="30" width="12" height="40" rx="2" fill="#4a7a72" opacity="0.4"/>
-            <circle cx="57" cy="10" r="5" fill="#b5472a" opacity="0.7"/>
-          </svg>
-        </div>
-        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{color:"#4a7a72", letterSpacing:"0.12em"}}>You're done!</p>
-        <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.8rem", fontWeight:600, color:"#1c1410", lineHeight:1.3}} className="mb-4">
-          Your <em style={{color:"#4a7a72"}}>goal chart</em> is ready
-        </h2>
-        <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
-          Based on how your spheres connect, we've ranked where focusing first will create the biggest ripple effect across your life.
-        </p>
-        <p className="text-sm leading-relaxed mb-3" style={{color:"#5c4e40", fontWeight:300}}>
-          Next, you'll choose a sphere to focus on, select a goal, and identify the steps you need to take to move forward.
-        </p>
-        <p className="text-sm leading-relaxed mb-8" style={{color:"#8a7455", fontWeight:300, fontStyle:"italic"}}>
-          This is where things start to get exciting.
-        </p>
-        <button
-          onClick={() => setStep("results")}
-          style={{background:"#4a7a72", color:"#faf8f5", fontWeight:500, letterSpacing:"0.06em", fontSize:"0.8rem"}}
-          className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3"
-        >
-          SEE MY RESULTS →
-        </button>
-        <button
-          onClick={() => { setGoalStep(spheres.length - 1); setStep("connections"); }}
-          className="text-xs transition-opacity hover:opacity-70"
-          style={{color:"#8a7455"}}
-        >
-          ← Back to connections
-        </button>
-      </div>
-    </div>
-  );
-
-  if (step === "results") {
-    const top = ranked[0];
-    const others = ranked.slice(1, 4);
+  // ── RESULTS FLOW (results / focus / action) ──
+  if (["results","focus","action"].includes(step)) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16" style={{background:"#4a7a72", fontFamily:"'Inter', sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
-        <style>{FONTS}</style>
-      <DevReset />
-        <div className="max-w-lg w-full mx-auto">
-
-          {/* Eyebrow */}
-          <p className="text-xs uppercase tracking-widest mb-6 text-center" style={{color:"rgba(255,255,255,0.6)", letterSpacing:"0.15em"}}>
-            Your Lines of Influence
-          </p>
-
-          {/* White card */}
-          <div className="mb-6" style={{background:"white", border:"1px solid #e8e0d5", boxShadow:"0 4px 24px rgba(0,0,0,0.07)"}}>
-
-            {/* Primary recommendation */}
-            <div className="px-8 py-12 text-center" style={{borderBottom:"1px solid #e8e0d5"}}>
-              <p className="mb-4 leading-relaxed" style={{color:"#4a3828", fontWeight:300, fontSize:"1.05rem"}}>
-                Based on how your spheres influence each other, your greatest leverage is in{" "}
-                <span style={{fontFamily:"'Playfair Display', serif", fontWeight:600, fontSize:"1.25rem", color: top?.color || "#b5472a"}}>
-                  {top?.name}
-                </span>
-              </p>
-              <p className="text-xs" style={{color:"#b5472a"}}>
-                {top?.out} outgoing · {top?.in} incoming · score {top?.score > 0 ? "+" : ""}{top?.score}
-              </p>
-            </div>
-
-            {/* Supporting spheres */}
-            {others.length > 0 && (
-              <div className="px-8 py-8">
-                <p className="text-xs uppercase tracking-widest mb-4" style={{color:"#6e5c4a", letterSpacing:"0.12em"}}>
-                  Also worth your attention
-                </p>
-                <div className="space-y-3">
-                  {others.map((s) => (
-                    <div key={s.id} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full flex-shrink-0" style={{background: s.color}}/>
-                        <span style={{color:"#1c1410", fontWeight:500, fontFamily:"'Playfair Display', serif", fontSize:"1.05rem"}}>
-                          {s.name}
-                        </span>
-                      </div>
-                      <span className="text-xs" style={{color:"#6e5c4a"}}>
-                        score {s.score > 0 ? "+" : ""}{s.score}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* CTA */}
-          <button
-            onClick={() => setStep("chart")}
-            className="w-full py-4 text-sm font-semibold tracking-widest hover:opacity-90 transition-opacity"
-            style={{background:"#2c1f14", color:"white", letterSpacing:"0.08em"}}
-          >
-            VIEW MY FULL CHART →
-          </button>
-
-          {/* Back link */}
-          <button
-            onClick={() => setStep("connections")}
-            className="w-full text-center mt-4 text-xs hover:opacity-75 transition-opacity"
-            style={{color:"rgba(255,255,255,0.5)", background:"transparent"}}
-          >
-            ← Back to connections
-          </button>
-
-        </div>
-      </div>
+      <>
+        <ResultsFlow
+          step={step}
+          spheres={spheres}
+          ranked={ranked}
+          selectedFocusSphereId={selectedFocusSphereId}
+          setSelectedFocusSphereId={setSelectedFocusSphereId}
+          selectedGoalId={selectedGoalId}
+          setSelectedGoalId={setSelectedGoalId}
+          focusRound={focusRound}
+          completedGoals={completedGoals}
+          setActiveGoals={setActiveGoals}
+          setStep={setStep}
+          DevReset={DevReset}
+        />
+      </>
     );
   }
 
+  // ── CHART ──
   if (step === "chart" || step === "chart-view") {
-    // Trigger save_chart prompt for non-authed users (chart mode only)
     if (step === "chart" && !session && !hasSeenChartPrompt && authPrompt !== "save_chart") {
-      setTimeout(() => {
-        setAuthPrompt("save_chart");
-        setHasSeenChartPrompt(true);
-      }, 6000);
+      setTimeout(() => { setAuthPrompt("save_chart"); setHasSeenChartPrompt(true); }, 6000);
     }
     return (
       <>
@@ -855,17 +377,12 @@ function GoalChart() {
           counts={counts}
           ranked={ranked}
           positions={positions}
-          dragOffsets={dragOffsets}
-          setDragOffsets={setDragOffsets}
-          dragging={dragging}
-          setDragging={setDragging}
-          didDrag={didDrag}
-          setDidDrag={setDidDrag}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
+          dragOffsets={dragOffsets} setDragOffsets={setDragOffsets}
+          dragging={dragging} setDragging={setDragging}
+          didDrag={didDrag} setDidDrag={setDidDrag}
+          selectedId={selectedId} setSelectedId={setSelectedId}
           isMobile={isMobile}
-          pdfLoading={pdfLoading}
-          setPdfLoading={setPdfLoading}
+          pdfLoading={pdfLoading} setPdfLoading={setPdfLoading}
           activeGoals={activeGoals}
           setStep={setStep}
           setFocusRound={setFocusRound}
@@ -882,204 +399,6 @@ function GoalChart() {
     );
   }
 
-  // ── FOCUS SPHERE STEP ──
-  if (step === "focus") {
-    const recommended = ranked[0];
-    const focusSphere = spheres.find(b => b.id === selectedFocusSphereId) || recommended;
-    const availableSpheres = ranked.filter(b =>
-      b.goals.some(g => !completedGoals.has(g.id))
-    );
-    const roundLabels = ["first", "second", "third"];
-
-    return (
-      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
-        <style>{FONTS}</style>
-        <DevReset />
-        <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#b5472a"}} />
-        <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
-        <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#6e5c4a"}}>Focus {roundLabels[focusRound]} sphere</p>
-        <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">
-          {focusRound === 0 ? "Choose a sphere to focus on" : "Pick a new focus sphere"}
-        </h2>
-        <p className="text-sm mb-8" style={{color:"#5c4e40", fontWeight:300}}>
-          {focusRound === 0
-            ? "Based on your connections, we recommend starting here — but you can choose any sphere below."
-            : "Choose another sphere to focus on next."}
-        </p>
-
-        <p className="text-xs uppercase tracking-wider mb-3" style={{color:"#6e5c4a"}}>Choose a sphere</p>
-        <div className="space-y-2 mb-8">
-          {availableSpheres.map((b, i) => {
-            const isSelected = selectedFocusSphereId === b.id || (!selectedFocusSphereId && b.id === recommended?.id);
-            const isRecommended = b.id === recommended?.id && focusRound === 0;
-            return (
-              <button
-                key={b.id}
-                onClick={() => setSelectedFocusSphereId(b.id)}
-                className="w-full text-left border-2 transition-all"
-                style={{
-                  borderColor: isSelected ? b.color : "#e8e0d5",
-                  background: isSelected ? b.color + "08" : "white",
-                  padding: isRecommended ? "1.25rem 1.25rem" : "0.875rem 1.25rem",
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 rounded-full flex-shrink-0" style={{background: b.color}}/>
-                  <span className="font-semibold flex-1" style={{color:"#1c1410", fontFamily: isRecommended ? "'Playfair Display', serif" : "inherit", fontSize: isRecommended ? "1.1rem" : "0.9rem"}}>{b.name}</span>
-                  {isRecommended && (
-                    <span className="text-xs px-2 py-0.5 text-white flex-shrink-0" style={{background:"#b5472a", letterSpacing:"0.04em"}}>WE RECOMMEND THIS</span>
-                  )}
-                </div>
-                {/* Goal detail only for recommended */}
-                {isRecommended && b.goals.length > 0 && (
-                  <div className="mt-3 ml-6 space-y-1">
-                    {b.goals.map(g => (
-                      <div key={g.id} className="flex items-center gap-2 text-sm" style={{color:"#4a3828"}}>
-                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{background: b.color}}/>
-                        {g.text}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="flex gap-3">
-          <button onClick={() => setStep(focusRound === 0 ? "chart" : "active")} className="px-6 py-3 text-sm font-medium" style={{color:"#5c4e40", border:"1px solid #d4c9bb"}}>
-            {focusRound === 0 ? "← Back" : "Skip"}
-          </button>
-          <button
-            onClick={() => { setSelectedGoalId(null); setStep("action"); }}
-            className="flex-1 py-3 text-sm font-semibold hover:opacity-90 transition-opacity"
-            style={{background:"#b5472a", color:"white"}}
-          >
-            Focus on {focusSphere?.name} →
-          </button>
-        </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── GOAL SELECTION STEP ──
-  if (step === "action") {
-    const focusSphere = spheres.find(b => b.id === selectedFocusSphereId) || ranked[0];
-
-    return (
-      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeSlideUp 0.4s ease-out"}}>
-        <style>{FONTS}</style>
-        <DevReset />
-        <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"350px", background: focusSphere?.color || "#b5472a"}} />
-        <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-3 h-3 rounded-full" style={{background: focusSphere?.color}}/>
-          <p className="text-xs uppercase tracking-widest" style={{color:"#6e5c4a"}}>{focusSphere?.name}</p>
-        </div>
-        <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">Choose a goal to work on</h2>
-        <p className="text-sm mb-8" style={{color:"#5c4e40", fontWeight:300}}>Pick one goal to make active. We'll build a plan together in your next step.</p>
-
-        {/* Goal selection */}
-        <div className="space-y-2 mb-8">
-          {(() => {
-            const availableGoals = focusSphere?.goals.filter(g => !completedGoals.has(g.id)) || [];
-            return availableGoals.length > 0 ? availableGoals.map(g => (
-            <button
-              key={g.id}
-              onClick={() => setSelectedGoalId(g.id)}
-              className="w-full flex items-center gap-3 p-4 border-2 transition-all text-left"
-              style={{
-                borderColor: selectedGoalId === g.id ? focusSphere.color : "#e8e0d5",
-                background: selectedGoalId === g.id ? focusSphere.color + "08" : "white"
-              }}
-            >
-              <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all"
-                style={{borderColor: focusSphere.color, background: selectedGoalId === g.id ? focusSphere.color : "white"}}>
-                {selectedGoalId === g.id && <span className="text-white text-xs font-bold">✓</span>}
-              </div>
-              <span className="text-sm font-medium" style={{color:"#1c1410"}}>{g.text}</span>
-            </button>
-            )) : (
-              <p className="text-sm" style={{color:"#6e5c4a"}}>All goals in this sphere are complete. Pick a different sphere.</p>
-            );
-          })()}
-        </div>
-
-        <div className="flex gap-3">
-          <button onClick={() => setStep("focus")} className="px-6 py-3 text-sm font-medium" style={{color:"#5c4e40", border:"1px solid #d4c9bb"}}>← Back</button>
-          <button
-            disabled={!selectedGoalId}
-            onClick={() => {
-              const focusSph = spheres.find(b => b.id === selectedFocusSphereId) || ranked[0];
-              const goal = focusSph?.goals.find(g => g.id === selectedGoalId);
-              setActiveGoals([{
-                sphereId: focusSph?.id,
-                sphereName: focusSph?.name,
-                sphereColor: focusSph?.color,
-                goalId: selectedGoalId,
-                goalText: goal?.text,
-                actionItems: []
-              }]);
-              setStep("intro-active");
-            }}
-            className="flex-1 py-3 text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-30"
-            style={{background:"#b5472a", color:"white"}}
-          >
-            Confirm & see my plan →
-          </button>
-        </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── INTERSTITIAL: INTRO TO ACTION ITEMS ──
-  if (step === "intro-active") return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
-      <style>{FONTS}</style>
-      <DevReset />
-      <div style={{maxWidth:"480px"}} className="w-full">
-        {/* Decorative element — checklist */}
-        <div className="flex justify-center mb-6">
-          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <rect x="20" y="12" width="40" height="56" rx="4" stroke="#b5472a" strokeWidth="1.5" opacity="0.3"/>
-            <line x1="28" y1="28" x2="52" y2="28" stroke="#b5472a" strokeWidth="1.5" opacity="0.2"/>
-            <line x1="28" y1="38" x2="52" y2="38" stroke="#b5472a" strokeWidth="1.5" opacity="0.2"/>
-            <line x1="28" y1="48" x2="45" y2="48" stroke="#b5472a" strokeWidth="1.5" opacity="0.2"/>
-            <polyline points="26,27 29,30 34,24" stroke="#b5472a" strokeWidth="2" fill="none" opacity="0.6"/>
-            <polyline points="26,37 29,40 34,34" stroke="#b5472a" strokeWidth="2" fill="none" opacity="0.6"/>
-          </svg>
-        </div>
-        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{color:"#b5472a", letterSpacing:"0.12em"}}>Your plan</p>
-        <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.8rem", fontWeight:600, color:"#1c1410", lineHeight:1.3}} className="mb-4">
-          Build it with <em style={{color:"#b5472a"}}>action items</em>
-        </h2>
-        <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
-          Now that you've chosen a goal, it's time to break it into concrete steps. You can add action items yourself or talk to <strong style={{fontWeight:500}}>Lyme</strong> — your AI coach — to build a plan together.
-        </p>
-        <p className="text-sm leading-relaxed mb-8" style={{color:"#5c4e40", fontWeight:300}}>
-          Check items off as you complete them. This is your space to track progress and stay accountable.
-        </p>
-        <button
-          onClick={() => setStep("active")}
-          style={{background:"#b5472a", color:"#faf8f5", fontWeight:500, letterSpacing:"0.06em", fontSize:"0.8rem"}}
-          className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3"
-        >
-          LET'S GO →
-        </button>
-        <button
-          onClick={() => setStep("action")}
-          className="text-xs transition-opacity hover:opacity-70"
-          style={{color:"#8a7455"}}
-        >
-          ← Back to goal selection
-        </button>
-      </div>
-    </div>
-  );
-
-  // ── ACTIVE GOALS SUMMARY ──
   if (step === "active") {
     return (
       <>
@@ -1295,230 +614,31 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
     );
   }
 
-  // ── CHAT STEP ──
-  // Simple markdown renderer for chat bubbles
-  const processBold = (text) => {
-    const parts = text.split(/\*\*([^*]+)\*\*/g);
-    return parts.map((part, i) =>
-      i % 2 === 1 ? <strong key={i} style={{fontWeight:600}}>{part}</strong> : part
-    );
-  };
-
-  const renderMarkdown = (text) => {
-    if (!text) return null;
-    const lines = text.split('\n');
-    const elements = [];
-    let i = 0;
-    while (i < lines.length) {
-      const line = lines[i];
-      const numMatch = line.match(/^(\d+)\.\s+(.+)/);
-      if (numMatch) {
-        const items = [];
-        while (i < lines.length) {
-          const nm = lines[i].match(/^(\d+)\.\s+(.+)/);
-          if (!nm) break;
-          items.push(<li key={i} style={{marginBottom:"0.35rem"}}>{processBold(nm[2])}</li>);
-          i++;
-        }
-        elements.push(<ol key={`ol-${i}`} style={{paddingLeft:"1.25rem", margin:"0.5rem 0"}}>{items}</ol>);
-        continue;
-      }
-      if (line.match(/^[-*]\s+/)) {
-        const items = [];
-        while (i < lines.length && lines[i].match(/^[-*]\s+/)) {
-          const t = lines[i].replace(/^[-*]\s+/, '');
-          items.push(<li key={i} style={{marginBottom:"0.35rem"}}>{processBold(t)}</li>);
-          i++;
-        }
-        elements.push(<ul key={`ul-${i}`} style={{paddingLeft:"1.25rem", margin:"0.5rem 0"}}>{items}</ul>);
-        continue;
-      }
-      if (line.trim() === '') {
-        elements.push(<div key={i} style={{height:"0.5rem"}} />);
-      } else {
-        elements.push(<p key={i} style={{margin:"0.25rem 0"}}>{processBold(line)}</p>);
-      }
-      i++;
-    }
-    return elements;
-  };
-
   if (step === "chat") {
-    const pendingItems = chatMessages
-      .filter(m => m.role === "assistant" && m.actionItems)
-      .slice(-1)[0]?.actionItems || null;
-
-
-
-    const sendMessage = async () => {
-      if (!chatInput.trim()) return;
-      const userMsg = { role: "user", content: chatInput.trim() };
-      const updatedMessages = [...chatMessages, userMsg];
-      setChatMessages(updatedMessages);
-      setChatInput("");
-      setChatLoading(true);
-      try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 1000,
-            system: `You are Lyme, a warm and focused life coach inside the Lyminal app. You are helping someone build a concrete action plan for a specific goal.
-
-Context:
-- Sphere: ${chatContext?.sphereName}
-- Goal: ${chatContext?.goalText}
-
-Your job is to gather just enough information to propose 3-5 specific, personalized action items. Ask one focused question at a time. Once you have enough context (usually 2-4 exchanges), propose your action items and ask if they feel right.
-
-If the user is clearly being direct, skipping the process, or explicitly asking you to just generate action items without discussion — do it immediately without pushing back. Respect their time and intent. Do not insist on gathering more context if they've made clear they don't want to provide it.
-
-When the user confirms the action items are good (they say yes, looks good, sounds right, etc.), end the conversation by outputting EXACTLY this format and nothing else after it:
-
-ACTION_ITEMS_CONFIRMED
-\`\`\`json
-["action item 1", "action item 2", "action item 3"]
-\`\`\`
-CLOSING: [one warm sentence acknowledging their commitment]
-
-Do not ask follow-up questions after proposing action items unless the user wants to change something. Keep the whole conversation under 6 exchanges.`,
-            messages: updatedMessages.map(m => ({ role: m.role, content: m.content }))
-          })
-        });
-        const data = await res.json();
-        const reply = data.content?.find(b => b.type === "text")?.text || "I'm here — tell me more.";
-
-        if (reply.includes("ACTION_ITEMS_CONFIRMED")) {
-          try {
-            const jsonMatch = reply.match(/```json\n([\s\S]*?)\n```/);
-            const closingMatch = reply.match(/CLOSING: (.+)/);
-            const items = jsonMatch ? JSON.parse(jsonMatch[1]) : [];
-            const closing = closingMatch ? closingMatch[1] : "Your action items are saved.";
-            setChatMessages(prev => [...prev, { role: "assistant", content: closing, actionItems: items.map((t, i) => ({ id: `c${i}`, text: t })) }]);
-          } catch {
-            setChatMessages(prev => [...prev, { role: "assistant", content: reply }]);
-          }
-        } else {
-          setChatMessages(prev => [...prev, { role: "assistant", content: reply }]);
-        }
-      } catch {
-        setChatMessages(prev => [...prev, { role: "assistant", content: "Something went wrong on my end. Try again in a moment." }]);
-      }
-      setChatLoading(false);
-    };
-
-    const saveAndFinish = () => {
-      if (!pendingItems) return;
-      setActiveGoals(prev => prev.map(ag =>
-        ag.goalId === chatContext?.goalId
-          ? { ...ag, actionItems: pendingItems }
-          : ag
-      ));
-      // Show save_plan prompt for non-authed users who haven't seen it
-      if (!session && !hasSeenPlanPrompt) {
-        setHasSeenPlanPrompt(true);
-        setTimeout(() => setAuthPrompt("save_plan"), 9000);
-      }
-      setStep("active");
-    };
-
     return (
-      <div className="min-h-screen flex flex-col" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeIn 0.35s ease-out"}}>
-        <style>{FONTS}</style>
-        <DevReset />
-        {isMobile && <NavBar />}
-        {/* Header */}
-        <div className="px-6 py-4 flex items-center gap-4 border-b" style={{background:"white", borderColor:"#e8e0d5"}}>
-          <div className="flex items-center gap-2 flex-1">
-            <div className="w-2.5 h-2.5 rounded-full" style={{background: chatContext?.sphereColor}}/>
-            <div>
-              <p className="text-xs" style={{color:"#6e5c4a"}}>{chatContext?.sphereName}</p>
-              <p className="text-sm font-medium" style={{color:"#1c1410"}}>{chatContext?.goalText}</p>
-            </div>
-          </div>
-          <button
-            onClick={() => setStep("active")}
-            className="text-xs px-4 py-2 font-medium hover:opacity-80 transition-opacity"
-            style={{border:"1px solid #d4c9bb", color:"#5c4e40"}}
-          >
-            Exit conversation
-          </button>
-        </div>
-
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4" style={{maxHeight:"calc(100vh - 140px)"}}>
-          {chatMessages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-              <div style={{display:"flex", flexDirection:"column", alignItems: m.role === "user" ? "flex-end" : "flex-start", gap:"8px", maxWidth:"340px"}}>
-                <div
-                  className="px-4 py-3 text-sm leading-relaxed"
-                  style={{
-                    background: m.role === "user" ? "#b5472a" : "white",
-                    color: m.role === "user" ? "white" : "#1c1410",
-                    border: m.role === "assistant" ? "1px solid #e8e0d5" : "none",
-                    borderRadius: m.role === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px"
-                  }}
-                >
-                  {m.role === "assistant" ? renderMarkdown(m.content) : m.content}
-                </div>
-                {m.actionItems && (
-                  <div className="w-full border p-4" style={{borderColor:"#e8e0d5", background:"white", borderRadius:"8px"}}>
-                    <p className="text-xs uppercase tracking-wider mb-3" style={{color:"#6e5c4a"}}>Your action items</p>
-                    <div className="space-y-2 mb-4">
-                      {m.actionItems.map(a => (
-                        <div key={a.id} className="flex items-start gap-2 text-sm" style={{color:"#1c1410"}}>
-                          <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{background: chatContext?.sphereColor}}/>
-                          {a.text}
-                        </div>
-                      ))}
-                    </div>
-                    <button
-                      onClick={saveAndFinish}
-                      className="w-full py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity"
-                      style={{background:"#b5472a", color:"white"}}
-                    >
-                      Save & finish →
-                    </button>
-                    <p className="text-xs text-center mt-2" style={{color:"#8a7455"}}>
-                      Not quite right? Keep chatting to refine.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-          {chatLoading && (
-            <div className="flex justify-start">
-              <div className="px-4 py-3 text-sm" style={{background:"white", border:"1px solid #e8e0d5", borderRadius:"12px 12px 12px 2px", color:"#6e5c4a"}}>
-                <span className="animate-pulse">Thinking…</span>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {!chatLoading && chatMessages.length > 0 && (
-          <div className="px-6 py-4 border-t flex gap-3" style={{background:"white", borderColor:"#e8e0d5"}}>
-            <input
-              className="flex-1 px-4 py-3 text-sm outline-none border"
-              style={{borderColor:"#e8e0d5", background:"#faf8f5", color:"#1c1410"}}
-              placeholder="Type a message…"
-              value={chatInput}
-              onChange={e => setChatInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
-            />
-            <button
-              onClick={sendMessage}
-              disabled={!chatInput.trim() || chatLoading}
-              className="px-5 py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-30 transition-opacity"
-              style={{background:"#b5472a", color:"white"}}
-            >
-              Send
-            </button>
-          </div>
-        )}
-      </div>
+      <>
+        <AuthOverlay />
+        <ChatScreen
+          chatMessages={chatMessages}
+          setChatMessages={setChatMessages}
+          chatInput={chatInput}
+          setChatInput={setChatInput}
+          chatLoading={chatLoading}
+          setChatLoading={setChatLoading}
+          chatContext={chatContext}
+          session={session}
+          hasSeenPlanPrompt={hasSeenPlanPrompt}
+          setHasSeenPlanPrompt={setHasSeenPlanPrompt}
+          setAuthPrompt={setAuthPrompt}
+          setActiveGoals={setActiveGoals}
+          setStep={setStep}
+          isMobile={isMobile}
+          isPaid={isPaid}
+          activeGoals={activeGoals}
+          messagesEndRef={messagesEndRef}
+          DevReset={DevReset}
+        />
+      </>
     );
   }
 
