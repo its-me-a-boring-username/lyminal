@@ -4,6 +4,7 @@ import { supabase } from "./supabaseClient.js";
 import { MagicLinkAuth } from "./components/MagicLinkAuth.jsx";
 import { Nav } from "./components/Nav.jsx";
 import { ChartView } from "./components/ChartView.jsx";
+import { ActiveScreen } from "./components/ActiveScreen.jsx";
 
 function TriangleLogo({ size = 80 }) {
   const s = size;
@@ -1935,321 +1936,41 @@ function GoalChart() {
 
   // ── ACTIVE GOALS SUMMARY ──
   if (step === "active") {
-    const allActive = focusRound >= 1
-      ? activeGoals
-      : activeGoals.slice(0, 1);
-
     return (
-      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
-        <style>{FONTS}</style>
+      <>
+        <AuthOverlay />
         <DevReset />
-        <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"350px", background: allActive[0]?.sphereColor || "#b5472a"}} />
-        <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-          {/* Desktop top nav */}
-          {!isMobile && <NavBar />}
-          <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
-          <AuthOverlay />
-          {/* Mobile fixed bottom nav */}
-          {isMobile && <NavBar />}
-        <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#6e5c4a"}}>Your Active Goals</p>
-        <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">Here's what you're working on</h2>
-        <p className="text-sm mb-8" style={{color:"#5c4e40", fontWeight:300}}>
-          Select a goal to talk through your plan with Lyme, or add action items yourself.
-          {/* V3: connect with a live coach, or add action items yourself. */}
-        </p>
-
-        <div className="space-y-4 mb-8">
-          {allActive.map((ag, i) => (
-            <div key={ag.sphereId} className="border" style={{borderColor:"#e8e0d5", background:"white"}}>
-              {/* Header */}
-              <div className="px-5 py-4 flex items-center gap-3 border-b" style={{borderColor:"#e8e0d5"}}>
-                <div className="w-3 h-3 rounded-full flex-shrink-0" style={{background: ag.sphereColor}}/>
-                <span className="text-xs uppercase tracking-wider font-medium" style={{color: ag.sphereColor}}>{ag.sphereName}</span>
-              </div>
-              {/* Goal */}
-              <div className="px-5 py-4 border-b" style={{borderColor:"#f0ebe3"}}>
-                <div className="flex items-start gap-3">
-                  <button
-                    onClick={() => setCompletedGoals(prev => {
-                      const next = new Set(prev);
-                      prev.has(ag.goalId) ? next.delete(ag.goalId) : next.add(ag.goalId);
-                      return next;
-                    })}
-                    className="w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 transition-all"
-                    style={{borderColor: ag.sphereColor, background: completedGoals.has(ag.goalId) ? ag.sphereColor : "white"}}
-                  >
-                    {completedGoals.has(ag.goalId) && <span className="text-white" style={{fontSize:"10px", fontWeight:"bold"}}>✓</span>}
-                  </button>
-                  <p style={{fontFamily:"'Playfair Display', serif", fontSize:"1.1rem", color: completedGoals.has(ag.goalId) ? "#6e5c4a" : "#1c1410", textDecoration: completedGoals.has(ag.goalId) ? "line-through" : "none"}}>{ag.goalText}</p>
-                </div>
-                {completedGoals.has(ag.goalId) && (
-                  <button
-                    onClick={() => {
-                      setSelectedFocusSphereId(ranked[0]?.id || null);
-                      setSelectedGoalId(null);
-                      setActiveGoals(prev => prev.filter(g => g.goalId !== ag.goalId));
-                      setStep("focus");
-                    }}
-                    className="mt-3 ml-8 text-xs font-semibold hover:opacity-80 transition-opacity"
-                    style={{color:"#b5472a"}}
-                  >
-                    Pick a new goal →
-                  </button>
-                )}
-              </div>
-              {/* Action items */}
-              <div className="px-5 py-3 border-b" style={{borderColor:"#f0ebe3"}}>
-                {ag.actionItems.length > 0 ? (
-                  <div className="space-y-2">
-                    {ag.actionItems.map(a => {
-                      const checked = checkedItems[ag.goalId]?.has(a.id) || false;
-                      const isEditing = editingAction?.goalId === ag.goalId && editingAction?.itemId === a.id;
-                      return (
-                        <div key={a.id} className="flex items-start gap-3 group">
-                          <button
-                            onClick={() => setCheckedItems(prev => {
-                              const set = new Set(prev[ag.goalId] || []);
-                              checked ? set.delete(a.id) : set.add(a.id);
-                              return { ...prev, [ag.goalId]: set };
-                            })}
-                            className="flex-shrink-0 mt-0.5"
-                          >
-                            <div
-                              className="w-4 h-4 rounded border-2 flex items-center justify-center transition-all"
-                              style={{borderColor: ag.sphereColor, background: checked ? ag.sphereColor : "white"}}
-                            >
-                              {checked && <span className="text-white" style={{fontSize:"9px", fontWeight:"bold"}}>✓</span>}
-                            </div>
-                          </button>
-                          {isEditing ? (
-                            <input
-                              autoFocus
-                              className="flex-1 text-xs border rounded px-2 py-0.5 outline-none"
-                              style={{borderColor: ag.sphereColor, color:"#4a3828"}}
-                              value={editingAction.text}
-                              onChange={e => setEditingAction(prev => ({...prev, text: e.target.value}))}
-                              onKeyDown={e => {
-                                if (e.key === "Enter" && editingAction.text.trim()) {
-                                  setActiveGoals(prev => prev.map(g =>
-                                    g.goalId === ag.goalId
-                                      ? { ...g, actionItems: g.actionItems.map(ai => ai.id === a.id ? {...ai, text: editingAction.text.trim()} : ai) }
-                                      : g
-                                  ));
-                                  setEditingAction(null);
-                                }
-                                if (e.key === "Escape") setEditingAction(null);
-                              }}
-                              onBlur={() => {
-                                if (editingAction.text.trim()) {
-                                  setActiveGoals(prev => prev.map(g =>
-                                    g.goalId === ag.goalId
-                                      ? { ...g, actionItems: g.actionItems.map(ai => ai.id === a.id ? {...ai, text: editingAction.text.trim()} : ai) }
-                                      : g
-                                  ));
-                                }
-                                setEditingAction(null);
-                              }}
-                            />
-                          ) : (
-                            <span
-                              className="flex-1 text-xs cursor-pointer hover:opacity-70 transition-opacity"
-                              style={{color: checked ? "#6e5c4a" : "#4a3828", textDecoration: checked ? "line-through" : "none"}}
-                              onClick={() => setEditingAction({goalId: ag.goalId, itemId: a.id, text: a.text})}
-                              title="Click to edit"
-                            >
-                              {a.text}
-                            </span>
-                          )}
-                          <button
-                            onClick={() => {
-                              setActiveGoals(prev => prev.map(g =>
-                                g.goalId === ag.goalId
-                                  ? { ...g, actionItems: g.actionItems.filter(ai => ai.id !== a.id) }
-                                  : g
-                              ));
-                              setCheckedItems(prev => {
-                                const set = new Set(prev[ag.goalId] || []);
-                                set.delete(a.id);
-                                return { ...prev, [ag.goalId]: set };
-                              });
-                            }}
-                            className="flex-shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                            style={{color:"#8a7455", fontSize:"11px"}}
-                            title="Remove"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-xs mb-2" style={{color:"#6e5c4a"}}>No action items yet. Add your own or talk to Lyme.</p>
-                )}
-                {/* Manual action item input */}
-                <div className="flex items-center gap-2 mt-3">
-                  <input
-                    className="flex-1 border rounded px-3 py-1.5 text-xs outline-none transition-colors"
-                    style={{borderColor:"#d4c9bb", background:"#faf8f5"}}
-                    placeholder="Add an action item..."
-                    value={newActionItem}
-                    onChange={e => setNewActionItem(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === "Enter" && newActionItem.trim()) {
-                        const item = { id: `m${Date.now()}`, text: newActionItem.trim() };
-                        setActiveGoals(prev => prev.map(g =>
-                          g.goalId === ag.goalId
-                            ? { ...g, actionItems: [...g.actionItems, item] }
-                            : g
-                        ));
-                        setNewActionItem("");
-                      }
-                    }}
-                  />
-                  <button
-                    onClick={() => {
-                      if (!newActionItem.trim()) return;
-                      const item = { id: `m${Date.now()}`, text: newActionItem.trim() };
-                      setActiveGoals(prev => prev.map(g =>
-                        g.goalId === ag.goalId
-                          ? { ...g, actionItems: [...g.actionItems, item] }
-                          : g
-                      ));
-                      setNewActionItem("");
-                    }}
-                    disabled={!newActionItem.trim()}
-                    className="px-3 py-1.5 text-xs font-semibold rounded transition-all"
-                    style={{
-                      background: newActionItem.trim() ? ag.sphereColor : "transparent",
-                      color: newActionItem.trim() ? "white" : "#8a7455",
-                      border: newActionItem.trim() ? "none" : "1px solid #d4c9bb"
-                    }}
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-              {/* CTAs */}
-              <div className="px-5 py-3 flex gap-2">
-                <button
-                  onClick={async () => {
-                    setChatContext(ag);
-                    const introMsg = { role: "assistant", content: "Hi — I'm Lyme, your AI coach. I am here to help you identify steps you can take to achieve your goals. I'll ask a few questions, then we'll put together a checklist of action items that gets saved to your home screen so you can track your progress." };
-                    setChatMessages([introMsg]);
-                    setStep("chat");
-                    setChatLoading(true);
-                    try {
-                      const res = await fetch("/api/chat", {
-                        method: "POST",
-                        headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({
-                          model: "claude-sonnet-4-20250514",
-                          max_tokens: 1000,
-                          system: `You are Lyme, a warm and focused life coach inside the Lyminal app. Your job is to help someone build a concrete action plan for a specific goal.
-
-Context:
-- Sphere: ${ag.sphereName}
-- Goal: ${ag.goalText}
-
-Open the conversation with a single, specific, thoughtful question that gets right to the heart of where this person stands with this goal. Do NOT use a generic opener like "where are you starting from?" — instead, ask something directly relevant to the goal itself. For example, if the goal is "Get a promotion", ask about promotion criteria or manager feedback. If the goal is "Pay down debt", ask which debt they want to tackle first. Make it feel like you already understand the goal and want to understand their situation.
-
-Do NOT introduce yourself or explain what you do — that has already been handled. Just ask your question directly. Keep it concise and warm.`,
-                          messages: [{ role: "user", content: "Start the conversation." }]
-                        })
-                      });
-                      const data = await res.json();
-                      const opener = data.content?.find(b => b.type === "text")?.text || `Let's talk about your goal: ${ag.goalText}. What does your current situation look like?`;
-                      setChatMessages(prev => [...prev, { role: "assistant", content: opener }]);
-                    } catch {
-                      setChatMessages(prev => [...prev, { role: "assistant", content: `Let's talk about your goal: ${ag.goalText}. What does your current situation look like?` }]);
-                    } finally {
-                      setChatLoading(false);
-                    }
-                  }}
-                  className="flex-1 py-2 text-xs font-semibold hover:opacity-90 transition-opacity"
-                  style={{background:"#b5472a", color:"white", letterSpacing:"0.04em"}}
-                >
-                  Talk to Lyme
-                </button>
-                {/* V3: Talk to a Coach button — re-enable when coaching network is live
-                <button
-                  className="flex-1 py-2 text-xs font-semibold border"
-                  style={{borderColor:"#d4c9bb", color:"#6e5c4a"}}
-                  onClick={() => alert("Live coaching coming soon!")}
-                >
-                  Talk to a Coach ✦
-                </button>
-                */}
-                <button
-                  className="py-2 px-3 text-xs font-semibold border hover:opacity-80 transition-opacity"
-                  style={{borderColor:"#d4c9bb", color:"#6e5c4a"}}
-                  onClick={() => {
-                    setActiveGoals(prev => prev.filter(g => g.goalId !== ag.goalId));
-                    setSelectedFocusSphereId(ag.sphereId);
-                    setSelectedGoalId(null);
-                    setStep("action");
-                  }}
-                >
-                  ↩ Change
-                </button>
-              </div>
-            </div>
-          ))}
-          {/* Locked second goal slot — visible to free/unauthed users */}
-          {!isPaid && allActive.length >= 1 && (
-            <button
-              onClick={() => setAuthPrompt("upgrade")}
-              className="w-full text-left border-2 transition-all hover:opacity-90"
-              style={{borderColor:"#e8e0d5", borderStyle:"dashed", background:"#faf8f5"}}
-            >
-              <div className="px-5 py-4 flex items-center gap-3">
-                <span style={{fontSize:"1rem"}}>🔒</span>
-                <div className="flex-1">
-                  <p className="text-sm font-medium" style={{color:"#6e5c4a"}}>Track a second goal</p>
-                  <p className="text-xs" style={{color:"#8a7455"}}>Upgrade to track multiple goals at once</p>
-                </div>
-                <span className="text-xs font-semibold" style={{color:"#b5472a"}}>Upgrade →</span>
-              </div>
-            </button>
-          )}
-        </div>
-
-        {/* Add more / done */}
-        <div className="flex gap-3 flex-col">
-          {/* Upgrade card hidden for now */}
-          <button
-            onClick={async () => {
-              if (!session) { setAuthPrompt("upgrade"); return; }
-              if (!isPaid) { setAuthPrompt("upgrade"); return; }
-              setPdfLoading('full');
-              try { await generateFullReport(spheres, connections, counts, ranked, activeGoals, checkedItems, completedGoals); }
-              catch(e) { console.error(e); alert('Report generation failed. Please try again.'); }
-              setPdfLoading(null);
-            }}
-            disabled={!!pdfLoading}
-            className="w-full py-3 text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-            style={{
-              background: isPaid ? "#4a7a72" : "#f0ebe3",
-              color: isPaid ? "white" : "#6e5c4a",
-              border: isPaid ? "none" : "1px dashed #d4c9bb",
-              letterSpacing:"0.04em",
-              opacity: pdfLoading ? 0.7 : 1
-            }}
-          >
-            {!isPaid && <span style={{fontSize:"0.85rem"}}>🔒</span>}
-            {pdfLoading === 'full' ? 'Generating your report...' : '↓ DOWNLOAD FULL REPORT'}
-          </button>
-          <button
-            onClick={() => setStep("chart-view")}
-            className="w-full py-3 text-sm font-medium text-center"
-            style={{color:"#5c4e40", border:"1px solid #d4c9bb"}}
-          >
-            View your chart
-          </button>
-        </div>
-        </div>
-        </div>
-      </div>
+        <ActiveScreen
+          focusRound={focusRound}
+          activeGoals={activeGoals}
+          setActiveGoals={setActiveGoals}
+          checkedItems={checkedItems}
+          setCheckedItems={setCheckedItems}
+          completedGoals={completedGoals}
+          setCompletedGoals={setCompletedGoals}
+          editingAction={editingAction}
+          setEditingAction={setEditingAction}
+          newActionItem={newActionItem}
+          setNewActionItem={setNewActionItem}
+          isPaid={isPaid}
+          session={session}
+          pdfLoading={pdfLoading}
+          setPdfLoading={setPdfLoading}
+          spheres={spheres}
+          connections={connections}
+          counts={counts}
+          ranked={ranked}
+          generateFullReport={generateFullReport}
+          setStep={setStep}
+          setSelectedFocusSphereId={setSelectedFocusSphereId}
+          setSelectedGoalId={setSelectedGoalId}
+          setAuthPrompt={setAuthPrompt}
+          setChatContext={setChatContext}
+          setChatMessages={setChatMessages}
+          setChatLoading={setChatLoading}
+          isMobile={isMobile}
+        />
+      </>
     );
   }
 
