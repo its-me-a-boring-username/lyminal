@@ -143,7 +143,7 @@ Do not ask follow-up questions after proposing action items unless the user want
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.35s ease-out" }}>
+    <div className="flex flex-col overflow-hidden" style={{ height: "100dvh", paddingBottom: isMobile ? "60px" : 0, background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.35s ease-out" }}>
       <style>{FONTS}</style>
       <DevReset />
       {isMobile && <Nav step="chat" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
@@ -164,7 +164,7 @@ Do not ask follow-up questions after proposing action items unless the user want
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4" style={{ maxHeight: "calc(100vh - 140px)" }}>
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
         {chatMessages.map((m, i) => (
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start", gap: "8px", maxWidth: "340px" }}>
