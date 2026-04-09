@@ -814,7 +814,6 @@ function GoalChart() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1024);
   const [session, setSession] = useState(null);
   const [isPaid, setIsPaid] = useState(false);
-  const [remoteContent, setRemoteContent] = useState({});
   const [authPrompt, setAuthPrompt] = useState(null); // "save_chart" | "save_plan" | "upgrade" | null
   const [hasSeenChartPrompt, setHasSeenChartPrompt] = useState(false);
   const [hasSeenPlanPrompt, setHasSeenPlanPrompt] = useState(false);
@@ -840,17 +839,6 @@ function GoalChart() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Fetch remote content (interstitial copy) from Supabase — silent background fetch
-  useEffect(() => {
-    supabase.from('content').select('*').then(({ data }) => {
-      if (data) {
-        const map = {};
-        data.forEach(row => { map[row.key] = row; });
-        setRemoteContent(map);
-      }
-    });
-  }, []);
-
   // Auto-dismiss auth overlay when session is established
   useEffect(() => {
     if (session && authPrompt) setAuthPrompt(null);
@@ -861,18 +849,11 @@ function GoalChart() {
     <MagicLinkAuth
       context={authPrompt}
       isLoggedIn={!!session}
-      onSkip={authPrompt !== "upgrade" ? () => setAuthPrompt(null) : (session ? () => setAuthPrompt(null) : null)}
+      onSkip={() => setAuthPrompt(null)}
       onSuccess={() => {}}
-      leftOffset={!isMobile && authPrompt === "save_plan" ? 350 : 0}
+      leftOffset={!isMobile && (authPrompt === "save_plan" || authPrompt === "upgrade") ? 350 : 0}
     />
   ) : null;
-
-  // Helper: get interstitial copy, preferring remote over hardcoded
-  const getContent = (key, defaults) => ({
-    heading: remoteContent[key]?.heading || defaults.heading,
-    body: remoteContent[key]?.body || defaults.body,
-    button_label: remoteContent[key]?.button_label || defaults.button_label,
-  });
 
   // Post-chart flow state
   const [activeGoals, setActiveGoals] = useState([]); // [{sphereId, sphereName, sphereColor, goalId, goalText, actionItems}]
@@ -1132,17 +1113,12 @@ function GoalChart() {
   );
 
   // ── INTERSTITIAL: INTRO TO SPHERES ──
-  if (step === "intro-spheres") {
-    const c = getContent("intro_spheres", {
-      heading: "Start with your spheres",
-      body: "Your life is made up of different areas — we call them spheres. Career, health, relationships, creativity, finances...\n\nName the ones that matter most to you right now. You\'ll need at least three to build a meaningful chart.",
-      button_label: "DEFINE MY SPHERES →",
-    });
-    return (
+  if (step === "intro-spheres") return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
       <style>{FONTS}</style>
       <DevReset />
       <div style={{maxWidth:"480px"}} className="w-full">
+        {/* Decorative element */}
         <div className="flex justify-center mb-6">
           <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
             <circle cx="25" cy="40" r="16" fill="#b5693a" opacity="0.25"/>
@@ -1153,17 +1129,20 @@ function GoalChart() {
         </div>
         <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{color:"#b5472a", letterSpacing:"0.12em"}}>Step 1 of 3</p>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.8rem", fontWeight:600, color:"#1c1410", lineHeight:1.3}} className="mb-4">
-          {c.heading}
+          Start with your <em style={{color:"#b5472a"}}>spheres</em>
         </h2>
-        <p className="text-sm leading-relaxed mb-8" style={{color:"#4a3828", fontWeight:300}}>
-          {c.body}
+        <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
+          Your life is made up of different areas — we call them <strong style={{fontWeight:500}}>spheres</strong>. Career, health, relationships, creativity, finances...
+        </p>
+        <p className="text-sm leading-relaxed mb-8" style={{color:"#5c4e40", fontWeight:300}}>
+          Name the ones that matter most to you right now. You'll need at least three to build a meaningful chart.
         </p>
         <button
           onClick={() => setStep("spheres")}
           style={{background:"#b5472a", color:"#faf8f5", fontWeight:500, letterSpacing:"0.06em", fontSize:"0.8rem"}}
           className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3"
         >
-          {c.button_label}
+          DEFINE MY SPHERES →
         </button>
         <button
           onClick={() => setStep("welcome")}
@@ -1174,8 +1153,7 @@ function GoalChart() {
         </button>
       </div>
     </div>
-    );
-  }
+  );
 
   // ── INTERSTITIAL: INTRO TO GOALS ──
   if (step === "intro-goals") return (
@@ -1192,20 +1170,22 @@ function GoalChart() {
           </svg>
         </div>
         <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{color:"#b5472a", letterSpacing:"0.12em"}}>Step 2 of 3</p>
-        {(() => { const c = getContent("intro_goals", { heading:"Now set your goals", body:"For each sphere, you\'ll add goals — concrete things you want to achieve. These don\'t have to be perfect.\n\nThink about what progress looks like in each area. We\'ll suggest some ideas to get you started.", button_label:"ADD MY GOALS →" }); return (<>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.8rem", fontWeight:600, color:"#1c1410", lineHeight:1.3}} className="mb-4">
-          {c.heading}
+          Now set your <em style={{color:"#b5472a"}}>goals</em>
         </h2>
-        <p className="text-sm leading-relaxed mb-8" style={{color:"#4a3828", fontWeight:300}}>
-          {c.body}
+        <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
+          For each sphere, you'll add goals — concrete things you want to achieve. These don't have to be perfect.
+        </p>
+        <p className="text-sm leading-relaxed mb-8" style={{color:"#5c4e40", fontWeight:300}}>
+          Think about what progress looks like in each area. We'll suggest some ideas to get you started.
         </p>
         <button
           onClick={() => setStep("goals")}
           style={{background:"#b5472a", color:"#faf8f5", fontWeight:500, letterSpacing:"0.06em", fontSize:"0.8rem"}}
           className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3"
         >
-          {c.button_label}
-        </button></> ); })()}
+          ADD MY GOALS →
+        </button>
         <button
           onClick={() => setStep("spheres")}
           className="text-xs transition-opacity hover:opacity-70"
@@ -1237,20 +1217,22 @@ function GoalChart() {
           </svg>
         </div>
         <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{color:"#4a7a72", letterSpacing:"0.12em"}}>Step 3 of 3</p>
-        {(() => { const c = getContent("intro_connections", { heading:"Map the influence", body:"Think about your specific goals in each sphere and how they might support other areas of your life. A goal like \"get a promotion\" will influence your finances differently than learning a new hard skill.\n\nFor each sphere, select which other areas it directly impacts based on what you\'re actually working toward. We\'ll use these connections to find where focusing first creates the biggest ripple effect.", button_label:"MAP CONNECTIONS →" }); return (<>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.8rem", fontWeight:600, color:"#1c1410", lineHeight:1.3}} className="mb-4">
-          {c.heading}
+          Map the <em style={{color:"#4a7a72"}}>influence</em>
         </h2>
-        <p className="text-sm leading-relaxed mb-8" style={{color:"#4a3828", fontWeight:300}}>
-          {c.body}
+        <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
+          Think about your specific goals in each sphere and how they might support other areas of your life. A goal like "get a promotion" will influence your finances differently than learning a new hard skill.
+        </p>
+        <p className="text-sm leading-relaxed mb-8" style={{color:"#5c4e40", fontWeight:300}}>
+          For each sphere, select which other areas it directly impacts based on what you're actually working toward. We'll use these connections to find where focusing first creates the biggest ripple effect.
         </p>
         <button
           onClick={() => setStep("connections")}
           style={{background:"#4a7a72", color:"#faf8f5", fontWeight:500, letterSpacing:"0.06em", fontSize:"0.8rem"}}
           className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3"
         >
-          {c.button_label}
-        </button></> ); })()}
+          MAP CONNECTIONS →
+        </button>
         <button
           onClick={() => { setGoalStep(spheres.length - 1); setStep("goals"); }}
           className="text-xs transition-opacity hover:opacity-70"
@@ -1510,20 +1492,25 @@ function GoalChart() {
           </svg>
         </div>
         <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{color:"#4a7a72", letterSpacing:"0.12em"}}>You're done!</p>
-        {(() => { const c = getContent("intro_results", { heading:"Your goal chart is ready", body:"Based on how your spheres connect, we\'ve ranked where focusing first will create the biggest ripple effect across your life.\n\nNext, you\'ll choose a sphere to focus on, select a goal, and identify the steps you need to take to move forward.", button_label:"SEE MY RESULTS →" }); return (<>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.8rem", fontWeight:600, color:"#1c1410", lineHeight:1.3}} className="mb-4">
-          {c.heading}
+          Your <em style={{color:"#4a7a72"}}>goal chart</em> is ready
         </h2>
-        <p className="text-sm leading-relaxed mb-8" style={{color:"#4a3828", fontWeight:300}}>
-          {c.body}
+        <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
+          Based on how your spheres connect, we've ranked where focusing first will create the biggest ripple effect across your life.
+        </p>
+        <p className="text-sm leading-relaxed mb-3" style={{color:"#5c4e40", fontWeight:300}}>
+          Next, you'll choose a sphere to focus on, select a goal, and identify the steps you need to take to move forward.
+        </p>
+        <p className="text-sm leading-relaxed mb-8" style={{color:"#8a7455", fontWeight:300, fontStyle:"italic"}}>
+          This is where things start to get exciting.
         </p>
         <button
           onClick={() => setStep("results")}
           style={{background:"#4a7a72", color:"#faf8f5", fontWeight:500, letterSpacing:"0.06em", fontSize:"0.8rem"}}
           className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3"
         >
-          {c.button_label}
-        </button></> ); })()}
+          SEE MY RESULTS →
+        </button>
         <button
           onClick={() => { setGoalStep(spheres.length - 1); setStep("connections"); }}
           className="text-xs transition-opacity hover:opacity-70"
@@ -2394,20 +2381,22 @@ function GoalChart() {
           </svg>
         </div>
         <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{color:"#b5472a", letterSpacing:"0.12em"}}>Your plan</p>
-        {(() => { const c = getContent("intro_active", { heading:"Build it with action items", body:"Now that you\'ve chosen a goal, it\'s time to break it into concrete steps. You can add action items yourself or talk to Lyme — your AI coach — to build a plan together.\n\nCheck items off as you complete them. This is your space to track progress and stay accountable.", button_label:"LET\'S GO →" }); return (<>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"1.8rem", fontWeight:600, color:"#1c1410", lineHeight:1.3}} className="mb-4">
-          {c.heading}
+          Build it with <em style={{color:"#b5472a"}}>action items</em>
         </h2>
-        <p className="text-sm leading-relaxed mb-8" style={{color:"#4a3828", fontWeight:300}}>
-          {c.body}
+        <p className="text-sm leading-relaxed mb-3" style={{color:"#4a3828", fontWeight:300}}>
+          Now that you've chosen a goal, it's time to break it into concrete steps. You can add action items yourself or talk to <strong style={{fontWeight:500}}>Lyme</strong> — your AI coach — to build a plan together.
+        </p>
+        <p className="text-sm leading-relaxed mb-8" style={{color:"#5c4e40", fontWeight:300}}>
+          Check items off as you complete them. This is your space to track progress and stay accountable.
         </p>
         <button
           onClick={() => setStep("active")}
           style={{background:"#b5472a", color:"#faf8f5", fontWeight:500, letterSpacing:"0.06em", fontSize:"0.8rem"}}
           className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3"
         >
-          {c.button_label}
-        </button></> ); })()}
+          LET'S GO →
+        </button>
         <button
           onClick={() => setStep("action")}
           className="text-xs transition-opacity hover:opacity-70"
