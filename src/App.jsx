@@ -84,6 +84,78 @@ function GoalChart() {
     return () => window.removeEventListener('resize', handler);
   }, []);
 
+  // ── SUPABASE SYNC HELPERS ──
+  const saveToSupabase = async (session, { spheres, connections, activeGoals, checkedItems, completedGoals }) => {
+    if (!session?.user?.id || spheres.length === 0) return;
+    const uid = session.user.id;
+    try {
+      // Upsert chart (spheres + connections — one row per user)
+      await supabase.from('charts').upsert({
+        user_id: uid,
+        spheres,
+        connections,
+        drag_offsets: {},
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+
+      // Replace active goals — delete all then re-insert
+      await supabase.from('active_goals').delete().eq('user_id', uid);
+      if (activeGoals.length > 0) {
+        await supabase.from('active_goals').insert(
+          activeGoals.map(ag => ({
+            user_id: uid,
+            sphere_id: ag.sphereId,
+            sphere_name: ag.sphereName,
+            sphere_color: ag.sphereColor,
+            goal_id: ag.goalId,
+            goal_text: ag.goalText,
+            action_items: ag.actionItems || [],
+            checked_items: checkedItems[ag.goalId] ? [...checkedItems[ag.goalId]] : [],
+            completed: completedGoals.has(ag.goalId)
+          }))
+        );
+      }
+    } catch (e) {
+      console.error('Supabase sync failed:', e);
+    }
+  };
+
+  const loadFromSupabase = async (session) => {
+    if (!session?.user?.id) return;
+    // Only pull from Supabase if localStorage has nothing — localStorage always wins
+    const saved = localStorage.getItem('goalchart_state');
+    if (saved) {
+      try {
+        const s = JSON.parse(saved);
+        if (s.spheres?.length > 0) return;
+      } catch {}
+    }
+    try {
+      const { data: chart } = await supabase
+        .from('charts').select('*').eq('user_id', session.user.id).single();
+      if (chart?.spheres?.length > 0) {
+        setSpheres(chart.spheres);
+        setConnections(chart.connections || {});
+      }
+      const { data: goals } = await supabase
+        .from('active_goals').select('*').eq('user_id', session.user.id);
+      if (goals?.length > 0) {
+        setActiveGoals(goals.map(g => ({
+          sphereId: g.sphere_id, sphereName: g.sphere_name,
+          sphereColor: g.sphere_color, goalId: g.goal_id,
+          goalText: g.goal_text, actionItems: g.action_items || []
+        })));
+        const ci = {};
+        goals.forEach(g => { ci[g.goal_id] = new Set(g.checked_items || []); });
+        setCheckedItems(ci);
+        setCompletedGoals(new Set(goals.filter(g => g.completed).map(g => g.goal_id)));
+        setStep('active');
+      }
+    } catch (e) {
+      console.error('Supabase load failed:', e);
+    }
+  };
+
   // Auth session listener + tier fetch
   useEffect(() => {
     const fetchTier = async (session) => {
@@ -95,8 +167,16 @@ function GoalChart() {
       setIsPaid(data?.tier === 'paid');
       */
     };
-    supabase.auth.getSession().then(({ data: { session } }) => { setSession(session); fetchTier(session); });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => { setSession(session); fetchTier(session); });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      fetchTier(session);
+      loadFromSupabase(session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setSession(session);
+      fetchTier(session);
+      if (session) loadFromSupabase(session);
+    });
     return () => subscription.unsubscribe();
   }, []);
 
@@ -175,13 +255,13 @@ function GoalChart() {
     if (spheres.length > 0) {
       const serializedChecked = {};
       Object.entries(checkedItems).forEach(([k, v]) => { serializedChecked[k] = [...v]; });
-      localStorage.setItem("goalchart_state", JSON.stringify({
-        spheres, connections, activeGoals, step,
-        completedGoals: [...completedGoals],
-        checkedItems: serializedChecked
-      }));
+      const state = { spheres, connections, activeGoals, step, completedGoals: [...completedGoals], checkedItems: serializedChecked };
+      localStorage.setItem("goalchart_state", JSON.stringify(state));
+      // Keep Supabase in sync whenever localStorage saves
+      saveToSupabase(session, { spheres, connections, activeGoals, checkedItems, completedGoals });
     }
   }, [spheres, connections, activeGoals, step, completedGoals, checkedItems]);
+
 
 
   // --- Computed ---
