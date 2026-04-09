@@ -71,7 +71,7 @@ function GoalChart() {
   const [dragOffsets, setDragOffsets] = useState({}); // {sphereId: {dx, dy}}
   const [dragging, setDragging] = useState(null); // sphereId being dragged
   const [didDrag, setDidDrag] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1024);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [session, setSession] = useState(null);
   const [isPaid, setIsPaid] = useState(false);
   const [authPrompt, setAuthPrompt] = useState(null); // "save_chart" | "save_plan" | "upgrade" | null
@@ -80,7 +80,7 @@ function GoalChart() {
   const [appearance, setAppearance] = useState("system");
   const [hasSeenPlanPrompt, setHasSeenPlanPrompt] = useState(false);
   useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth < 1024);
+    const handler = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handler);
     return () => window.removeEventListener('resize', handler);
   }, []);
