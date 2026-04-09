@@ -60,7 +60,9 @@ export function MagicLinkAuth({ context, isLoggedIn = false, onSkip, onSuccess, 
 
       {showUpgrade ? (
         // ── UPGRADE SCREEN (logged in, hitting paywall) ──
-        <div style={S.modal}>
+        <div style={{...S.modal, position:"relative"}}>
+        {/* X button */}
+        <button onClick={onSkip} style={{position:"absolute", top:"1rem", right:"1rem", background:"none", border:"none", fontSize:"1.25rem", cursor:"pointer", color:"#8a7455", lineHeight:1, padding:"0.25rem"}}>✕</button>
           <p style={S.eyebrow}>Lyminal Premium</p>
           <h2 style={S.heading}>Unlock the full experience</h2>
           <p style={S.body}>Upgrade to track multiple goals, download your full AI-generated report, and access planning tools that connect your goals to your calendar.</p>
@@ -79,7 +81,9 @@ export function MagicLinkAuth({ context, isLoggedIn = false, onSkip, onSuccess, 
 
       ) : (
         // ── AUTH SCREEN (not logged in) ──
-        <div style={S.modal}>
+        <div style={{...S.modal, position:"relative"}}>
+        {/* X button */}
+        <button onClick={onSkip} style={{position:"absolute", top:"1rem", right:"1rem", background:"none", border:"none", fontSize:"1.25rem", cursor:"pointer", color:"#8a7455", lineHeight:1, padding:"0.25rem"}}>✕</button>
           <p style={S.eyebrow}>{copy.eyebrow}</p>
           <h2 style={S.heading}>{copy.heading}</h2>
           <p style={S.body}>{copy.body}</p>
