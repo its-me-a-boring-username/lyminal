@@ -37,6 +37,24 @@ const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Di
 
 import { generateChartReport, generateFullReport } from "./utils/pdf.js";
 
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { hasError: false, error: null }; }
+  static getDerivedStateFromError(error) { return { hasError: true, error }; }
+  componentDidCatch(error, info) { console.error("Lyminal error:", error, info); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{padding:"40px", fontFamily:"sans-serif", color:"#b5472a"}}>
+          <h2>Something went wrong.</h2>
+          <pre style={{fontSize:"12px", color:"#555"}}>{this.state.error?.message}</pre>
+          <button onClick={() => this.setState({ hasError: false, error: null })}>Try again</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function GoalChart() {
   const [step, setStep] = useState("welcome");
   const [spheres, setSpheres] = useState([]);
