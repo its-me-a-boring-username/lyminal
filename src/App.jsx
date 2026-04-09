@@ -96,10 +96,7 @@ function GoalChart() {
       */
     };
 
-    const handleSession = async (session) => {
-      setSession(session);
-      fetchTier(session);
-      // Load from Supabase only if localStorage has no existing state
+    const applySupabaseData = async (session) => {
       const data = await loadChart(session);
       if (data) {
         setSpheres(data.spheres);
@@ -111,8 +108,22 @@ function GoalChart() {
       }
     };
 
-    supabase.auth.getSession().then(({ data: { session } }) => handleSession(session));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => handleSession(session));
+    // getSession handles the initial load — sets session, tier, and loads from Supabase if needed
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      fetchTier(session);
+      applySupabaseData(session);
+    });
+
+    // onAuthStateChange handles subsequent changes (sign in, sign out, token refresh)
+    // Skip INITIAL_SESSION — already handled by getSession above
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION') return;
+      setSession(session);
+      fetchTier(session);
+      if (event === 'SIGNED_IN') applySupabaseData(session);
+    });
+
     return () => subscription.unsubscribe();
   }, []);
 
