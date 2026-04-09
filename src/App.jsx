@@ -840,6 +840,7 @@ function GoalChart() {
       context={authPrompt}
       onSkip={authPrompt !== "upgrade" ? () => setAuthPrompt(null) : null}
       onSuccess={() => {}}
+      leftOffset={isMobile ? 0 : 350}
     />
   ) : null;
 
@@ -1591,7 +1592,7 @@ function GoalChart() {
       setTimeout(() => {
         setAuthPrompt("save_chart");
         setHasSeenChartPrompt(true);
-      }, 9000);
+      }, 6000);
     }
 
     // Compute drag-adjusted positions

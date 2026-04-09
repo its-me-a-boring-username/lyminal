@@ -11,7 +11,7 @@ const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Di
  *   onSkip: () => void  — called when user dismisses (null = no skip allowed)
  *   onSuccess: (session) => void — called after magic link sent
  */
-export function MagicLinkAuth({ context, onSkip, onSuccess }) {
+export function MagicLinkAuth({ context, onSkip, onSuccess, leftOffset = 0 }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -62,7 +62,7 @@ export function MagicLinkAuth({ context, onSkip, onSuccess }) {
 
   return (
     <div style={{
-      position: "fixed", inset: 0, zIndex: 1000,
+      position: "fixed", top: 0, right: 0, bottom: 0, left: leftOffset, zIndex: 1000,
       background: "rgba(28,20,16,0.6)",
       display: "flex", alignItems: "center", justifyContent: "center",
       padding: "1.5rem",
