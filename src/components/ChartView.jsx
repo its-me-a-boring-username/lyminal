@@ -1,6 +1,7 @@
 import React from "react";
 
-const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');`;
+const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+@keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
 
 // ── Pill ──
 const Pill = ({ b }) => (
