@@ -1,4 +1,5 @@
 import React from "react";
+import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeScaleIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
@@ -6,13 +7,14 @@ const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Di
 
 export function ResultsFlow({
   step,
-  spheres, ranked,
+  spheres, connections, ranked,
   selectedFocusSphereId, setSelectedFocusSphereId,
   selectedGoalId, setSelectedGoalId,
   focusRound,
   completedGoals,
   setActiveGoals,
   setStep,
+  session,
   DevReset,
 }) {
 
@@ -61,7 +63,7 @@ export function ResultsFlow({
               </div>
             )}
           </div>
-          <button onClick={() => setStep("chart")}
+          <button onClick={() => { setStep("chart"); saveChart(session, { spheres, connections }); }}
             className="w-full py-4 text-sm font-semibold tracking-widest hover:opacity-90 transition-opacity"
             style={{ background: "#2c1f14", color: "white", letterSpacing: "0.08em" }}>
             VIEW MY FULL CHART →
@@ -196,15 +198,17 @@ export function ResultsFlow({
               disabled={!selectedGoalId}
               onClick={() => {
                 const goal = focusSphere?.goals.find(g => g.id === selectedGoalId);
-                setActiveGoals([{
+                const newActiveGoals = [{
                   sphereId: focusSphere?.id,
                   sphereName: focusSphere?.name,
                   sphereColor: focusSphere?.color,
                   goalId: selectedGoalId,
                   goalText: goal?.text,
                   actionItems: []
-                }]);
+                }];
+                setActiveGoals(newActiveGoals);
                 setStep("intro-active");
+                saveChart(session, { spheres, connections, activeGoals: newActiveGoals });
               }}
               className="flex-1 py-3 text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-30"
               style={{ background: "#b5472a", color: "white" }}>

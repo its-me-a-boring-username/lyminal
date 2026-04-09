@@ -1,4 +1,5 @@
 import React from "react";
+import { clearChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
@@ -310,7 +311,7 @@ export function ChartView({
   dragOffsets, setDragOffsets, dragging, setDragging, didDrag, setDidDrag,
   selectedId, setSelectedId,
   isMobile, pdfLoading, setPdfLoading,
-  activeGoals,
+  activeGoals, session,
   setStep, setFocusRound, setOverrideSphere, setSelectedFocusSphereId, setSelectedGoalId,
   setSpheres, setConnections, setGoalStep, setActiveGoals,
   generateChartReport,
@@ -322,6 +323,7 @@ export function ChartView({
     setGoalStep(0);
     setActiveGoals([]);
     setSelectedId(null);
+    clearChart(session);
     setStep("spheres");
   };
 

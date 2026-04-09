@@ -1,5 +1,6 @@
 import React from "react";
 import { Nav } from "./Nav.jsx";
+import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');`;
 
@@ -71,30 +72,38 @@ Do NOT introduce yourself or explain what you do — that has already been handl
 
   const addActionItem = (goalId, text) => {
     const item = { id: `m${Date.now()}`, text: text.trim() };
-    setActiveGoals(prev => prev.map(g =>
+    const updated = activeGoals.map(g =>
       g.goalId === goalId ? { ...g, actionItems: [...g.actionItems, item] } : g
-    ));
+    );
+    setActiveGoals(updated);
+    saveChart(session, { spheres, connections, activeGoals: updated, checkedItems, completedGoals });
   };
 
   const removeActionItem = (goalId, itemId) => {
-    setActiveGoals(prev => prev.map(g =>
+    const updated = activeGoals.map(g =>
       g.goalId === goalId ? { ...g, actionItems: g.actionItems.filter(ai => ai.id !== itemId) } : g
-    ));
-    setCheckedItems(prev => {
-      const set = new Set(prev[goalId] || []);
+    );
+    setActiveGoals(updated);
+    const newChecked = { ...checkedItems };
+    if (newChecked[goalId]) {
+      const set = new Set(newChecked[goalId]);
       set.delete(itemId);
-      return { ...prev, [goalId]: set };
-    });
+      newChecked[goalId] = set;
+    }
+    setCheckedItems(newChecked);
+    saveChart(session, { spheres, connections, activeGoals: updated, checkedItems: newChecked, completedGoals });
   };
 
   const saveEditedItem = (goalId, itemId, text) => {
     if (!text.trim()) return;
-    setActiveGoals(prev => prev.map(g =>
+    const updated = activeGoals.map(g =>
       g.goalId === goalId
         ? { ...g, actionItems: g.actionItems.map(ai => ai.id === itemId ? { ...ai, text: text.trim() } : ai) }
         : g
-    ));
+    );
+    setActiveGoals(updated);
     setEditingAction(null);
+    saveChart(session, { spheres, connections, activeGoals: updated, checkedItems, completedGoals });
   };
 
   return (

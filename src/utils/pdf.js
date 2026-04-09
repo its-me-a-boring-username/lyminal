@@ -26,7 +26,8 @@ function pdfHeader(doc) {
   pdfLogo(doc, 55, 45, 24);
   doc.setFontSize(8); doc.setTextColor(...hexRgb(PC.muted)); doc.setFont('helvetica','normal');
   doc.text('LYMINAL', 72, 47);
-  doc.setFontSize(7); doc.text('March 2026', W-40, 47, {align:'right'});
+  const headerDate = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  doc.setFontSize(7); doc.text(headerDate, W-40, 47, {align:'right'});
   doc.setDrawColor(...hexRgb(PC.border)); doc.setLineWidth(0.5);
   doc.line(40, 58, W-40, 58);
 }
@@ -502,27 +503,28 @@ Themes: 2-4 patterns you notice across ALL goals (not per-sphere). Each theme sh
     doc.addPage(); pdfBg(doc); pdfHeader(doc);
     y = pdfSectionTitle(doc, 40, 90, 'Sphere Deep Dive', fColor, 110);
 
-    // Sphere name + subtitle
-    doc.setFillColor(...hexRgb(fColor)); doc.circle(48, y+4, 5, 'F');
+    // Sphere name + subtitle — move DOWN the page
+    doc.setFillColor(...hexRgb(fColor)); doc.circle(48, y + 2, 5, 'F');
     doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(PC.dark));
-    doc.text(focusAg.sphereName, 60, y); y -= 8;
+    doc.text(focusAg.sphereName, 60, y + 6); y += 22;
     doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(PC.muted));
-    doc.text('Take 15 minutes to reflect on this sphere. Be honest — this is for you.', 40, y); y -= 25;
+    doc.text('Take 15 minutes to reflect on this sphere. Be honest — this is for you.', 40, y); y += 20;
 
-    // Goals reminder box
+    // Goals reminder box — y is the top of the box
     const focusSphere = spheres.find(s => s.id === focusAg.sphereId);
     const goalTexts = focusSphere?.goals?.map(g => g.text).join('  ·  ') || focusAg.goalText;
-    doc.setFillColor(...mixC(fColor, 0.08)); doc.roundedRect(40, y-40, W-80, 45, 6, 6, 'F');
+    const goalLines = doc.splitTextToSize(goalTexts, W - 120);
+    const goalBoxH = Math.max(48, goalLines.length * 13 + 28);
+    doc.setFillColor(...mixC(fColor, 0.08)); doc.roundedRect(40, y, W - 80, goalBoxH, 6, 6, 'F');
     doc.setDrawColor(...mixC(fColor, 0.25)); doc.setLineWidth(0.5);
-    doc.roundedRect(40, y-40, W-80, 45, 6, 6, 'S');
+    doc.roundedRect(40, y, W - 80, goalBoxH, 6, 6, 'S');
     doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(fColor));
-    doc.text('YOUR GOALS IN THIS SPHERE:', 55, y-5);
+    doc.text('YOUR GOALS IN THIS SPHERE:', 55, y + 14);
     doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(PC.body));
-    const goalLines = doc.splitTextToSize(goalTexts, W-120);
-    goalLines.forEach((line, i) => { doc.text(line, 55, y-20-i*12); });
-    y -= 60;
+    goalLines.forEach((line, i) => { doc.text(line, 55, y + 28 + i * 13); });
+    y += goalBoxH + 24;
 
-    // Prompt boxes
+    // Prompt boxes — each drawn top-down
     const deepDivePrompts = [
       { icon: '?', text: "What's currently working in this area?", color: fColor },
       { icon: '!', text: "What's blocking you or holding you back?", color: '#8a5c5c' },
@@ -532,38 +534,36 @@ Themes: 2-4 patterns you notice across ALL goals (not per-sphere). Each theme sh
 
     deepDivePrompts.forEach(prompt => {
       const boxH = 130;
-      // Page break check
-      if (y - boxH < 60) {
+      if (y + boxH > H - 60) {
         pdfFooter(doc, wsPageNum); wsPageNum++;
         doc.addPage(); pdfBg(doc); pdfHeader(doc);
-        y = H - 80;
+        y = 80;
       }
-      const pColor = typeof prompt.color === 'string' ? prompt.color : prompt.color;
+      const pColor = prompt.color;
 
-      // Box
+      // Box — y is the top
       doc.setFillColor(255,255,255); doc.setDrawColor(...hexRgb(PC.border)); doc.setLineWidth(1);
-      doc.roundedRect(40, y-boxH, W-80, boxH, 6, 6, 'FD');
+      doc.roundedRect(40, y, W - 80, boxH, 6, 6, 'FD');
 
-      // Icon circle
-      const iconY = y - 16;
-      doc.setFillColor(...hexRgb(pColor)); doc.circle(58, iconY+4, 8, 'F');
+      // Icon circle at top-left of box
+      doc.setFillColor(...hexRgb(pColor)); doc.circle(58, y + 18, 8, 'F');
       doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(255,255,255);
-      doc.text(prompt.icon, 58, iconY+1, {align:'center'});
+      doc.text(prompt.icon, 58, y + 22, {align:'center'});
 
       // Prompt text
       doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(PC.dark));
-      doc.text(prompt.text, 76, iconY);
+      doc.text(prompt.text, 76, y + 21);
 
-      // Writing lines
-      let lineY = iconY - 22;
+      // Writing lines — start below the prompt heading
+      let lineY = y + 48;
       doc.setDrawColor(...hexRgb('#e0d8cc')); doc.setLineWidth(0.3);
-      const lineCount = Math.floor((boxH - 50) / 20);
+      const lineCount = Math.floor((boxH - 55) / 20);
       for (let i = 0; i < lineCount; i++) {
-        doc.line(56, lineY, W-56, lineY);
-        lineY -= 20;
+        doc.line(56, lineY, W - 56, lineY);
+        lineY += 20;
       }
 
-      y -= boxH + 12;
+      y += boxH + 12;
     });
 
     pdfFooter(doc, wsPageNum); wsPageNum++;
@@ -574,76 +574,76 @@ Themes: 2-4 patterns you notice across ALL goals (not per-sphere). Each theme sh
   y = pdfSectionTitle(doc, 40, 90, 'Weekly Check-In', PC.sage, 100);
 
   doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(PC.muted));
-  doc.text('Print this page and fill it out each week. Consistency beats intensity.', 40, y); y -= 10;
+  doc.text('Print this page and fill it out each week. Consistency beats intensity.', 40, y); y += 22;
 
   // Week of field
   doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(PC.dark));
   doc.text('Week of:', 40, y);
   doc.setDrawColor(...hexRgb(PC.border)); doc.setLineWidth(0.5);
-  doc.line(100, y+2, 250, y+2);
-  y -= 28;
+  doc.line(100, y + 2, 250, y + 2);
+  y += 32;
 
   // Sphere Pulse
   doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(PC.dark));
-  doc.text('Sphere Pulse', 40, y); y -= 5;
+  doc.text('Sphere Pulse', 40, y); y += 16;
   doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(PC.muted));
-  doc.text('Rate how each area felt this week (1 = struggling, 5 = thriving)', 40, y); y -= 18;
+  doc.text('Rate how each area felt this week (1 = struggling, 5 = thriving)', 40, y); y += 22;
 
   spheres.forEach(sphere => {
     const sColor = sphere.color || PC.accent;
-    doc.setFillColor(...hexRgb(sColor)); doc.circle(50, y+3, 3.5, 'F');
+    doc.setFillColor(...hexRgb(sColor)); doc.circle(50, y - 3, 3.5, 'F');
     doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(PC.dark));
-    let sName = sphere.name; if (sName.length > 14) sName = sName.slice(0,13) + '…';
+    let sName = sphere.name; if (sName.length > 14) sName = sName.slice(0, 13) + '…';
     doc.text(sName, 60, y);
     for (let i = 0; i < 5; i++) {
       const cx = 200 + i * 36;
       doc.setDrawColor(...hexRgb(sColor)); doc.setLineWidth(1.2);
-      doc.setFillColor(255,255,255); doc.circle(cx, y+2, 9, 'FD');
+      doc.setFillColor(255,255,255); doc.circle(cx, y - 2, 9, 'FD');
       doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(sColor));
-      doc.text(String(i+1), cx, y+5, {align:'center'});
+      doc.text(String(i + 1), cx, y + 1, {align:'center'});
     }
-    y -= 24;
+    y += 26;
   });
 
-  y -= 8;
+  y += 10;
 
   // Action Item Progress
   doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(PC.dark));
-  doc.text('Action Item Progress', 40, y); y -= 5;
+  doc.text('Action Item Progress', 40, y); y += 16;
   doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(PC.muted));
-  doc.text('Check off what you completed this week', 40, y); y -= 18;
+  doc.text('Check off what you completed this week', 40, y); y += 22;
 
   activeGoals.forEach(ag => {
     (ag.actionItems || []).forEach(item => {
-      if (y < 120) return; // safety
+      if (y > H - 100) return; // safety guard
       const aColor = ag.sphereColor || PC.accent;
       doc.setDrawColor(...hexRgb(aColor)); doc.setLineWidth(1.2);
-      doc.setFillColor(255,255,255); doc.roundedRect(44, y-5, 12, 12, 2, 2, 'FD');
+      doc.setFillColor(255,255,255); doc.roundedRect(44, y - 9, 12, 12, 2, 2, 'FD');
       doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(PC.body));
-      const itemText = item.text.length > 70 ? item.text.slice(0,68) + '…' : item.text;
+      const itemText = item.text.length > 70 ? item.text.slice(0, 68) + '…' : item.text;
       doc.text(itemText, 64, y);
-      y -= 20;
+      y += 22;
     });
   });
 
-  y -= 6;
+  y += 8;
   doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...hexRgb(PC.muted));
-  doc.text('Notes on progress:', 44, y); y -= 12;
+  doc.text('Notes on progress:', 44, y); y += 16;
   doc.setDrawColor(...hexRgb(PC.border)); doc.setLineWidth(0.4);
-  doc.line(44, y, W-44, y); y -= 18;
-  doc.line(44, y, W-44, y); y -= 22;
+  doc.line(44, y, W - 44, y); y += 22;
+  doc.line(44, y, W - 44, y); y += 28;
 
   // Reflections
   doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(PC.dark));
-  doc.text('Reflections', 40, y); y -= 18;
+  doc.text('Reflections', 40, y); y += 22;
 
-  ['What went well this week?', 'What was harder than expected?', 'One thing I\'ll do differently next week:'].forEach(prompt => {
-    if (y < 70) return;
+  ['What went well this week?', 'What was harder than expected?', "One thing I'll do differently next week:"].forEach(prompt => {
+    if (y > H - 80) return;
     doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...hexRgb(PC.body));
-    doc.text(prompt, 44, y); y -= 16;
+    doc.text(prompt, 44, y); y += 18;
     doc.setDrawColor(...hexRgb(PC.border)); doc.setLineWidth(0.4);
-    doc.line(44, y, W-44, y); y -= 18;
-    doc.line(44, y, W-44, y); y -= 22;
+    doc.line(44, y, W - 44, y); y += 22;
+    doc.line(44, y, W - 44, y); y += 28;
   });
 
   pdfFooter(doc, wsPageNum);

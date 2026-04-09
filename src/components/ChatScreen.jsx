@@ -1,5 +1,6 @@
 import React from "react";
 import { Nav } from "./Nav.jsx";
+import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -61,6 +62,7 @@ export function ChatScreen({
   setActiveGoals,
   setStep,
   isMobile, isPaid, activeGoals,
+  spheres, connections,
   messagesEndRef,
   DevReset,
 }) {
@@ -128,9 +130,11 @@ Do not ask follow-up questions after proposing action items unless the user want
 
   const saveAndFinish = () => {
     if (!pendingItems) return;
-    setActiveGoals(prev => prev.map(ag =>
+    const updatedGoals = activeGoals.map(ag =>
       ag.goalId === chatContext?.goalId ? { ...ag, actionItems: pendingItems } : ag
-    ));
+    );
+    setActiveGoals(updatedGoals);
+    saveChart(session, { spheres, connections, activeGoals: updatedGoals });
     if (!session && !hasSeenPlanPrompt) {
       setHasSeenPlanPrompt(true);
       setTimeout(() => setAuthPrompt("save_plan"), 9000);

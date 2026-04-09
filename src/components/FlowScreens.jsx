@@ -1,6 +1,7 @@
 import React from "react";
 import { SphereConnCard } from "./SphereConnCard.jsx";
 import { SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE } from "../constants.js";
+import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -26,6 +27,7 @@ export function FlowScreens({
   connections, setConnections,
   setSelectedId,
   setStep,
+  session,
   DevReset,
 }) {
   const addSphere = (name) => {
@@ -122,7 +124,7 @@ export function FlowScreens({
             ← Back
           </button>
           <button
-            onClick={() => { setGoalStep(0); setStep("intro-goals"); }}
+            onClick={() => { setGoalStep(0); setStep("intro-goals"); saveChart(session, { spheres, connections }); }}
             disabled={spheres.length < 3}
             style={{ background: "#b5472a", color: "white", fontWeight: 500 }}
             className="flex-1 hover:opacity-90 disabled:opacity-30 py-3 rounded-sm transition-opacity"
@@ -294,7 +296,7 @@ export function FlowScreens({
               ← Back
             </button>
             <button
-              onClick={() => isLast ? (setSelectedId(null), setStep("intro-results")) : setGoalStep(s => s + 1)}
+              onClick={() => isLast ? (setSelectedId(null), setStep("intro-results"), saveChart(session, { spheres, connections })) : setGoalStep(s => s + 1)}
               className="flex-1 text-white font-bold py-3 rounded-xl transition-colors"
               style={{ background: fromSphere?.color || "#6366f1" }}>
               {isLast ? "See my chart →" : `Next: ${spheres[connStep + 1]?.name} →`}

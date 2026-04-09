@@ -40,6 +40,7 @@ const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Di
 @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
 
 import { generateChartReport, generateFullReport } from "./utils/pdf.js";
+import { saveChart, loadChart, clearChart } from "./utils/supabase.js";
 
 class ErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null }; }
@@ -84,99 +85,34 @@ function GoalChart() {
     return () => window.removeEventListener('resize', handler);
   }, []);
 
-  // ── SUPABASE SYNC HELPERS ──
-  const saveToSupabase = async (session, { spheres, connections, activeGoals, checkedItems, completedGoals }) => {
-    if (!session?.user?.id || spheres.length === 0) return;
-    const uid = session.user.id;
-    try {
-      // Upsert chart (spheres + connections — one row per user)
-      await supabase.from('charts').upsert({
-        user_id: uid,
-        spheres,
-        connections,
-        drag_offsets: {},
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id' });
-
-      // Replace active goals — delete all then re-insert
-      await supabase.from('active_goals').delete().eq('user_id', uid);
-      if (activeGoals.length > 0) {
-        await supabase.from('active_goals').insert(
-          activeGoals.map(ag => ({
-            user_id: uid,
-            sphere_id: ag.sphereId,
-            sphere_name: ag.sphereName,
-            sphere_color: ag.sphereColor,
-            goal_id: ag.goalId,
-            goal_text: ag.goalText,
-            action_items: ag.actionItems || [],
-            checked_items: checkedItems[ag.goalId] ? [...checkedItems[ag.goalId]] : [],
-            completed: completedGoals.has(ag.goalId)
-          }))
-        );
-      }
-    } catch (e) {
-      console.error('Supabase sync failed:', e);
-    }
-  };
-
-  const loadFromSupabase = async (session) => {
-    if (!session?.user?.id) return;
-    // Only pull from Supabase if localStorage has nothing — localStorage always wins
-    const saved = localStorage.getItem('goalchart_state');
-    if (saved) {
-      try {
-        const s = JSON.parse(saved);
-        if (s.spheres?.length > 0) return;
-      } catch {}
-    }
-    try {
-      const { data: chart } = await supabase
-        .from('charts').select('*').eq('user_id', session.user.id).single();
-      if (chart?.spheres?.length > 0) {
-        setSpheres(chart.spheres);
-        setConnections(chart.connections || {});
-      }
-      const { data: goals } = await supabase
-        .from('active_goals').select('*').eq('user_id', session.user.id);
-      if (goals?.length > 0) {
-        setActiveGoals(goals.map(g => ({
-          sphereId: g.sphere_id, sphereName: g.sphere_name,
-          sphereColor: g.sphere_color, goalId: g.goal_id,
-          goalText: g.goal_text, actionItems: g.action_items || []
-        })));
-        const ci = {};
-        goals.forEach(g => { ci[g.goal_id] = new Set(g.checked_items || []); });
-        setCheckedItems(ci);
-        setCompletedGoals(new Set(goals.filter(g => g.completed).map(g => g.goal_id)));
-        setStep('active');
-      }
-    } catch (e) {
-      console.error('Supabase load failed:', e);
-    }
-  };
-
   // Auth session listener + tier fetch
   useEffect(() => {
     const fetchTier = async (session) => {
       if (!session) { setIsPaid(false); return; }
-      // For now everyone is paid — flip to false before launch
       setIsPaid(true);
       /* Production tier check — uncomment before launch:
       const { data } = await supabase.from('profiles').select('tier').eq('id', session.user.id).single();
       setIsPaid(data?.tier === 'paid');
       */
     };
-    supabase.auth.getSession().then(({ data: { session } }) => {
+
+    const handleSession = async (session) => {
       setSession(session);
       fetchTier(session);
-      loadFromSupabase(session);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setSession(session);
-      fetchTier(session);
-      if (session) loadFromSupabase(session);
-    });
+      // Load from Supabase only if localStorage has no existing state
+      const data = await loadChart(session);
+      if (data) {
+        setSpheres(data.spheres);
+        setConnections(data.connections);
+        setActiveGoals(data.activeGoals);
+        setCheckedItems(data.checkedItems);
+        setCompletedGoals(data.completedGoals);
+        if (data.activeGoals.length > 0) setStep('active');
+      }
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => handleSession(session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => handleSession(session));
     return () => subscription.unsubscribe();
   }, []);
 
@@ -257,12 +193,8 @@ function GoalChart() {
       Object.entries(checkedItems).forEach(([k, v]) => { serializedChecked[k] = [...v]; });
       const state = { spheres, connections, activeGoals, step, completedGoals: [...completedGoals], checkedItems: serializedChecked };
       localStorage.setItem("goalchart_state", JSON.stringify(state));
-      // Keep Supabase in sync whenever localStorage saves
-      saveToSupabase(session, { spheres, connections, activeGoals, checkedItems, completedGoals });
     }
   }, [spheres, connections, activeGoals, step, completedGoals, checkedItems]);
-
-
 
   // --- Computed ---
   const counts = useMemo(() => {
@@ -321,7 +253,7 @@ function GoalChart() {
   // ── PASSWORD GATE ──
   const DevReset = () => (
     <button
-      onClick={() => { localStorage.removeItem("goalchart_state"); location.reload(); }}
+      onClick={() => { localStorage.removeItem("goalchart_state"); clearChart(session); location.reload(); }}
       className="fixed right-4 text-xs px-3 py-2 hover:opacity-100 transition-opacity z-50"
       style={{bottom:"76px", background:"#2c1f14", color:"#faf8f5", opacity:0.5, borderRadius:"4px"}}
     >
@@ -412,6 +344,7 @@ function GoalChart() {
         connections={connections} setConnections={setConnections}
         setSelectedId={setSelectedId}
         setStep={setStep}
+        session={session}
         DevReset={DevReset}
       />
     );
@@ -424,6 +357,7 @@ function GoalChart() {
         <ResultsFlow
           step={step}
           spheres={spheres}
+          connections={connections}
           ranked={ranked}
           selectedFocusSphereId={selectedFocusSphereId}
           setSelectedFocusSphereId={setSelectedFocusSphereId}
@@ -433,6 +367,7 @@ function GoalChart() {
           completedGoals={completedGoals}
           setActiveGoals={setActiveGoals}
           setStep={setStep}
+          session={session}
           DevReset={DevReset}
         />
       </>
@@ -462,6 +397,7 @@ function GoalChart() {
           isMobile={isMobile}
           pdfLoading={pdfLoading} setPdfLoading={setPdfLoading}
           activeGoals={activeGoals}
+          session={session}
           setStep={setStep}
           setFocusRound={setFocusRound}
           setOverrideSphere={setOverrideSphere}
@@ -603,7 +539,7 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
                   <p style={{fontSize:"0.875rem", color:"#1c1410", margin:0, fontFamily:"'Inter',sans-serif"}}>Reset your chart</p>
                   <p style={{fontSize:"0.68rem", color:"#8a7455", margin:"2px 0 0", fontFamily:"'Inter',sans-serif"}}>Start over with new spheres and goals</p>
                 </div>
-                <button style={btn("default")} onClick={() => { if (window.confirm("Reset your chart? This will clear all your spheres, goals and action items.")) { localStorage.removeItem("goalchart_state"); location.reload(); } }}>Reset</button>
+                <button style={btn("default")} onClick={() => { if (window.confirm("Reset your chart? This will clear all your spheres, goals and action items.")) { localStorage.removeItem("goalchart_state"); clearChart(session); location.reload(); } }}>Reset</button>
               </div>
 
               {/* Appearance */}
@@ -713,6 +649,8 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
           isMobile={isMobile}
           isPaid={isPaid}
           activeGoals={activeGoals}
+          spheres={spheres}
+          connections={connections}
           messagesEndRef={messagesEndRef}
           DevReset={DevReset}
         />
