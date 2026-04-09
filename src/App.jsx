@@ -834,6 +834,12 @@ function GoalChart() {
     if (session && authPrompt) setAuthPrompt(null);
   }, [session, authPrompt]);
 
+  // Chat auto-scroll
+  const messagesEndRef = React.useRef(null);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages, chatLoading]);
+
   // Auth overlay — position:fixed, renders on top of any step
   const AuthOverlay = () => authPrompt ? (
     <MagicLinkAuth
@@ -2734,11 +2740,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
       .filter(m => m.role === "assistant" && m.actionItems)
       .slice(-1)[0]?.actionItems || null;
 
-    const messagesEndRef = React.useRef(null);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [chatMessages, chatLoading]);
+
 
     const sendMessage = async () => {
       if (!chatInput.trim()) return;
