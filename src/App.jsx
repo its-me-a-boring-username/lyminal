@@ -840,7 +840,7 @@ function GoalChart() {
       context={authPrompt}
       onSkip={authPrompt !== "upgrade" ? () => setAuthPrompt(null) : null}
       onSuccess={() => {}}
-      leftOffset={isMobile ? 0 : 350}
+      leftOffset={!isMobile && authPrompt === "save_plan" ? 350 : 0}
     />
   ) : null;
 
@@ -2677,10 +2677,68 @@ Do NOT introduce yourself or explain what you do — that has already been handl
   }
 
   // ── CHAT STEP ──
+  // Simple markdown renderer for chat bubbles
+  const renderMarkdown = (text) => {
+    if (!text) return null;
+    // Split into lines and process
+    const lines = text.split('\n');
+    const elements = [];
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      // Numbered list item
+      const numMatch = line.match(/^(\d+)\.\s+(.+)/);
+      if (numMatch) {
+        const items = [];
+        while (i < lines.length) {
+          const nm = lines[i].match(/^(\d+)\.\s+(.+)/);
+          if (!nm) break;
+          // Process inline bold within list items
+          items.push(<li key={i} style={{marginBottom:"0.35rem"}}>{processBold(nm[2])}</li>);
+          i++;
+        }
+        elements.push(<ol key={`ol-${i}`} style={{paddingLeft:"1.25rem", margin:"0.5rem 0"}}>{items}</ol>);
+        continue;
+      }
+      // Bullet list
+      if (line.match(/^[-*]\s+/)) {
+        const items = [];
+        while (i < lines.length && lines[i].match(/^[-*]\s+/)) {
+          const text = lines[i].replace(/^[-*]\s+/, '');
+          items.push(<li key={i} style={{marginBottom:"0.35rem"}}>{processBold(text)}</li>);
+          i++;
+        }
+        elements.push(<ul key={`ul-${i}`} style={{paddingLeft:"1.25rem", margin:"0.5rem 0"}}>{items}</ul>);
+        continue;
+      }
+      // Empty line
+      if (line.trim() === '') {
+        elements.push(<div key={i} style={{height:"0.5rem"}} />);
+      } else {
+        elements.push(<p key={i} style={{margin:"0.25rem 0"}}>{processBold(line)}</p>);
+      }
+      i++;
+    }
+    return elements;
+  };
+
+  const processBold = (text) => {
+    const parts = text.split(/\*\*([^*]+)\*\*/g);
+    return parts.map((part, i) =>
+      i % 2 === 1 ? <strong key={i} style={{fontWeight:600}}>{part}</strong> : part
+    );
+  };
+
   if (step === "chat") {
     const pendingItems = chatMessages
       .filter(m => m.role === "assistant" && m.actionItems)
       .slice(-1)[0]?.actionItems || null;
+
+    const messagesEndRef = React.useRef(null);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [chatMessages, chatLoading]);
 
     const sendMessage = async () => {
       if (!chatInput.trim()) return;
@@ -2791,7 +2849,7 @@ Do not ask follow-up questions after proposing action items unless the user want
                     borderRadius: m.role === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px"
                   }}
                 >
-                  {m.content}
+                  {m.role === "assistant" ? renderMarkdown(m.content) : m.content}
                 </div>
                 {m.actionItems && (
                   <div className="w-full border p-4" style={{borderColor:"#e8e0d5", background:"white", borderRadius:"8px"}}>
@@ -2811,6 +2869,9 @@ Do not ask follow-up questions after proposing action items unless the user want
                     >
                       Save & finish →
                     </button>
+                    <p className="text-xs text-center mt-2" style={{color:"#8a7455"}}>
+                      Not quite right? Keep chatting to refine.
+                    </p>
                   </div>
                 )}
               </div>
@@ -2823,9 +2884,10 @@ Do not ask follow-up questions after proposing action items unless the user want
               </div>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
 
-        {!pendingItems && !chatLoading && chatMessages.length > 0 && (
+        {!chatLoading && chatMessages.length > 0 && (
           <div className="px-6 py-4 border-t flex gap-3" style={{background:"white", borderColor:"#e8e0d5"}}>
             <input
               className="flex-1 px-4 py-3 text-sm outline-none border"
