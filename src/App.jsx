@@ -2684,40 +2684,42 @@ Do NOT introduce yourself or explain what you do — that has already been handl
 
   // ── CHAT STEP ──
   // Simple markdown renderer for chat bubbles
+  const processBold = (text) => {
+    const parts = text.split(/\*\*([^*]+)\*\*/g);
+    return parts.map((part, i) =>
+      i % 2 === 1 ? <strong key={i} style={{fontWeight:600}}>{part}</strong> : part
+    );
+  };
+
   const renderMarkdown = (text) => {
     if (!text) return null;
-    // Split into lines and process
     const lines = text.split('\n');
     const elements = [];
     let i = 0;
     while (i < lines.length) {
       const line = lines[i];
-      // Numbered list item
       const numMatch = line.match(/^(\d+)\.\s+(.+)/);
       if (numMatch) {
         const items = [];
         while (i < lines.length) {
           const nm = lines[i].match(/^(\d+)\.\s+(.+)/);
           if (!nm) break;
-          // Process inline bold within list items
           items.push(<li key={i} style={{marginBottom:"0.35rem"}}>{processBold(nm[2])}</li>);
           i++;
         }
         elements.push(<ol key={`ol-${i}`} style={{paddingLeft:"1.25rem", margin:"0.5rem 0"}}>{items}</ol>);
         continue;
       }
-      // Bullet list
       if (line.match(/^[-*]\s+/)) {
         const items = [];
         while (i < lines.length && lines[i].match(/^[-*]\s+/)) {
-          const text = lines[i].replace(/^[-*]\s+/, '');
-          items.push(<li key={i} style={{marginBottom:"0.35rem"}}>{processBold(text)}</li>);
+          const t = lines[i].replace(/^[-*]\s+/, '');
+          items.push(<li key={i} style={{marginBottom:"0.35rem"}}>{processBold(t)}</li>);
           i++;
         }
         elements.push(<ul key={`ul-${i}`} style={{paddingLeft:"1.25rem", margin:"0.5rem 0"}}>{items}</ul>);
         continue;
       }
-      // Empty line
       if (line.trim() === '') {
         elements.push(<div key={i} style={{height:"0.5rem"}} />);
       } else {
@@ -2726,13 +2728,6 @@ Do NOT introduce yourself or explain what you do — that has already been handl
       i++;
     }
     return elements;
-  };
-
-  const processBold = (text) => {
-    const parts = text.split(/\*\*([^*]+)\*\*/g);
-    return parts.map((part, i) =>
-      i % 2 === 1 ? <strong key={i} style={{fontWeight:600}}>{part}</strong> : part
-    );
   };
 
   if (step === "chat") {
