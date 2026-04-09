@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { jsPDF } from "jspdf";
+import { supabase } from "./supabaseClient.js";
+import { MagicLinkAuth } from "./components/MagicLinkAuth.jsx";
 
 function TriangleLogo({ size = 80 }) {
   const s = size;
@@ -810,11 +812,36 @@ function GoalChart() {
   const [dragging, setDragging] = useState(null); // sphereId being dragged
   const [didDrag, setDidDrag] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1024);
+  const [session, setSession] = useState(null);
+  const [authPrompt, setAuthPrompt] = useState(null); // "save_chart" | "save_plan" | "upgrade" | null
+  const [hasSeenChartPrompt, setHasSeenChartPrompt] = useState(false);
+  const [hasSeenPlanPrompt, setHasSeenPlanPrompt] = useState(false);
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 1024);
     window.addEventListener('resize', handler);
     return () => window.removeEventListener('resize', handler);
   }, []);
+
+  // Auth session listener
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setSession(session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setSession(session));
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Auto-dismiss auth overlay when session is established
+  useEffect(() => {
+    if (session && authPrompt) setAuthPrompt(null);
+  }, [session, authPrompt]);
+
+  // Auth overlay — position:fixed, renders on top of any step
+  const AuthOverlay = () => authPrompt ? (
+    <MagicLinkAuth
+      context={authPrompt}
+      onSkip={authPrompt !== "upgrade" ? () => setAuthPrompt(null) : null}
+      onSuccess={() => {}}
+    />
+  ) : null;
 
   // Post-chart flow state
   const [activeGoals, setActiveGoals] = useState([]); // [{sphereId, sphereName, sphereColor, goalId, goalText, actionItems}]
@@ -1559,6 +1586,14 @@ function GoalChart() {
     const selected = spheres.find(b => b.id === selectedId);
     const selectedCounts = selectedId ? counts[selectedId] : null;
 
+    // Trigger save_chart prompt for non-authed users seeing chart for first time
+    if (!session && !hasSeenChartPrompt && authPrompt !== "save_chart") {
+      setTimeout(() => {
+        setAuthPrompt("save_chart");
+        setHasSeenChartPrompt(true);
+      }, 3000);
+    }
+
     // Compute drag-adjusted positions
     const chartPos = {};
     Object.entries(positions).forEach(([id, p]) => {
@@ -1618,6 +1653,7 @@ function GoalChart() {
       <div className="min-h-screen" style={{background:"#faf8f5",fontFamily:"'Inter', sans-serif", animation:"fadeIn 0.4s ease-out"}}>
         <style>{FONTS}</style>
       <DevReset />
+        <AuthOverlay />
         {/* Header */}
         <div style={{background:"#faf8f5", borderBottom:"1px solid #e8e0d5"}} className="px-6 py-4 flex items-center justify-between">
           <div>
@@ -2366,6 +2402,7 @@ function GoalChart() {
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"350px", background: allActive[0]?.sphereColor || "#b5472a"}} />
         <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
+        <AuthOverlay />
         <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#6e5c4a"}}>Your Active Goals</p>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">Here's what you're working on</h2>
         <p className="text-sm mb-8" style={{color:"#5c4e40", fontWeight:300}}>
@@ -2707,6 +2744,11 @@ Do not ask follow-up questions after proposing action items unless the user want
           ? { ...ag, actionItems: pendingItems }
           : ag
       ));
+      // Show save_plan prompt for non-authed users who haven't seen it
+      if (!session && !hasSeenPlanPrompt) {
+        setHasSeenPlanPrompt(true);
+        setAuthPrompt("save_plan");
+      }
       setStep("active");
     };
 
@@ -2804,7 +2846,7 @@ Do not ask follow-up questions after proposing action items unless the user want
     );
   }
 
-  return <DevReset />;
+  return <><DevReset /></>;
 }
 
 export default function GoalChartWrapper() {
