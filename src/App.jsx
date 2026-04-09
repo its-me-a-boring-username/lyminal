@@ -1123,6 +1123,20 @@ function GoalChart() {
   const currentSphere = spheres[goalStep];
 
   // --- Sub-components ---
+  // ── Pill — used in spheres step and chart side panel ──
+  const Pill = ({ b, onRemove }) => (
+    <div
+      className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all"
+      style={{ background: b.color + "18", border: `1px solid ${b.color}40`, color: b.color }}
+    >
+      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: b.color }} />
+      <span>{b.name}</span>
+      {onRemove && (
+        <button onClick={onRemove} className="ml-1 opacity-50 hover:opacity-100 text-xs leading-none">✕</button>
+      )}
+    </div>
+  );
+
   // --- Steps ---
 
   // ── PASSWORD GATE ──
