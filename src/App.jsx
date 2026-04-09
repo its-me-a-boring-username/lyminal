@@ -924,6 +924,8 @@ function GoalChart() {
   const [isPaid, setIsPaid] = useState(false);
   const [authPrompt, setAuthPrompt] = useState(null); // "save_chart" | "save_plan" | "upgrade" | null
   const [hasSeenChartPrompt, setHasSeenChartPrompt] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState("warm_earth");
+  const [appearance, setAppearance] = useState("system");
   const [hasSeenPlanPrompt, setHasSeenPlanPrompt] = useState(false);
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 1024);
@@ -2862,9 +2864,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
       { key: "ocean",             label: "Ocean",       multi: false, c1: "#0e3a5c" },
       { key: "ink",               label: "Ink",         multi: false, c1: "#0a0a0a" },
     ];
-    const [selectedTheme, setSelectedTheme] = useState("warm_earth");
-    const [appearance, setAppearance] = useState("system");
-    const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"#b5472a", fontWeight:600, margin:"0 0 12px", fontFamily:"'Inter',sans-serif" };
+const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"#b5472a", fontWeight:600, margin:"0 0 12px", fontFamily:"'Inter',sans-serif" };
     const card = { background:"white", border:"1px solid #e8e0d5", marginBottom:"28px" };
     const row = (last) => ({ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 18px", borderBottom: last ? "none" : "1px solid #f0e8df" });
     const btn = (variant) => ({
