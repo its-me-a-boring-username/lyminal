@@ -2630,13 +2630,6 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                   Talk to Lyme
                 </button>
                 <button
-                  className="flex-1 py-2 text-xs font-semibold border"
-                  style={{borderColor:"#d4c9bb", color:"#6e5c4a"}}
-                  onClick={() => alert("Live coaching coming soon!")}
-                >
-                  Talk to a Coach ✦
-                </button>
-                <button
                   className="py-2 px-3 text-xs font-semibold border hover:opacity-80 transition-opacity"
                   style={{borderColor:"#d4c9bb", color:"#6e5c4a"}}
                   onClick={() => {
