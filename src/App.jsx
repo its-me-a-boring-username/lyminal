@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import { supabase } from "./supabaseClient.js";
 import { MagicLinkAuth } from "./components/MagicLinkAuth.jsx";
+import { Nav } from "./components/Nav.jsx";
 
 function TriangleLogo({ size = 80 }) {
   const s = size;
@@ -726,6 +727,113 @@ const PALETTE = [
   "#5c8a7a", // seafoam
 ];
 
+// ── THEMES ──
+// Each theme defines: primary (buttons, accents), dark (headings, color strip),
+// accent (secondary elements like connections), bg (page background), border, muted (body text)
+const THEMES = {
+  // ── Multi-color ──
+  warm_earth: {
+    label: "Warm earth",
+    type: "multi",
+    primary:  "#b5472a",
+    dark:     "#2c1f14",
+    accent:   "#4a7a72",
+    bg:       "#faf8f5",
+    border:   "#e8e0d5",
+    muted:    "#6e5c4a",
+    body:     "#5c4e40",
+  },
+  terracotta_sage: {
+    label: "Terracotta & sage",
+    type: "multi",
+    primary:  "#b5614a",
+    dark:     "#5c3d2e",
+    accent:   "#8fa882",
+    bg:       "#faf7f3",
+    border:   "#ece4d8",
+    muted:    "#6e5040",
+    body:     "#5c4438",
+  },
+  plum_teal: {
+    label: "Plum & teal",
+    type: "multi",
+    primary:  "#9b6b8a",
+    dark:     "#3d2b3d",
+    accent:   "#7a9e8e",
+    bg:       "#faf8fc",
+    border:   "#e8e0ed",
+    muted:    "#6e5068",
+    body:     "#5c4458",
+  },
+  blush_eucalyptus: {
+    label: "Blush & eucalyptus",
+    type: "multi",
+    primary:  "#c17a6f",
+    dark:     "#4a3030",
+    accent:   "#8aab9e",
+    bg:       "#fdf8f7",
+    border:   "#edddd9",
+    muted:    "#6e504c",
+    body:     "#5c4440",
+  },
+  // ── Unicolor ──
+  forest: {
+    label: "Forest",
+    type: "uni",
+    primary:  "#1a4a30",
+    dark:     "#2a6e48",
+    accent:   "#4a9e70",
+    bg:       "#f2faf5",
+    border:   "#c8e8d8",
+    muted:    "#2a6e48",
+    body:     "#1a4a30",
+  },
+  violet: {
+    label: "Violet",
+    type: "uni",
+    primary:  "#4a1a7a",
+    dark:     "#6a2ea8",
+    accent:   "#9a60d0",
+    bg:       "#faf7fd",
+    border:   "#e0cef5",
+    muted:    "#6a2ea8",
+    body:     "#4a1a7a",
+  },
+  rose: {
+    label: "Rose",
+    type: "uni",
+    primary:  "#6e1a2e",
+    dark:     "#9a2a44",
+    accent:   "#c45a74",
+    bg:       "#fdf7f8",
+    border:   "#f0ccd4",
+    muted:    "#9a2a44",
+    body:     "#6e1a2e",
+  },
+  ocean: {
+    label: "Ocean",
+    type: "uni",
+    primary:  "#0e3a5c",
+    dark:     "#1a5a84",
+    accent:   "#3a8ab0",
+    bg:       "#f3f8fd",
+    border:   "#c4dff0",
+    muted:    "#1a5a84",
+    body:     "#0e3a5c",
+  },
+  ink: {
+    label: "Ink",
+    type: "uni",
+    primary:  "#0a0a0a",
+    dark:     "#2a2a2a",
+    accent:   "#606060",
+    bg:       "#f7f7f7",
+    border:   "#dcdcdc",
+    muted:    "#2a2a2a",
+    body:     "#0a0a0a",
+  },
+};
+
 function SphereConnCard({ sphere, isChecked, onToggle }) {
   const [open, setOpen] = useState(false);
   return (
@@ -852,6 +960,19 @@ function GoalChart() {
       onSkip={() => setAuthPrompt(null)}
       onSuccess={() => {}}
       leftOffset={!isMobile && (authPrompt === "save_plan" || authPrompt === "upgrade") ? 350 : 0}
+    />
+  ) : null;
+
+  // Nav bar — shown on home screen and beyond
+  const navSteps = ["active", "plan", "progress", "chart-view", "account", "chat"];
+  const showNav = navSteps.includes(step);
+  const NavBar = () => showNav ? (
+    <Nav
+      step={step}
+      setStep={setStep}
+      isMobile={isMobile}
+      isPaid={isPaid}
+      activeGoals={activeGoals}
     />
   ) : null;
 
@@ -2419,8 +2540,13 @@ function GoalChart() {
         <style>{FONTS}</style>
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{width:"350px", background: allActive[0]?.sphereColor || "#b5472a"}} />
-        <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
-        <AuthOverlay />
+        <div className="w-full lg:flex-1 lg:flex lg:flex-col">
+          {/* Desktop top nav */}
+          {!isMobile && <NavBar />}
+          <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
+          <AuthOverlay />
+          {/* Mobile fixed bottom nav */}
+          {isMobile && <NavBar />}
         <p className="text-xs uppercase tracking-widest mb-2" style={{color:"#6e5c4a"}}>Your Active Goals</p>
         <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:"2rem", fontWeight:600, color:"#1c1410"}} className="mb-1">Here's what you're working on</h2>
         <p className="text-sm mb-8" style={{color:"#5c4e40", fontWeight:300}}>
@@ -2718,6 +2844,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
           </button>
         </div>
         </div>
+        </div>
       </div>
     );
   }
@@ -2854,6 +2981,7 @@ Do not ask follow-up questions after proposing action items unless the user want
       <div className="min-h-screen flex flex-col" style={{background:"#faf8f5", fontFamily:"'Inter', sans-serif", animation:"fadeIn 0.35s ease-out"}}>
         <style>{FONTS}</style>
         <DevReset />
+        {isMobile && <NavBar />}
         {/* Header */}
         <div className="px-6 py-4 flex items-center gap-4 border-b" style={{background:"white", borderColor:"#e8e0d5"}}>
           <div className="flex items-center gap-2 flex-1">
