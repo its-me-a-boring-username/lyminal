@@ -1591,7 +1591,7 @@ function GoalChart() {
       setTimeout(() => {
         setAuthPrompt("save_chart");
         setHasSeenChartPrompt(true);
-      }, 3000);
+      }, 9000);
     }
 
     // Compute drag-adjusted positions
@@ -2703,6 +2703,8 @@ Context:
 
 Your job is to gather just enough information to propose 3-5 specific, personalized action items. Ask one focused question at a time. Once you have enough context (usually 2-4 exchanges), propose your action items and ask if they feel right.
 
+If the user is clearly being direct, skipping the process, or explicitly asking you to just generate action items without discussion — do it immediately without pushing back. Respect their time and intent. Do not insist on gathering more context if they've made clear they don't want to provide it.
+
 When the user confirms the action items are good (they say yes, looks good, sounds right, etc.), end the conversation by outputting EXACTLY this format and nothing else after it:
 
 ACTION_ITEMS_CONFIRMED
@@ -2747,7 +2749,7 @@ Do not ask follow-up questions after proposing action items unless the user want
       // Show save_plan prompt for non-authed users who haven't seen it
       if (!session && !hasSeenPlanPrompt) {
         setHasSeenPlanPrompt(true);
-        setAuthPrompt("save_plan");
+        setTimeout(() => setAuthPrompt("save_plan"), 9000);
       }
       setStep("active");
     };
