@@ -22,7 +22,8 @@ export function ActiveScreen({
   isMobile,
 }) {
   const allActive = focusRound >= 1 ? activeGoals : activeGoals.slice(0, 1);
-  const [celebrating, setCelebrating] = React.useState(null); // goalId currently celebrating
+  const [celebrating, setCelebrating] = React.useState(null);
+  const [confirmRemove, setConfirmRemove] = React.useState(null); // stores ag object pending removal
 
   const handleTalkToLyme = async (ag) => {
     setChatContext(ag);
@@ -110,6 +111,41 @@ Do NOT introduce yourself or explain what you do — that has already been handl
   return (
     <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeScaleIn 0.5s ease-out" }}>
       <style>{FONTS}</style>
+
+      {/* Remove goal modal */}
+      {confirmRemove && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+          <div style={{ background: "white", maxWidth: "400px", width: "100%", padding: "28px 24px" }}>
+            <p style={{ fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 8px", fontFamily: "'Inter', sans-serif" }}>Remove goal</p>
+            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 10px", lineHeight: 1.4 }}>
+              {confirmRemove.goalText}
+            </p>
+            <p style={{ fontSize: "13px", color: "#6e5c4a", fontWeight: 300, margin: "0 0 24px", lineHeight: 1.5 }}>
+              This will remove the goal and all its action items. You can add it again any time from the goal picker.
+            </p>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                onClick={() => setConfirmRemove(null)}
+                style={{ flex: 1, padding: "10px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}
+              >
+                Keep it
+              </button>
+              <button
+                onClick={() => {
+                  const updated = activeGoals.filter(g => g.goalId !== confirmRemove.goalId);
+                  setActiveGoals(updated);
+                  saveChart(session, { spheres, connections, activeGoals: updated, checkedItems, completedGoals });
+                  setConfirmRemove(null);
+                  if (updated.length === 0) setStep("goal-picker");
+                }}
+                style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, color: "white", background: "#9b2a2a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: allActive[0]?.sphereColor || "#b5472a" }} />
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
@@ -132,13 +168,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                     {ag.sphereName}
                   </span>
                   <button
-                    onClick={() => {
-                      if (window.confirm(`Remove "${ag.goalText}" from your active goals?`)) {
-                        const updated = activeGoals.filter(g => g.goalId !== ag.goalId);
-                        setActiveGoals(updated);
-                        saveChart(session, { spheres, connections, activeGoals: updated, checkedItems, completedGoals });
-                      }
-                    }}
+                    onClick={() => setConfirmRemove(ag)}
                     style={{ background: "none", border: "none", color: "rgba(255,255,255,0.65)", cursor: "pointer", fontSize: "13px", padding: 0, lineHeight: 1 }}
                     title="Remove this goal"
                   >
