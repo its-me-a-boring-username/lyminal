@@ -106,6 +106,10 @@ ACTION_ITEMS_CONFIRMED
 CLOSING: [one warm sentence acknowledging their commitment]
 
 Type must always be one of: "forward", "schedule", or "find".
+Use these definitions when assigning type:
+- forward: delegate/share/send to another person (EA, teammate, partner)
+- schedule: anything time-based (calendar block, reminder, appointment, follow-up date)
+- find: research/discovery/sourcing information, options, or resources
 
 Do not ask follow-up questions after proposing action items unless the user wants to change something. Keep the whole conversation under 6 exchanges.`,
           messages: updatedMessages.map(m => ({ role: m.role, content: m.content }))
