@@ -95,10 +95,13 @@ function DetailPanel({
   sphere, activeGoal, checkedItems, setCheckedItems,
   completedGoals, setCompletedGoals,
   spheres, connections, activeGoals, setActiveGoals, session,
+  isPaid, setAuthPrompt,
   setStep, setSelectedFocusSphereId, setSelectedGoalId,
   setChatContext, setChatMessages, setChatLoading,
 }) {
   if (!sphere) return null;
+
+  const canAddGoal = isPaid || activeGoals.length === 0;
 
   // ── Empty state ──
   if (!activeGoal) {
@@ -110,16 +113,33 @@ function DetailPanel({
         <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>
           Add a goal for this sphere to start tracking your progress here.
         </p>
-        <button
-          onClick={() => setStep("goal-picker")}
-          style={{
-            fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em",
-            color: "#b5472a", background: "none", border: "1px solid #e8e0d5",
-            padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif",
-          }}
-        >
-          ADD A GOAL →
-        </button>
+        {canAddGoal ? (
+          <button
+            onClick={() => setStep("goal-picker")}
+            style={{
+              fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em",
+              color: "#b5472a", background: "none", border: "1px solid #e8e0d5",
+              padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            ADD A GOAL →
+          </button>
+        ) : (
+          <button
+            onClick={() => setAuthPrompt("upgrade")}
+            className="w-full text-left border-2 transition-all hover:opacity-90"
+            style={{ borderColor: "#e8e0d5", borderStyle: "dashed", background: "#faf8f5" }}
+          >
+            <div className="px-5 py-4 flex items-center gap-3">
+              <span style={{ fontSize: "1rem" }}>🔒</span>
+              <div className="flex-1">
+                <p className="text-sm font-medium" style={{ color: "#6e5c4a" }}>Track a goal for this sphere</p>
+                <p className="text-xs" style={{ color: "#8a7455" }}>Upgrade to track multiple goals at once</p>
+              </div>
+              <span className="text-xs font-semibold" style={{ color: "#b5472a" }}>Upgrade →</span>
+            </div>
+          </button>
+        )}
       </div>
     );
   }
@@ -334,6 +354,7 @@ export function ProgressScreen({
   session,
   setSelectedFocusSphereId,
   setSelectedGoalId,
+  setAuthPrompt,
   setChatContext,
   setChatMessages,
   setChatLoading,
@@ -483,9 +504,11 @@ export function ProgressScreen({
               activeGoals={activeGoals}
               setActiveGoals={setActiveGoals}
               session={session}
+              isPaid={isPaid}
               setStep={setStep}
               setSelectedFocusSphereId={setSelectedFocusSphereId}
               setSelectedGoalId={setSelectedGoalId}
+              setAuthPrompt={setAuthPrompt}
               setChatContext={setChatContext}
               setChatMessages={setChatMessages}
               setChatLoading={setChatLoading}

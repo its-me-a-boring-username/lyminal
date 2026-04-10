@@ -284,7 +284,25 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               </div>
             ))}
 
-            {/* Locked second goal slot */}
+            {/* Add another goal — paid users */}
+            {isPaid && allActive.length < 5 && (
+              <button
+                onClick={() => setStep("goal-picker")}
+                className="w-full text-left border transition-all hover:opacity-90"
+                style={{ borderColor: "#e8e0d5", background: "#faf8f5" }}
+              >
+                <div className="px-5 py-4 flex items-center gap-3">
+                  <span style={{ fontSize: "1rem", color: "#b5472a" }}>+</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium" style={{ color: "#6e5c4a" }}>Add another goal</p>
+                    <p className="text-xs" style={{ color: "#8a7455" }}>Track a goal from a different sphere</p>
+                  </div>
+                  <span className="text-xs font-semibold" style={{ color: "#b5472a" }}>→</span>
+                </div>
+              </button>
+            )}
+
+            {/* Locked second goal slot — free users */}
             {!isPaid && allActive.length >= 1 && (
               <button
                 onClick={() => setAuthPrompt("upgrade")}

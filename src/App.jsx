@@ -619,6 +619,7 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
           session={session}
           setSelectedFocusSphereId={setSelectedFocusSphereId}
           setSelectedGoalId={setSelectedGoalId}
+          setAuthPrompt={setAuthPrompt}
           setChatContext={setChatContext}
           setChatMessages={setChatMessages}
           setChatLoading={setChatLoading}
