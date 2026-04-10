@@ -1,6 +1,7 @@
 import React from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
+import { ACTION_TYPES } from "../utils/actionItems.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -12,6 +13,7 @@ export function ActiveScreen({
   completedGoals, setCompletedGoals,
   editingAction, setEditingAction,
   newActionItem, setNewActionItem,
+  newActionType, setNewActionType,
   isPaid, session,
   pdfLoading, setPdfLoading,
   spheres, connections, counts, ranked,
@@ -73,8 +75,9 @@ Do NOT introduce yourself or explain what you do — that has already been handl
     setPdfLoading(null);
   };
 
-  const addActionItem = (goalId, text) => {
-    const item = { id: `m${Date.now()}`, text: text.trim() };
+  const addActionItem = (goalId, text, type) => {
+    const itemType = ACTION_TYPES.includes(type) ? type : "find";
+    const item = { id: `m${Date.now()}`, text: text.trim(), type: itemType };
     const updated = activeGoals.map(g =>
       g.goalId === goalId ? { ...g, actionItems: [...g.actionItems, item] } : g
     );
@@ -278,6 +281,16 @@ Do NOT introduce yourself or explain what you do — that has already been handl
 
                   {/* Manual action item input */}
                   <div className="flex items-center gap-2 mt-3">
+                    <select
+                      value={newActionType}
+                      onChange={e => setNewActionType(e.target.value)}
+                      className="border rounded px-2 py-1.5 text-xs outline-none"
+                      style={{ borderColor: "#d4c9bb", background: "#faf8f5", color: "#5c4e40", textTransform: "capitalize" }}
+                    >
+                      <option value="forward">forward</option>
+                      <option value="schedule">schedule</option>
+                      <option value="find">find</option>
+                    </select>
                     <input
                       className="flex-1 border rounded px-3 py-1.5 text-xs outline-none transition-colors"
                       style={{ borderColor: "#d4c9bb", background: "#faf8f5" }}
@@ -286,7 +299,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                       onChange={e => setNewActionItem(e.target.value)}
                       onKeyDown={e => {
                         if (e.key === "Enter" && newActionItem.trim()) {
-                          addActionItem(ag.goalId, newActionItem);
+                          addActionItem(ag.goalId, newActionItem, newActionType);
                           setNewActionItem("");
                         }
                       }}
@@ -294,7 +307,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                     <button
                       onClick={() => {
                         if (!newActionItem.trim()) return;
-                        addActionItem(ag.goalId, newActionItem);
+                        addActionItem(ag.goalId, newActionItem, newActionType);
                         setNewActionItem("");
                       }}
                       disabled={!newActionItem.trim()}

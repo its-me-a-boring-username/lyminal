@@ -51,3 +51,7 @@ Open `src/App.jsx` and find:
 const CORRECT_PASSWORD = "goaldirected";
 ```
 Change it to whatever you want, commit, and push. Vercel redeploys automatically.
+
+## Dev workflow docs
+- Regression checklist: `docs/REGRESSION_CHECKLIST.md`
+- Development guardrails: `docs/DEVELOPMENT_GUARDRAILS.md`

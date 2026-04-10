@@ -1,6 +1,7 @@
 import React from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
+import { normalizeActionItems } from "../utils/actionItems.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -100,9 +101,11 @@ When the user confirms the action items are good (they say yes, looks good, soun
 
 ACTION_ITEMS_CONFIRMED
 \`\`\`json
-["action item 1", "action item 2", "action item 3"]
+[{"text":"action item 1","type":"find"},{"text":"action item 2","type":"forward"},{"text":"action item 3","type":"schedule"}]
 \`\`\`
 CLOSING: [one warm sentence acknowledging their commitment]
+
+Type must always be one of: "forward", "schedule", or "find".
 
 Do not ask follow-up questions after proposing action items unless the user wants to change something. Keep the whole conversation under 6 exchanges.`,
           messages: updatedMessages.map(m => ({ role: m.role, content: m.content }))
@@ -113,11 +116,12 @@ Do not ask follow-up questions after proposing action items unless the user want
 
       if (reply.includes("ACTION_ITEMS_CONFIRMED")) {
         try {
-          const jsonMatch = reply.match(/```json\n([\s\S]*?)\n```/);
+          const jsonMatch = reply.match(/```json\r?\n([\s\S]*?)\r?\n```/);
           const closingMatch = reply.match(/CLOSING: (.+)/);
-          const items = jsonMatch ? JSON.parse(jsonMatch[1]) : [];
+          const rawItems = jsonMatch ? JSON.parse(jsonMatch[1]) : [];
+          const items = normalizeActionItems(rawItems);
           const closing = closingMatch ? closingMatch[1] : "Your action items are saved.";
-          setChatMessages(prev => [...prev, { role: "assistant", content: closing, actionItems: items.map((t, i) => ({ id: `c${i}`, text: t })) }]);
+          setChatMessages(prev => [...prev, { role: "assistant", content: closing, actionItems: items }]);
         } catch {
           setChatMessages(prev => [...prev, { role: "assistant", content: reply }]);
         }

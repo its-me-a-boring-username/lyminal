@@ -11,6 +11,7 @@ import { ChatScreen } from "./components/ChatScreen.jsx";
 import { ProgressScreen } from "./components/ProgressScreen.jsx";
 import { GoalPicker } from "./components/GoalPicker.jsx";
 import { PlanScreen } from "./components/PlanScreen.jsx";
+import { normalizeActionItems } from "./utils/actionItems.js";
 
 function TriangleLogo({ size = 80 }) {
   const s = size;
@@ -168,6 +169,7 @@ function GoalChart() {
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [newActionItem, setNewActionItem] = useState("");
+  const [newActionType, setNewActionType] = useState("find");
   const [editingAction, setEditingAction] = useState(null); // {goalId, itemId, text}
   const [pdfLoading, setPdfLoading] = useState(null); // 'chart' | 'full' | null
   const [chatLoading, setChatLoading] = useState(false);
@@ -189,7 +191,13 @@ function GoalChart() {
         const s = JSON.parse(saved);
         if (s.spheres) setSpheres(s.spheres);
         if (s.connections) setConnections(s.connections);
-        if (s.activeGoals) setActiveGoals(s.activeGoals);
+        if (s.activeGoals) {
+          const normalizedGoals = s.activeGoals.map((goal) => ({
+            ...goal,
+            actionItems: normalizeActionItems(goal.actionItems || []),
+          }));
+          setActiveGoals(normalizedGoals);
+        }
         if (s.step) setStep(s.step);
         if (s.completedGoals) setCompletedGoals(new Set(s.completedGoals));
         if (s.checkedItems) {
@@ -444,6 +452,8 @@ function GoalChart() {
           setEditingAction={setEditingAction}
           newActionItem={newActionItem}
           setNewActionItem={setNewActionItem}
+          newActionType={newActionType}
+          setNewActionType={setNewActionType}
           isPaid={isPaid}
           session={session}
           pdfLoading={pdfLoading}
@@ -660,6 +670,7 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
         <DevReset />
         <PlanScreen
           activeGoals={activeGoals}
+          setActiveGoals={setActiveGoals}
           checkedItems={checkedItems} setCheckedItems={setCheckedItems}
           completedGoals={completedGoals} setCompletedGoals={setCompletedGoals}
           spheres={spheres} connections={connections}

@@ -1,4 +1,5 @@
 import { supabase } from "../supabaseClient.js";
+import { normalizeActionItems } from "./actionItems.js";
 
 /**
  * Save chart + active goals to Supabase.
@@ -98,7 +99,7 @@ export async function loadChart(session) {
       sphereColor: g.sphere_color,
       goalId:      g.goal_id,
       goalText:    g.goal_text,
-      actionItems: g.action_items || []
+      actionItems: normalizeActionItems(g.action_items || [])
     }));
 
     const checkedItems = {};
