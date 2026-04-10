@@ -147,13 +147,12 @@ export function GoalPicker({
                 return (
                   <div key={sphere.id} style={{ border: "1px solid #e8e0d5", background: "white" }}>
                     {/* Sphere header */}
-                    <div style={{ padding: "12px 18px", borderBottom: "1px solid #f0ebe3", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: sphere.color, flexShrink: 0 }} />
-                      <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: sphere.color, fontWeight: 600 }}>
+                    <div style={{ background: sphere.color, padding: "10px 18px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "white", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>
                         {sphere.name}
                       </span>
                       {allActive && (
-                        <span style={{ fontSize: "9px", color: "#8a7455", marginLeft: "auto", fontStyle: "italic" }}>
+                        <span style={{ fontSize: "9px", color: "rgba(255,255,255,0.75)", fontStyle: "italic" }}>
                           all goals active
                         </span>
                       )}

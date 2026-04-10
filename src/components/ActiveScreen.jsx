@@ -22,6 +22,7 @@ export function ActiveScreen({
   isMobile,
 }) {
   const allActive = focusRound >= 1 ? activeGoals : activeGoals.slice(0, 1);
+  const [celebrating, setCelebrating] = React.useState(null); // goalId currently celebrating
 
   const handleTalkToLyme = async (ag) => {
     setChatContext(ag);
@@ -126,9 +127,10 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               <div key={ag.sphereId} className="border" style={{ borderColor: "#e8e0d5", background: "white" }}>
 
                 {/* Header */}
-                <div className="px-5 py-4 flex items-center gap-3 border-b" style={{ borderColor: "#e8e0d5" }}>
-                  <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: ag.sphereColor }} />
-                  <span className="text-xs uppercase tracking-wider font-medium" style={{ color: ag.sphereColor }}>{ag.sphereName}</span>
+                <div style={{ background: ag.sphereColor, padding: "10px 20px" }}>
+                  <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "white", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>
+                    {ag.sphereName}
+                  </span>
                 </div>
 
                 {/* Goal */}
@@ -147,13 +149,19 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                     </button>
                     <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: completedGoals.has(ag.goalId) ? "#6e5c4a" : "#1c1410", textDecoration: completedGoals.has(ag.goalId) ? "line-through" : "none" }}>{ag.goalText}</p>
                   </div>
-                  {completedGoals.has(ag.goalId) && (
+                  {celebrating === ag.goalId ? (
+                    <p className="mt-3 ml-8 text-xs font-medium" style={{ color: "#4a7a72" }}>
+                      🎉 Well done! Choosing your next goal...
+                    </p>
+                  ) : completedGoals.has(ag.goalId) && (
                     <button
                       onClick={() => {
-                        setSelectedFocusSphereId(ranked[0]?.id || null);
-                        setSelectedGoalId(null);
-                        setActiveGoals(prev => prev.filter(g => g.goalId !== ag.goalId));
-                        setStep("focus");
+                        setCelebrating(ag.goalId);
+                        setTimeout(() => {
+                          setActiveGoals(prev => prev.filter(g => g.goalId !== ag.goalId));
+                          setCelebrating(null);
+                          setStep("goal-picker");
+                        }, 1500);
                       }}
                       className="mt-3 ml-8 text-xs font-semibold hover:opacity-80 transition-opacity"
                       style={{ color: "#b5472a" }}
