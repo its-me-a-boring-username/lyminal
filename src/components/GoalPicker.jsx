@@ -12,9 +12,16 @@ export function GoalPicker({
   checkedItems,
   session,
   setStep,
+  setFocusRound,
+  setAuthPrompt,
   isMobile,
   isPaid,
 }) {
+  const MAX_GOALS_FREE = 1;
+  const MAX_GOALS_PAID = 5;
+  const atFreeLimit = !isPaid && activeGoals.length >= MAX_GOALS_FREE;
+  const atPaidLimit = activeGoals.length >= MAX_GOALS_PAID;
+
   // Goals already being tracked (active) or previously completed
   const trackedGoalIds = new Set([
     ...activeGoals.map(ag => ag.goalId),
@@ -32,6 +39,7 @@ export function GoalPicker({
     };
     const updated = [...activeGoals, newGoal];
     setActiveGoals(updated);
+    setFocusRound(1); // ensure ActiveScreen shows all goals, not just the first
     saveChart(session, {
       spheres,
       connections,
@@ -80,7 +88,44 @@ export function GoalPicker({
             Pick a goal from any sphere below. You can work on multiple goals at once.
           </p>
 
-          {spheresWithGoals.length === 0 && spheresWithNoGoals.length === 0 ? (
+          {atPaidLimit ? (
+            <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "32px 24px", textAlign: "center" }}>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>
+                You've reached the goal limit
+              </p>
+              <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>
+                You can track up to 5 goals at once. Complete or remove one before adding another.
+              </p>
+              <button
+                onClick={() => setStep("active")}
+                style={{ background: "#b5472a", color: "white", fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer" }}
+              >
+                BACK TO MY GOALS →
+              </button>
+            </div>
+          ) : atFreeLimit ? (
+            <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "32px 24px", textAlign: "center" }}>
+              <div style={{ fontSize: "1.5rem", marginBottom: "12px" }}>🔒</div>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>
+                Tracking multiple goals is a premium feature
+              </p>
+              <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>
+                Upgrade to track up to 5 goals across different spheres at the same time.
+              </p>
+              <button
+                onClick={() => setAuthPrompt("upgrade")}
+                style={{ background: "#b5472a", color: "white", fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", marginBottom: "10px", display: "block", width: "100%" }}
+              >
+                UPGRADE →
+              </button>
+              <button
+                onClick={() => setStep("active")}
+                style={{ fontSize: "11px", color: "#8a7455", background: "none", border: "none", cursor: "pointer" }}
+              >
+                Back to my goals
+              </button>
+            </div>
+          ) : spheresWithGoals.length === 0 && spheresWithNoGoals.length === 0 ? (
             <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "32px 24px", textAlign: "center" }}>
               <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>
                 All goals are already active

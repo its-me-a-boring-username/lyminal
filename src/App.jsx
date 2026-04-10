@@ -641,6 +641,8 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
           checkedItems={checkedItems}
           session={session}
           setStep={setStep}
+          setFocusRound={setFocusRound}
+          setAuthPrompt={setAuthPrompt}
           isMobile={isMobile}
           isPaid={isPaid}
         />

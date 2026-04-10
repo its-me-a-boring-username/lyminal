@@ -3,7 +3,7 @@ import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');`;
-const SLOT = 120;
+const SLOT = 140;
 
 function ArcCircle({ cx, cy, r, pct, color, sw }) {
   if (pct >= 100) {
@@ -46,7 +46,7 @@ function MiniPie({ done, total, color }) {
 }
 
 function RingSlot({ sphere, pct, isActive, dist, onClick }) {
-  const size = isActive ? 100 : dist === 1 ? 78 : 60;
+  const size = isActive ? 116 : dist === 1 ? 88 : 66;
   const cx = size / 2, cy = size / 2;
   const r = size / 2 - 7;
   const sw = isActive ? 8 : 5;
@@ -430,8 +430,8 @@ export function ProgressScreen({
 
           {/* Colored header band — replaces the left strip on mobile, adds color on desktop */}
           <div style={{
-            background: `${headerColor}14`,
-            borderBottom: `2px solid ${headerColor}35`,
+            background: `${headerColor}28`,
+            borderBottom: `2px solid ${headerColor}60`,
             padding: "24px 24px 20px",
             transition: "background 0.35s ease, border-color 0.35s ease",
           }}>
