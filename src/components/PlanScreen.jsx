@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
+﻿import React, { useState, useRef } from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
 
-// ── Ring sidebar button ──────────────────────────────────────────────────────
+// â”€â”€ Ring sidebar button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function RingButton({ color, isActive, onClick }) {
   const size = isActive ? 38 : 28;
   const sw = isActive ? 5 : 3;
@@ -28,7 +28,7 @@ function RingButton({ color, isActive, onClick }) {
   );
 }
 
-// ── Inline reminder UI ───────────────────────────────────────────────────────
+// â”€â”€ Inline reminder UI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ReminderPanel({ item, color, onClose }) {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("09:00");
@@ -43,9 +43,9 @@ function ReminderPanel({ item, color, onClose }) {
   if (saved) {
     return (
       <div style={{ padding: "14px 18px", background: "#f0faf6", borderTop: "1px solid #e8e0d5" }}>
-        <p style={{ fontSize: "12px", color: "#4a7a72", fontWeight: 500, margin: "0 0 2px" }}>Reminder set ✓</p>
-        <p style={{ fontSize: "11px", color: "#6e5c4a", margin: 0 }}>{date} at {time} · {repeat === "once" ? "One time" : repeat === "daily" ? "Every day" : "Every week"}</p>
-        <p style={{ fontSize: "10px", color: "#8a7455", margin: "6px 0 0", fontStyle: "italic" }}>Push notifications coming soon — we'll save this for now.</p>
+        <p style={{ fontSize: "12px", color: "#4a7a72", fontWeight: 500, margin: "0 0 2px" }}>Reminder set âœ“</p>
+        <p style={{ fontSize: "11px", color: "#6e5c4a", margin: 0 }}>{date} at {time} Â· {repeat === "once" ? "One time" : repeat === "daily" ? "Every day" : "Every week"}</p>
+        <p style={{ fontSize: "10px", color: "#8a7455", margin: "6px 0 0", fontStyle: "italic" }}>Push notifications coming soon â€” we'll save this for now.</p>
       </div>
     );
   }
@@ -103,7 +103,7 @@ function ReminderPanel({ item, color, onClose }) {
   );
 }
 
-// ── Inline forward UI ────────────────────────────────────────────────────────
+// â”€â”€ Inline forward UI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ForwardPanel({ item, onClose }) {
   const [contact, setContact] = useState("");
   const [sent, setSent] = useState(false);
@@ -122,7 +122,7 @@ function ForwardPanel({ item, onClose }) {
   if (sent) {
     return (
       <div style={{ padding: "14px 18px", background: "#faf8f5", borderTop: "1px solid #e8e0d5" }}>
-        <p style={{ fontSize: "12px", color: "#4a7a72", fontWeight: 500, margin: 0 }}>Forwarded ✓</p>
+        <p style={{ fontSize: "12px", color: "#4a7a72", fontWeight: 500, margin: 0 }}>Forwarded âœ“</p>
       </div>
     );
   }
@@ -151,7 +151,7 @@ function ForwardPanel({ item, onClose }) {
   );
 }
 
-// ── Inline Lyme panel ────────────────────────────────────────────────────────
+// â”€â”€ Inline Lyme panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function LymePanel({ item, goal, onMarkDone, onClose }) {
   const [input, setInput] = useState(item.text);
   const [loading, setLoading] = useState(false);
@@ -173,7 +173,7 @@ Sphere: ${goal.sphereName}
 Goal: ${goal.goalText}
 Action item: ${item.text}
 
-Help them directly and concisely. If they need information found, provide it. If they need something drafted, draft it. If they need help with timing or planning, give specific suggestions. One clear response — no follow-up questions unless essential. Do not introduce yourself.`,
+Help them directly and concisely. If they need information found, provide it. If they need something drafted, draft it. If they need help with timing or planning, give specific suggestions. One clear response â€” no follow-up questions unless essential. Do not introduce yourself.`,
           messages: [{ role: "user", content: input.trim() }],
         }),
       });
@@ -200,14 +200,14 @@ Help them directly and concisely. If they need information found, provide it. If
             fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410",
             background: "white", outline: "none", opacity: loading ? 0.6 : 1,
           }}
-          placeholder={loading ? "Lyme is thinking…" : "Ask Lyme anything about this step…"}
+          placeholder={loading ? "Lyme is thinkingâ€¦" : "Ask Lyme anything about this stepâ€¦"}
         />
         <button
           onClick={ask}
           disabled={loading || !input.trim()}
           style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "#b5472a", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}
         >
-          Ask →
+          Ask â†’
         </button>
       </div>
       {response && (
@@ -218,7 +218,7 @@ Help them directly and concisely. If they need information found, provide it. If
             onClick={onMarkDone}
             style={{ fontSize: "11px", fontWeight: 600, color: "#b5472a", background: "none", border: "1px solid #b5472a", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}
           >
-            Mark step as done →
+            Mark step as done â†’
           </button>
         </div>
       )}
@@ -226,7 +226,7 @@ Help them directly and concisely. If they need information found, provide it. If
   );
 }
 
-// ── Action item row ──────────────────────────────────────────────────────────
+// â”€â”€ Action item row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ActionItem({ item, goal, isChecked, isExpanded, onToggleExpand, onCheck, checkedItems, setCheckedItems, spheres, connections, activeGoals, completedGoals, session }) {
   const [mode, setMode] = useState(null); // 'remind' | 'forward' | 'lyme'
   const color = goal.sphereColor;
@@ -273,7 +273,7 @@ function ActionItem({ item, goal, isChecked, isExpanded, onToggleExpand, onCheck
         }}>
           {item.text}
         </span>
-        <span style={{ color: "#c4b8a8", fontSize: "13px", flexShrink: 0, transform: isExpanded ? "rotate(90deg)" : "none", transition: "transform 0.2s", display: "inline-block" }}>›</span>
+        <span style={{ color: "#c4b8a8", fontSize: "13px", flexShrink: 0, transform: isExpanded ? "rotate(90deg)" : "none", transition: "transform 0.2s", display: "inline-block" }}>â€º</span>
       </div>
 
       {/* Expanded options */}
@@ -358,7 +358,7 @@ function ActionItem({ item, goal, isChecked, isExpanded, onToggleExpand, onCheck
   );
 }
 
-// ── Main component ───────────────────────────────────────────────────────────
+// â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function PlanScreen({
   activeGoals,
   checkedItems, setCheckedItems,
@@ -370,10 +370,11 @@ export function PlanScreen({
   setAuthPrompt,
 }) {
   const [selected, setSelected] = useState(0);
-  const [expanded, setExpanded] = useState(null); // action item id
+  const [expanded, setExpanded] = useState(null);
 
   const safeSelected = Math.min(selected, Math.max(0, activeGoals.length - 1));
   const currentGoal = activeGoals[safeSelected];
+  const headerColor = currentGoal?.sphereColor || "#2c1f14";
 
   const toggleCheck = (goalId, itemId) => {
     const current = new Set(checkedItems[goalId] || []);
@@ -383,134 +384,165 @@ export function PlanScreen({
     saveChart(session, { spheres, connections, activeGoals, checkedItems: updated, completedGoals });
   };
 
-  // ── Paywall gate ──
+  const desktopStrip = (
+    <div
+      className="hidden lg:block flex-shrink-0 transition-colors duration-300"
+      style={{ width: "350px", background: headerColor }}
+    />
+  );
+
   if (!isPaid) {
     return (
-      <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
         <style>{FONTS}</style>
-        {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-        {isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-        <div className="px-6 py-10 max-w-2xl mx-auto pb-24 lg:pb-10">
-          <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 6px" }}>Plan</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 28px" }}>Get things done</h2>
-          <button
-            onClick={() => setAuthPrompt("upgrade")}
-            className="w-full text-left border-2"
-            style={{ borderColor: "#e8e0d5", borderStyle: "dashed", background: "#faf8f5" }}
-          >
-            <div className="px-5 py-6 flex items-center gap-3">
-              <span style={{ fontSize: "1rem" }}>🔒</span>
-              <div className="flex-1">
-                <p className="text-sm font-medium" style={{ color: "#6e5c4a", margin: "0 0 4px" }}>The Plan tab is a premium feature</p>
-                <p className="text-xs" style={{ color: "#8a7455", margin: 0, lineHeight: 1.5 }}>Upgrade to get help actually completing your action items — set reminders, delegate tasks, and ask Lyme to search, draft and plan on your behalf.</p>
+        {desktopStrip}
+        <div className="w-full lg:flex-1 lg:flex lg:flex-col">
+          {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+          {isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+
+          <div className="px-6 py-10 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-10">
+            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 6px" }}>Plan</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 28px" }}>
+              Get things done
+            </h2>
+
+            <button
+              onClick={() => setAuthPrompt("upgrade")}
+              className="w-full text-left border-2"
+              style={{ borderColor: "#e8e0d5", borderStyle: "dashed", background: "#faf8f5" }}
+            >
+              <div className="px-5 py-6 flex items-center gap-3">
+                <span style={{ fontSize: "1rem" }}>🔒</span>
+                <div className="flex-1">
+                  <p className="text-sm font-medium" style={{ color: "#6e5c4a", margin: "0 0 4px" }}>The Plan tab is a premium feature</p>
+                  <p className="text-xs" style={{ color: "#8a7455", margin: 0, lineHeight: 1.5 }}>
+                    Upgrade to get help actually completing your action items - set reminders, delegate tasks, and ask Lyme to search, draft and plan on your behalf.
+                  </p>
+                </div>
+                <span className="text-xs font-semibold" style={{ color: "#b5472a", flexShrink: 0 }}>Upgrade →</span>
               </div>
-              <span className="text-xs font-semibold" style={{ color: "#b5472a", flexShrink: 0 }}>Upgrade →</span>
-            </div>
-          </button>
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
-  // ── Empty state ──
   if (activeGoals.length === 0) {
     return (
-      <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
         <style>{FONTS}</style>
-        {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-        {isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-        <div className="px-6 py-10 max-w-2xl mx-auto pb-24 lg:pb-10" style={{ textAlign: "center", paddingTop: "60px" }}>
-          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>No active goals yet</p>
-          <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>Add a goal to start planning how to complete it.</p>
-          <button onClick={() => setStep("goal-picker")} style={{ background: "#b5472a", color: "white", fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
-            ADD A GOAL →
-          </button>
+        {desktopStrip}
+        <div className="w-full lg:flex-1 lg:flex lg:flex-col">
+          {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+          {isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+
+          <div className="px-6 py-10 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-10" style={{ textAlign: "center", paddingTop: "60px" }}>
+            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>No active goals yet</p>
+            <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>
+              Add a goal to start planning how to complete it.
+            </p>
+            <button
+              onClick={() => setStep("goal-picker")}
+              style={{ background: "#b5472a", color: "white", fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}
+            >
+              ADD A GOAL →
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
-  const headerColor = currentGoal?.sphereColor || "#b5472a";
-
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
       <style>{FONTS}</style>
-      {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-      {isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+      {desktopStrip}
 
-      <div style={{ display: "flex", flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
+      <div className="w-full lg:flex-1 lg:flex lg:flex-col">
+        {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+        {isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
 
-        {/* ── Ring sidebar ── */}
-        <div style={{
-          width: "56px", flexShrink: 0,
-          display: "flex", flexDirection: "column", alignItems: "center",
-          paddingTop: "16px", gap: "4px",
-          borderRight: "1px solid #e8e0d5", background: "#faf8f5",
-        }}>
-          {activeGoals.map((ag, i) => (
-            <RingButton
-              key={ag.goalId}
-              color={ag.sphereColor}
-              isActive={i === safeSelected}
-              onClick={() => { setSelected(i); setExpanded(null); }}
-            />
-          ))}
-        </div>
-
-        {/* ── Content area ── */}
-        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-
-          {/* Colored goal header */}
-          <div style={{
-            background: headerColor + "1e",
-            borderBottom: `2px solid ${headerColor}55`,
-            padding: "16px 18px",
-            transition: "background 0.3s ease, border-color 0.3s ease",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
-              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: headerColor, flexShrink: 0 }} />
-              <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: headerColor, fontFamily: "'Inter', sans-serif" }}>
-                {currentGoal.sphereName}
-              </span>
-            </div>
-            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.05rem", fontWeight: 600, color: "#1c1410", margin: 0, lineHeight: 1.35 }}>
-              {currentGoal.goalText}
-            </p>
+        <div style={{ display: "flex", flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
+          <div
+            style={{
+              width: "56px",
+              flexShrink: 0,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              paddingTop: "16px",
+              gap: "4px",
+              borderRight: "1px solid #e8e0d5",
+              background: "#faf8f5",
+            }}
+          >
+            {activeGoals.map((ag, i) => (
+              <RingButton
+                key={ag.goalId}
+                color={ag.sphereColor}
+                isActive={i === safeSelected}
+                onClick={() => {
+                  setSelected(i);
+                  setExpanded(null);
+                }}
+              />
+            ))}
           </div>
 
-          {/* Action items */}
-          {currentGoal.actionItems.length === 0 ? (
-            <div style={{ padding: "24px 18px", textAlign: "center" }}>
-              <p style={{ fontSize: "13px", color: "#8a7455", fontStyle: "italic", margin: "0 0 14px" }}>No action items yet.</p>
-              <button
-                onClick={() => setStep("chat")}
-                style={{ background: "#b5472a", color: "white", fontSize: "11px", fontWeight: 600, letterSpacing: "0.05em", padding: "9px 18px", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}
-              >
-                TALK TO LYME TO BUILD YOUR PLAN →
-              </button>
+          <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                background: headerColor + "1e",
+                borderBottom: `2px solid ${headerColor}55`,
+                padding: "16px 18px",
+                transition: "background 0.3s ease, border-color 0.3s ease",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: headerColor, flexShrink: 0 }} />
+                <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: headerColor, fontFamily: "'Inter', sans-serif" }}>
+                  {currentGoal.sphereName}
+                </span>
+              </div>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.05rem", fontWeight: 600, color: "#1c1410", margin: 0, lineHeight: 1.35 }}>
+                {currentGoal.goalText}
+              </p>
             </div>
-          ) : (
-            <div style={{ flex: 1 }}>
-              {currentGoal.actionItems.map(item => (
-                <ActionItem
-                  key={item.id}
-                  item={item}
-                  goal={currentGoal}
-                  isChecked={checkedItems[currentGoal.goalId]?.has(item.id) || false}
-                  isExpanded={expanded === item.id}
-                  onToggleExpand={() => setExpanded(prev => prev === item.id ? null : item.id)}
-                  onCheck={(itemId) => toggleCheck(currentGoal.goalId, itemId)}
-                  checkedItems={checkedItems}
-                  setCheckedItems={setCheckedItems}
-                  spheres={spheres}
-                  connections={connections}
-                  activeGoals={activeGoals}
-                  completedGoals={completedGoals}
-                  session={session}
-                />
-              ))}
-            </div>
-          )}
+
+            {currentGoal.actionItems.length === 0 ? (
+              <div style={{ padding: "24px 18px", textAlign: "center" }}>
+                <p style={{ fontSize: "13px", color: "#8a7455", fontStyle: "italic", margin: "0 0 14px" }}>No action items yet.</p>
+                <button
+                  onClick={() => setStep("chat")}
+                  style={{ background: "#b5472a", color: "white", fontSize: "11px", fontWeight: 600, letterSpacing: "0.05em", padding: "9px 18px", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}
+                >
+                  TALK TO LYME TO BUILD YOUR PLAN →
+                </button>
+              </div>
+            ) : (
+              <div style={{ flex: 1 }}>
+                {currentGoal.actionItems.map(item => (
+                  <ActionItem
+                    key={item.id}
+                    item={item}
+                    goal={currentGoal}
+                    isChecked={checkedItems[currentGoal.goalId]?.has(item.id) || false}
+                    isExpanded={expanded === item.id}
+                    onToggleExpand={() => setExpanded(prev => (prev === item.id ? null : item.id))}
+                    onCheck={(itemId) => toggleCheck(currentGoal.goalId, itemId)}
+                    checkedItems={checkedItems}
+                    setCheckedItems={setCheckedItems}
+                    spheres={spheres}
+                    connections={connections}
+                    activeGoals={activeGoals}
+                    completedGoals={completedGoals}
+                    session={session}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
