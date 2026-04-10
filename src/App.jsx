@@ -607,6 +607,7 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
         <AuthOverlay />
         <DevReset />
         <ProgressScreen
+          spheres={spheres}
           activeGoals={activeGoals}
           checkedItems={checkedItems}
           completedGoals={completedGoals}
@@ -614,11 +615,13 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
           isPaid={isPaid}
           setStep={setStep}
           session={session}
+          setSelectedFocusSphereId={setSelectedFocusSphereId}
+          setSelectedGoalId={setSelectedGoalId}
+          setActiveGoals={setActiveGoals}
         />
       </>
     );
   }
-
 
   // ── PLAN STEP (placeholder) ──
   if (step === "plan") {
