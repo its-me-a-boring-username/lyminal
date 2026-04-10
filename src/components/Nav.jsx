@@ -2,7 +2,7 @@ import React from "react";
 
 const OCHRE = "#b5472a";
 const OCHRE_TINT = "#b5472a14";
-const INACTIVE = "#c4b8a8";
+const INACTIVE = "#8a7a68";
 const BORDER = "#e8e0d5";
 const BG = "#faf8f5";
 

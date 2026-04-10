@@ -149,7 +149,7 @@ Do not ask follow-up questions after proposing action items unless the user want
       {isMobile && <Nav step="chat" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
 
       {/* Header */}
-      <div className="px-6 py-4 flex items-center gap-4 border-b" style={{ background: "white", borderColor: "#e8e0d5" }}>
+      <div className="px-6 py-4 flex items-center gap-4 border-b" style={{ background: "white", borderColor: "#c4b8a8" }}>
         <div className="flex items-center gap-2 flex-1">
           <div className="w-2.5 h-2.5 rounded-full" style={{ background: chatContext?.sphereColor }} />
           <div>
@@ -208,10 +208,10 @@ Do not ask follow-up questions after proposing action items unless the user want
       </div>
 
       {!chatLoading && chatMessages.length > 0 && (
-        <div className="px-6 py-4 border-t flex gap-3" style={{ background: "white", borderColor: "#e8e0d5" }}>
+        <div className="px-4 py-3 border-t flex gap-3" style={{ background: "white", borderColor: "#c4b8a8" }}>
           <input
-            className="flex-1 px-4 py-3 text-sm outline-none border"
-            style={{ borderColor: "#e8e0d5", background: "#faf8f5", color: "#1c1410" }}
+            className="flex-1 px-4 py-2.5 text-sm outline-none border rounded-lg"
+            style={{ borderColor: "#c4b8a8", background: "#faf8f5", color: "#1c1410" }}
             placeholder="Type a message…"
             value={chatInput}
             onChange={e => setChatInput(e.target.value)}
