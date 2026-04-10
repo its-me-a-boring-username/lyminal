@@ -8,6 +8,7 @@ import { IntroScreens } from "./components/IntroScreens.jsx";
 import { FlowScreens } from "./components/FlowScreens.jsx";
 import { ResultsFlow } from "./components/ResultsFlow.jsx";
 import { ChatScreen } from "./components/ChatScreen.jsx";
+import { ProgressScreen } from "./components/ProgressScreen.jsx";
 
 function TriangleLogo({ size = 80 }) {
   const s = size;
@@ -599,25 +600,25 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
     );
   }
 
-  // ── PROGRESS STEP (placeholder) ──
+  // ── PROGRESS STEP ──
   if (step === "progress") {
     return (
-      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter',sans-serif"}}>
-        <style>{FONTS}</style>
-        <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#4a7a72"}} />
-        <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-          {!isMobile && <NavBar />}
-          {isMobile && <NavBar />}
-          <div className="px-6 py-10 max-w-2xl mx-auto w-full lg:px-16">
-            <AuthOverlay />
-            <p style={{fontSize:"0.65rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#8a7455", margin:"0 0 6px", fontFamily:"'Inter',sans-serif"}}>Coming soon</p>
-            <h2 style={{fontFamily:"'Playfair Display',serif", fontSize:"1.75rem", fontWeight:600, color:"#1c1410", margin:"0 0 12px"}}>Progress</h2>
-            <p style={{fontSize:"0.875rem", color:"#5c4e40", fontWeight:300, lineHeight:1.6}}>Track your progress across all your spheres and see how far you've come.</p>
-          </div>
-        </div>
-      </div>
+      <>
+        <AuthOverlay />
+        <DevReset />
+        <ProgressScreen
+          activeGoals={activeGoals}
+          checkedItems={checkedItems}
+          completedGoals={completedGoals}
+          isMobile={isMobile}
+          isPaid={isPaid}
+          setStep={setStep}
+          session={session}
+        />
+      </>
     );
   }
+
 
   // ── PLAN STEP (placeholder) ──
   if (step === "plan") {
