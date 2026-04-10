@@ -1,7 +1,12 @@
 export const ACTION_TYPES = ["forward", "schedule", "find"];
 
-const FORWARD_HINTS = ["send", "email", "share", "delegate", "ea", "forward", "message"];
-const SCHEDULE_HINTS = ["schedule", "book", "calendar", "appointment", "remind", "call", "meeting"];
+export const ACTION_TYPE_DESCRIPTIONS = `Use these definitions when assigning type:
+- forward: communicate, delegate, or send to another person (e.g. email, text, share with EA, ask a teammate)
+- schedule: anything time-based or location-based (e.g. calendar block, reminder, appointment, go somewhere, meet someone)
+- find: research, source, or acquire (e.g. look something up, find options, buy or order a product)`;
+
+const FORWARD_HINTS = ["send", "email", "share", "delegate", "ea", "forward", "message", "text", "call", "communicate", "ask", "tell", "notify"];
+const SCHEDULE_HINTS = ["schedule", "book", "calendar", "appointment", "remind", "meeting", "block", "go", "visit", "trip", "attend", "check out"];
 
 export function inferActionType(text = "") {
   const value = String(text || "").toLowerCase();

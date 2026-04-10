@@ -1,7 +1,7 @@
 import React from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
-import { normalizeActionItems } from "../utils/actionItems.js";
+import { normalizeActionItems, ACTION_TYPE_DESCRIPTIONS } from "../utils/actionItems.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -106,10 +106,7 @@ ACTION_ITEMS_CONFIRMED
 CLOSING: [one warm sentence acknowledging their commitment]
 
 Type must always be one of: "forward", "schedule", or "find".
-Use these definitions when assigning type:
-- forward: delegate/share/send to another person (EA, teammate, partner)
-- schedule: anything time-based (calendar block, reminder, appointment, follow-up date)
-- find: research/discovery/sourcing information, options, or resources
+${ACTION_TYPE_DESCRIPTIONS}
 
 Do not ask follow-up questions after proposing action items unless the user wants to change something. Keep the whole conversation under 6 exchanges.`,
           messages: updatedMessages.map(m => ({ role: m.role, content: m.content }))
@@ -217,15 +214,16 @@ Do not ask follow-up questions after proposing action items unless the user want
         <div ref={messagesEndRef} />
       </div>
 
-      {!chatLoading && chatMessages.length > 0 && (
-        <div className="px-4 py-3 border-t flex gap-3" style={{ background: "white", borderColor: "#c4b8a8" }}>
+      <div className="px-4 py-3 border-t flex gap-3" style={{ background: "white", borderColor: "#c4b8a8" }}>
           <input
             className="flex-1 px-4 py-2.5 text-sm outline-none border rounded-lg"
-            style={{ borderColor: "#c4b8a8", background: "#faf8f5", color: "#1c1410" }}
-            placeholder="Type a message…"
+            style={{ borderColor: "#c4b8a8", background: "#faf8f5", color: "#1c1410", opacity: chatLoading ? 0.5 : 1 }}
+            placeholder={chatLoading ? "Lyme is thinking…" : "Type a message…"}
             value={chatInput}
+            disabled={chatLoading}
             onChange={e => setChatInput(e.target.value)}
             onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
+            autoFocus
           />
           <button onClick={sendMessage} disabled={!chatInput.trim() || chatLoading}
             className="px-5 py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-30 transition-opacity"
@@ -233,7 +231,6 @@ Do not ask follow-up questions after proposing action items unless the user want
             Send
           </button>
         </div>
-      )}
     </div>
   );
 }

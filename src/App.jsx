@@ -77,7 +77,9 @@ function GoalChart() {
   const [didDrag, setDidDrag] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [session, setSession] = useState(null);
-  const [isPaid, setIsPaid] = useState(false);
+  const [tier, setTier] = useState("free"); // "free" | "paid_1" | "paid_2"
+  const isPaid = tier !== "free";
+  const isPro = tier === "paid_2";
   const [authPrompt, setAuthPrompt] = useState(null); // "save_chart" | "save_plan" | "upgrade" | null
   const [hasSeenChartPrompt, setHasSeenChartPrompt] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState("warm_earth");
@@ -92,11 +94,12 @@ function GoalChart() {
   // Auth session listener + tier fetch
   useEffect(() => {
     const fetchTier = async (session) => {
-      if (!session) { setIsPaid(false); return; }
-      setIsPaid(true);
+      if (!session) { setTier("free"); return; }
+      setTier("paid_2"); // hardcoded until Stripe is live — all logged-in users get full access
       /* Production tier check — uncomment before launch:
       const { data } = await supabase.from('profiles').select('tier').eq('id', session.user.id).single();
-      setIsPaid(data?.tier === 'paid');
+      const t = data?.tier;
+      setTier(t === 'paid_2' || t === 'paid_1' ? t : 'free');
       */
     };
 
@@ -542,7 +545,7 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
                 <div style={{display:"flex", alignItems:"center", gap:"10px"}}>
                   <p style={{fontSize:"0.875rem", color:"#1c1410", margin:0, fontFamily:"'Inter',sans-serif"}}>Current plan</p>
                   <span style={{fontSize:"0.6rem", fontWeight:600, letterSpacing:"0.08em", background:"#f0e8df", color:"#6e5c4a", padding:"3px 8px", fontFamily:"'Inter',sans-serif"}}>
-                    {isPaid ? "PREMIUM" : "FREE"}
+                    {tier === "paid_2" ? "PRO" : tier === "paid_1" ? "STANDARD" : "FREE"}
                   </span>
                 </div>
                 {!isPaid && <button style={btn("primary")} onClick={() => setAuthPrompt("upgrade")}>Upgrade →</button>}
@@ -675,7 +678,7 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
           completedGoals={completedGoals} setCompletedGoals={setCompletedGoals}
           spheres={spheres} connections={connections}
           session={session}
-          isMobile={isMobile} isPaid={isPaid}
+          isMobile={isMobile} isPaid={isPaid} isPro={isPro}
           setStep={setStep}
           setAuthPrompt={setAuthPrompt}
         />
