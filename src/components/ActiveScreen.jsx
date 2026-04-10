@@ -284,7 +284,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               </div>
             ))}
 
-            {/* Add another goal — paid users */}
+            {/* Add another goal — paid users under limit */}
             {isPaid && allActive.length < 5 && (
               <button
                 onClick={() => setStep("goal-picker")}
@@ -300,6 +300,13 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                   <span className="text-xs font-semibold" style={{ color: "#b5472a" }}>→</span>
                 </div>
               </button>
+            )}
+
+            {/* Max goals reached — paid users at limit */}
+            {isPaid && allActive.length >= 5 && (
+              <p className="text-xs text-center" style={{ color: "#8a7455", padding: "12px 0" }}>
+                You're tracking 5 goals — the maximum. Complete one before adding another.
+              </p>
             )}
 
             {/* Locked second goal slot — free users */}

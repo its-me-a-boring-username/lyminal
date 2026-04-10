@@ -101,7 +101,8 @@ function DetailPanel({
 }) {
   if (!sphere) return null;
 
-  const canAddGoal = isPaid || activeGoals.length === 0;
+  const atMax = activeGoals.length >= 5;
+  const canAddGoal = !atMax && (isPaid || activeGoals.length === 0);
 
   // ── Empty state ──
   if (!activeGoal) {
@@ -113,7 +114,11 @@ function DetailPanel({
         <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>
           Add a goal for this sphere to start tracking your progress here.
         </p>
-        {canAddGoal ? (
+        {atMax ? (
+          <p style={{ fontSize: "12px", color: "#8a7455", fontStyle: "italic" }}>
+            You're tracking 5 goals — the maximum. Complete one before adding another.
+          </p>
+        ) : canAddGoal ? (
           <button
             onClick={() => setStep("goal-picker")}
             style={{
