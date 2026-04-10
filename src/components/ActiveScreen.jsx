@@ -127,10 +127,23 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               <div key={ag.sphereId} className="border" style={{ borderColor: "#e8e0d5", background: "white" }}>
 
                 {/* Header */}
-                <div style={{ background: ag.sphereColor, padding: "10px 20px" }}>
+                <div style={{ background: ag.sphereColor, padding: "10px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "white", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>
                     {ag.sphereName}
                   </span>
+                  <button
+                    onClick={() => {
+                      if (window.confirm(`Remove "${ag.goalText}" from your active goals?`)) {
+                        const updated = activeGoals.filter(g => g.goalId !== ag.goalId);
+                        setActiveGoals(updated);
+                        saveChart(session, { spheres, connections, activeGoals: updated, checkedItems, completedGoals });
+                      }
+                    }}
+                    style={{ background: "none", border: "none", color: "rgba(255,255,255,0.65)", cursor: "pointer", fontSize: "13px", padding: 0, lineHeight: 1 }}
+                    title="Remove this goal"
+                  >
+                    ✕
+                  </button>
                 </div>
 
                 {/* Goal */}
