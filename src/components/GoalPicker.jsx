@@ -104,27 +104,20 @@ export function GoalPicker({
               </button>
             </div>
           ) : atFreeLimit ? (
-            <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "32px 24px", textAlign: "center" }}>
-              <div style={{ fontSize: "1.5rem", marginBottom: "12px" }}>🔒</div>
-              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>
-                Tracking multiple goals is a premium feature
-              </p>
-              <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>
-                Upgrade to track up to 5 goals across different spheres at the same time.
-              </p>
-              <button
-                onClick={() => setAuthPrompt("upgrade")}
-                style={{ background: "#b5472a", color: "white", fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", marginBottom: "10px", display: "block", width: "100%" }}
-              >
-                UPGRADE →
-              </button>
-              <button
-                onClick={() => setStep("active")}
-                style={{ fontSize: "11px", color: "#8a7455", background: "none", border: "none", cursor: "pointer" }}
-              >
-                Back to my goals
-              </button>
-            </div>
+            <button
+              onClick={() => setAuthPrompt("upgrade")}
+              className="w-full text-left border-2 transition-all hover:opacity-90"
+              style={{ borderColor: "#e8e0d5", borderStyle: "dashed", background: "#faf8f5" }}
+            >
+              <div className="px-5 py-4 flex items-center gap-3">
+                <span style={{ fontSize: "1rem" }}>🔒</span>
+                <div className="flex-1">
+                  <p className="text-sm font-medium" style={{ color: "#6e5c4a" }}>Track a second goal</p>
+                  <p className="text-xs" style={{ color: "#8a7455" }}>Upgrade to track multiple goals at once</p>
+                </div>
+                <span className="text-xs font-semibold" style={{ color: "#b5472a" }}>Upgrade →</span>
+              </div>
+            </button>
           ) : spheresWithGoals.length === 0 && spheresWithNoGoals.length === 0 ? (
             <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "32px 24px", textAlign: "center" }}>
               <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>
