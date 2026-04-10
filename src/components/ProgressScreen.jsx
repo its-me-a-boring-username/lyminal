@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Nav } from "./Nav.jsx";
+import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');`;
-const SLOT = 96;
+const SLOT = 120;
 
 function ArcCircle({ cx, cy, r, pct, color, sw }) {
   if (pct >= 100) {
@@ -26,16 +27,16 @@ function ArcCircle({ cx, cy, r, pct, color, sw }) {
 function MiniPie({ done, total, color }) {
   if (total === 0) return null;
   const pct = (done / total) * 100;
-  const r = 13, cx = 15, cy = 15, sw = 4;
+  const r = 14, cx = 16, cy = 16, sw = 4;
   return (
-    <svg width="30" height="30" viewBox="0 0 30 30" style={{ flexShrink: 0 }}>
+    <svg width="32" height="32" viewBox="0 0 32 32" style={{ flexShrink: 0 }}>
       <circle cx={cx} cy={cy} r={r} fill="none" stroke="#e8e0d5" strokeWidth={sw} />
       <ArcCircle cx={cx} cy={cy} r={r} pct={pct} color={color} sw={sw} />
       <text
-        x={cx} y={cy + 3.5}
+        x={cx} y={cy + 4}
         textAnchor="middle"
         fontFamily="Inter, sans-serif"
-        fontSize="8" fontWeight="600"
+        fontSize="9" fontWeight="600"
         fill={color}
       >
         {done}
@@ -45,23 +46,23 @@ function MiniPie({ done, total, color }) {
 }
 
 function RingSlot({ sphere, pct, isActive, dist, onClick }) {
-  const size = isActive ? 80 : dist === 1 ? 62 : 50;
+  const size = isActive ? 100 : dist === 1 ? 78 : 60;
   const cx = size / 2, cy = size / 2;
-  const r = size / 2 - 6;
-  const sw = isActive ? 7 : 5;
-  const opacity = isActive ? 1 : dist === 1 ? 0.55 : 0.3;
+  const r = size / 2 - 7;
+  const sw = isActive ? 8 : 5;
+  const opacity = isActive ? 1 : dist === 1 ? 0.55 : 0.28;
   const labelColor = isActive ? sphere.color : "#8a7455";
   const labelWeight = isActive ? 600 : 400;
   const hasPct = pct !== null && pct !== undefined;
   const pctLabel = !hasPct ? "—" : pct >= 100 ? "done" : `${pct}%`;
-  const pctSize = isActive ? 14 : 11;
+  const pctSize = isActive ? 16 : 12;
 
   return (
     <div
       onClick={onClick}
       style={{
         display: "flex", flexDirection: "column", alignItems: "center",
-        gap: "8px", cursor: "pointer", flexShrink: 0,
+        gap: "10px", cursor: "pointer", flexShrink: 0,
         width: `${SLOT}px`, opacity, transition: "opacity 0.25s",
       }}
     >
@@ -69,7 +70,7 @@ function RingSlot({ sphere, pct, isActive, dist, onClick }) {
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="#e8e0d5" strokeWidth={sw} />
         {hasPct && <ArcCircle cx={cx} cy={cy} r={r} pct={pct} color={sphere.color} sw={sw} />}
         <text
-          x={cx} y={cy + pctSize * 0.38}
+          x={cx} y={cy + pctSize * 0.4}
           textAnchor="middle"
           fontFamily="Playfair Display, serif"
           fontSize={pctSize} fontWeight="600"
@@ -81,7 +82,7 @@ function RingSlot({ sphere, pct, isActive, dist, onClick }) {
       <span style={{
         fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase",
         fontFamily: "'Inter', sans-serif", textAlign: "center",
-        lineHeight: 1.3, maxWidth: "80px",
+        lineHeight: 1.3, maxWidth: "96px",
         color: labelColor, fontWeight: labelWeight,
       }}>
         {sphere.name}
@@ -91,37 +92,30 @@ function RingSlot({ sphere, pct, isActive, dist, onClick }) {
 }
 
 function DetailPanel({
-  sphere, activeGoal, checkedItems, completedGoals,
-  setStep, setSelectedFocusSphereId, setSelectedGoalId, setActiveGoals,
+  sphere, activeGoal, checkedItems, setCheckedItems,
+  completedGoals, setCompletedGoals,
+  spheres, connections, activeGoals, setActiveGoals, session,
+  setStep, setSelectedFocusSphereId, setSelectedGoalId,
+  setChatContext, setChatMessages, setChatLoading,
 }) {
   if (!sphere) return null;
 
+  // ── Empty state ──
   if (!activeGoal) {
     return (
-      <div style={{ textAlign: "center", padding: "28px 0 8px" }}>
-        <div style={{
-          width: "36px", height: "36px", borderRadius: "50%",
-          border: "2px dashed #d4c9bb", margin: "0 auto 14px",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
-          <span style={{ fontSize: "18px", color: "#c4b8a8", lineHeight: 1 }}>+</span>
-        </div>
-        <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "15px", color: "#1c1410", margin: "0 0 6px" }}>
+      <div style={{ padding: "32px 0 12px" }}>
+        <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>
           No goal set for {sphere.name}
         </p>
-        <p style={{ fontSize: "12px", color: "#8a7455", fontWeight: 300, margin: "0 0 18px", lineHeight: 1.5 }}>
-          Add a goal for this sphere from your chart.
+        <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>
+          Add a goal for this sphere to start tracking your progress here.
         </p>
         <button
-          onClick={() => {
-            setSelectedFocusSphereId(sphere.id);
-            setSelectedGoalId(null);
-            setStep("focus");
-          }}
+          onClick={() => setStep("goal-picker")}
           style={{
             fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em",
             color: "#b5472a", background: "none", border: "1px solid #e8e0d5",
-            padding: "8px 18px", cursor: "pointer", fontFamily: "'Inter', sans-serif",
+            padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif",
           }}
         >
           ADD A GOAL →
@@ -134,10 +128,83 @@ function DetailPanel({
   const total = activeGoal.actionItems.length;
   const isComplete = completedGoals.has(activeGoal.goalId);
 
+  const toggleCheck = (itemId) => {
+    const current = new Set(checkedItems[activeGoal.goalId] || []);
+    current.has(itemId) ? current.delete(itemId) : current.add(itemId);
+    const updated = { ...checkedItems, [activeGoal.goalId]: current };
+    setCheckedItems(updated);
+    saveChart(session, { spheres, connections, activeGoals, checkedItems: updated, completedGoals });
+  };
+
+  const toggleGoalComplete = () => {
+    const next = new Set(completedGoals);
+    next.has(activeGoal.goalId) ? next.delete(activeGoal.goalId) : next.add(activeGoal.goalId);
+    setCompletedGoals(next);
+    saveChart(session, { spheres, connections, activeGoals, checkedItems, completedGoals: next });
+  };
+
+  const handleStuckLyme = async () => {
+    setChatContext(activeGoal);
+    const progressSummary = total > 0
+      ? `${done} of ${total} steps complete`
+      : "no steps added yet";
+    setChatMessages([{
+      role: "assistant",
+      content: "Hi — I'm Lyme. Let's figure out what's getting in the way and get you moving again.",
+    }]);
+    setStep("chat");
+    setChatLoading(true);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: `You are Lyme, a warm and focused life coach inside the Lyminal app. The user is working toward a goal and wants help getting unstuck.
+
+Context:
+- Sphere: ${activeGoal.sphereName}
+- Goal: ${activeGoal.goalText}
+- Progress: ${progressSummary}
+
+${done > 0 ? `They've already completed ${done} step${done > 1 ? "s" : ""} — acknowledge that warmly, then` : "They haven't started their steps yet —"} ask one specific, practical question to understand what's blocking them. Avoid generic phrases. Make it concrete and relevant to exactly where they are with this goal. If they have no steps yet, focus on what feels most unclear about where to start.
+
+Do NOT introduce yourself. Just ask your question directly.`,
+          messages: [{ role: "user", content: "I need help getting unstuck." }],
+        }),
+      });
+      const data = await res.json();
+      const opener = data.content?.find(b => b.type === "text")?.text
+        || "What's felt like the biggest obstacle since you last worked on this?";
+      setChatMessages(prev => [...prev, { role: "assistant", content: opener }]);
+    } catch {
+      setChatMessages(prev => [...prev, { role: "assistant", content: "What's felt like the biggest obstacle since you last worked on this?" }]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
   return (
     <>
-      {/* Goal header */}
+      {/* Goal header with completion toggle */}
       <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", marginBottom: "18px" }}>
+        <button
+          onClick={toggleGoalComplete}
+          style={{
+            width: "22px", height: "22px", borderRadius: "50%", flexShrink: 0, marginTop: "3px",
+            border: `2px solid ${isComplete ? activeGoal.sphereColor : "#d4c9bb"}`,
+            background: isComplete ? activeGoal.sphereColor : "white",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", padding: 0, transition: "all 0.2s",
+          }}
+        >
+          {isComplete && (
+            <svg width="10" height="10" viewBox="0 0 10 10">
+              <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+            </svg>
+          )}
+        </button>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
             <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: activeGoal.sphereColor, flexShrink: 0 }} />
@@ -151,7 +218,7 @@ function DetailPanel({
             )}
           </div>
           <p style={{
-            fontFamily: "'Playfair Display', serif", fontSize: "16px",
+            fontFamily: "'Playfair Display', serif", fontSize: "1.05rem",
             color: isComplete ? "#8a7455" : "#1c1410", margin: 0, lineHeight: 1.4,
             textDecoration: isComplete ? "line-through" : "none",
           }}>
@@ -184,9 +251,11 @@ function DetailPanel({
             return (
               <div
                 key={item.id}
+                onClick={() => toggleCheck(item.id)}
                 style={{
                   display: "flex", alignItems: "flex-start", gap: "10px",
                   padding: "10px 0", borderBottom: "1px solid #f0ebe3",
+                  cursor: "pointer",
                 }}
               >
                 <div style={{
@@ -195,7 +264,7 @@ function DetailPanel({
                   border: `1.5px solid ${checked ? activeGoal.sphereColor : "#d4c9bb"}`,
                   background: checked ? activeGoal.sphereColor : "white",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  position: "relative", zIndex: 1,
+                  position: "relative", zIndex: 1, transition: "all 0.15s",
                 }}>
                   {checked && (
                     <svg width="8" height="8" viewBox="0 0 8 8">
@@ -207,6 +276,7 @@ function DetailPanel({
                   fontSize: "12px", lineHeight: 1.5,
                   color: checked ? "#8a7455" : "#4a3828",
                   textDecoration: checked ? "line-through" : "none",
+                  transition: "color 0.15s",
                 }}>
                   {item.text}
                 </span>
@@ -216,28 +286,31 @@ function DetailPanel({
         </div>
       )}
 
-      {/* CTA */}
+      {/* CTAs */}
       {!isComplete ? (
         <button
-          onClick={() => setStep("active")}
+          onClick={handleStuckLyme}
           style={{
-            width: "100%", padding: "10px", fontSize: "11px", fontWeight: 600,
+            width: "100%", padding: "11px", fontSize: "11px", fontWeight: 600,
             letterSpacing: "0.05em", background: "#b5472a", color: "white",
             border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif",
           }}
         >
-          TALK TO LYME →
+          FEELING STUCK? TALK TO LYME →
         </button>
       ) : (
         <button
           onClick={() => {
             setActiveGoals(prev => prev.filter(g => g.goalId !== activeGoal.goalId));
-            setSelectedFocusSphereId(activeGoal.sphereId);
-            setSelectedGoalId(null);
-            setStep("focus");
+            saveChart(session, {
+              spheres, connections,
+              activeGoals: activeGoals.filter(g => g.goalId !== activeGoal.goalId),
+              checkedItems, completedGoals,
+            });
+            setStep("goal-picker");
           }}
           style={{
-            width: "100%", padding: "10px", fontSize: "11px", fontWeight: 500,
+            width: "100%", padding: "11px", fontSize: "11px", fontWeight: 500,
             color: "#5c4e40", border: "1px solid #d4c9bb", background: "none",
             cursor: "pointer", fontFamily: "'Inter', sans-serif",
           }}
@@ -251,16 +324,19 @@ function DetailPanel({
 
 export function ProgressScreen({
   spheres,
-  activeGoals,
-  checkedItems,
-  completedGoals,
+  activeGoals, setActiveGoals,
+  checkedItems, setCheckedItems,
+  completedGoals, setCompletedGoals,
+  connections,
   isMobile,
   isPaid,
   setStep,
   session,
   setSelectedFocusSphereId,
   setSelectedGoalId,
-  setActiveGoals,
+  setChatContext,
+  setChatMessages,
+  setChatLoading,
 }) {
   const firstActive = Math.max(0, spheres.findIndex(s => activeGoals.some(ag => ag.sphereId === s.id)));
   const [selected, setSelected] = useState(firstActive);
@@ -273,32 +349,23 @@ export function ProgressScreen({
     return (w / 2) - (selected * SLOT) - (SLOT / 2);
   };
 
-  // No transition on mount — just snap into position
   useEffect(() => {
     if (!trackRef.current) return;
     trackRef.current.style.transition = "none";
     trackRef.current.style.transform = `translateX(${getTranslate()}px)`;
     const t = setTimeout(() => {
-      if (trackRef.current) {
-        trackRef.current.style.transition = "transform 0.38s cubic-bezier(0.4,0,0.2,1)";
-      }
+      if (trackRef.current) trackRef.current.style.transition = "transform 0.38s cubic-bezier(0.4,0,0.2,1)";
     }, 50);
     return () => clearTimeout(t);
   }, []);
 
-  // Animate on selection change
   useEffect(() => {
-    if (trackRef.current) {
-      trackRef.current.style.transform = `translateX(${getTranslate()}px)`;
-    }
+    if (trackRef.current) trackRef.current.style.transform = `translateX(${getTranslate()}px)`;
   }, [selected]);
 
-  // Recalculate on resize
   useEffect(() => {
     const handler = () => {
-      if (trackRef.current) {
-        trackRef.current.style.transform = `translateX(${getTranslate()}px)`;
-      }
+      if (trackRef.current) trackRef.current.style.transform = `translateX(${getTranslate()}px)`;
     };
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
@@ -316,6 +383,7 @@ export function ProgressScreen({
 
   const currentSphere = spheres[selected];
   const activeGoal = currentSphere ? activeGoals.find(ag => ag.sphereId === currentSphere.id) : null;
+  const headerColor = currentSphere?.color || "#4a7a72";
 
   if (spheres.length === 0) {
     return (
@@ -327,7 +395,6 @@ export function ProgressScreen({
           {isMobile && <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
           <div className="px-6 py-10 max-w-2xl mx-auto w-full lg:px-16">
             <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "40px 24px", textAlign: "center" }}>
-              <div style={{ fontSize: "2rem", marginBottom: "12px" }}>🌱</div>
               <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>Nothing tracked yet</p>
               <p style={{ fontSize: "0.8rem", color: "#6e5c4a", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.6 }}>
                 Once you have an active goal and start adding steps, your progress will show up here.
@@ -349,10 +416,10 @@ export function ProgressScreen({
     <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
       <style>{FONTS}</style>
 
-      {/* Left strip transitions to the selected sphere color */}
+      {/* Left strip — transitions with sphere color */}
       <div
         className="hidden lg:block flex-shrink-0"
-        style={{ width: "350px", background: currentSphere?.color || "#4a7a72", transition: "background 0.4s ease" }}
+        style={{ width: "350px", background: headerColor, transition: "background 0.4s ease" }}
       />
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
@@ -361,20 +428,27 @@ export function ProgressScreen({
 
         <div className="w-full pb-24 lg:pb-12">
 
-          {/* Header */}
-          <div className="px-6 lg:px-16 pt-10 pb-0 max-w-2xl mx-auto">
-            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 6px" }}>
-              Progress
-            </p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>
-              How far you've come
-            </h2>
+          {/* Colored header band — replaces the left strip on mobile, adds color on desktop */}
+          <div style={{
+            background: `${headerColor}14`,
+            borderBottom: `2px solid ${headerColor}35`,
+            padding: "24px 24px 20px",
+            transition: "background 0.35s ease, border-color 0.35s ease",
+          }}>
+            <div className="max-w-2xl mx-auto lg:px-16">
+              <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>
+                Progress
+              </p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>
+                How far you've come
+              </h2>
+            </div>
           </div>
 
-          {/* Ring carousel — full width, no max-width, so rings can scroll freely */}
+          {/* Ring carousel — full bleed so rings can slide freely */}
           <div
             ref={wrapRef}
-            style={{ overflow: "hidden", position: "relative", padding: "24px 0 20px" }}
+            style={{ overflow: "hidden", position: "relative", padding: "28px 0 22px" }}
           >
             <div
               ref={trackRef}
@@ -393,19 +467,28 @@ export function ProgressScreen({
             </div>
           </div>
 
-          <div style={{ height: "1px", background: "#e8e0d5" }} className="mx-6 lg:mx-16" />
+          <div style={{ height: "1px", background: "#e8e0d5" }} />
 
           {/* Detail panel */}
-          <div className="px-6 lg:px-16 max-w-2xl mx-auto" style={{ paddingTop: "20px" }}>
+          <div className="px-6 lg:px-16 max-w-2xl mx-auto" style={{ paddingTop: "22px" }}>
             <DetailPanel
               sphere={currentSphere}
               activeGoal={activeGoal}
               checkedItems={checkedItems}
+              setCheckedItems={setCheckedItems}
               completedGoals={completedGoals}
+              setCompletedGoals={setCompletedGoals}
+              spheres={spheres}
+              connections={connections}
+              activeGoals={activeGoals}
+              setActiveGoals={setActiveGoals}
+              session={session}
               setStep={setStep}
               setSelectedFocusSphereId={setSelectedFocusSphereId}
               setSelectedGoalId={setSelectedGoalId}
-              setActiveGoals={setActiveGoals}
+              setChatContext={setChatContext}
+              setChatMessages={setChatMessages}
+              setChatLoading={setChatLoading}
             />
           </div>
         </div>

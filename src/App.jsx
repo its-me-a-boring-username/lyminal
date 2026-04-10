@@ -9,6 +9,7 @@ import { FlowScreens } from "./components/FlowScreens.jsx";
 import { ResultsFlow } from "./components/ResultsFlow.jsx";
 import { ChatScreen } from "./components/ChatScreen.jsx";
 import { ProgressScreen } from "./components/ProgressScreen.jsx";
+import { GoalPicker } from "./components/GoalPicker.jsx";
 
 function TriangleLogo({ size = 80 }) {
   const s = size;
@@ -145,7 +146,7 @@ function GoalChart() {
   ) : null;
 
   // Nav bar — shown on home screen and beyond
-  const navSteps = ["active", "plan", "progress", "chart-view", "account", "chat"];
+  const navSteps = ["active", "plan", "progress", "chart-view", "account", "chat", "goal-picker"];
   const showNav = navSteps.includes(step);
   const NavBar = () => showNav ? (
     <Nav
@@ -608,16 +609,40 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
         <DevReset />
         <ProgressScreen
           spheres={spheres}
-          activeGoals={activeGoals}
-          checkedItems={checkedItems}
-          completedGoals={completedGoals}
+          activeGoals={activeGoals} setActiveGoals={setActiveGoals}
+          checkedItems={checkedItems} setCheckedItems={setCheckedItems}
+          completedGoals={completedGoals} setCompletedGoals={setCompletedGoals}
+          connections={connections}
           isMobile={isMobile}
           isPaid={isPaid}
           setStep={setStep}
           session={session}
           setSelectedFocusSphereId={setSelectedFocusSphereId}
           setSelectedGoalId={setSelectedGoalId}
-          setActiveGoals={setActiveGoals}
+          setChatContext={setChatContext}
+          setChatMessages={setChatMessages}
+          setChatLoading={setChatLoading}
+        />
+      </>
+    );
+  }
+
+  // ── GOAL PICKER STEP ──
+  if (step === "goal-picker") {
+    return (
+      <>
+        <AuthOverlay />
+        <DevReset />
+        <GoalPicker
+          spheres={spheres}
+          activeGoals={activeGoals} setActiveGoals={setActiveGoals}
+          completedGoals={completedGoals}
+          connections={connections}
+          checkedItems={checkedItems}
+          session={session}
+          setStep={setStep}
+          isMobile={isMobile}
+          isPaid={isPaid}
         />
       </>
     );
