@@ -94,8 +94,6 @@ Your job is to gather just enough information to propose 3-5 specific, personali
 
 If the user is clearly being direct, skipping the process, or explicitly asking you to just generate action items without discussion — do it immediately without pushing back. Respect their time and intent. Do not insist on gathering more context if they've made clear they don't want to provide it.
 
-If the user mentions they are testing the app, or asks you to generate action items without discussion — immediately generate 3-5 specific, realistic action items for the goal, output them in the ACTION_ITEMS_CONFIRMED format below, and do not ask for confirmation first. The save button will appear for them directly.
-
 When the user confirms the action items are good (they say yes, looks good, sounds right, etc.), end the conversation by outputting EXACTLY this format and nothing else after it:
 
 ACTION_ITEMS_CONFIRMED
@@ -145,7 +143,7 @@ Do not ask follow-up questions after proposing action items unless the user want
   };
 
   return (
-    <div className="flex flex-col overflow-hidden" style={{ height: "100dvh", paddingBottom: isMobile ? "60px" : 0, background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.35s ease-out" }}>
+    <div className="flex flex-col overflow-hidden" style={{ height: "100dvh", paddingBottom: isMobile ? "60px" : 0, background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
       <style>{FONTS}</style>
       <DevReset />
       {isMobile && <Nav step="chat" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
@@ -209,23 +207,23 @@ Do not ask follow-up questions after proposing action items unless the user want
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="px-4 py-3 border-t flex gap-3" style={{ background: "white", borderColor: "#c4b8a8" }}>
-        <input
-          className="flex-1 px-4 py-2.5 text-sm outline-none border rounded-lg"
-          style={{ borderColor: "#c4b8a8", background: "#faf8f5", color: "#1c1410", opacity: chatLoading ? 0.5 : 1 }}
-          placeholder={chatLoading ? "Lyme is thinking…" : "Type a message…"}
-          value={chatInput}
-          disabled={chatLoading}
-          onChange={e => setChatInput(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
-          autoFocus
-        />
-        <button onClick={sendMessage} disabled={!chatInput.trim() || chatLoading}
-          className="px-5 py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-30 transition-opacity"
-          style={{ background: "#b5472a", color: "white" }}>
-          Send
-        </button>
-      </div>
+      {!chatLoading && chatMessages.length > 0 && (
+        <div className="px-4 py-3 border-t flex gap-3" style={{ background: "white", borderColor: "#c4b8a8" }}>
+          <input
+            className="flex-1 px-4 py-2.5 text-sm outline-none border rounded-lg"
+            style={{ borderColor: "#c4b8a8", background: "#faf8f5", color: "#1c1410" }}
+            placeholder="Type a message…"
+            value={chatInput}
+            onChange={e => setChatInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
+          />
+          <button onClick={sendMessage} disabled={!chatInput.trim() || chatLoading}
+            className="px-5 py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-30 transition-opacity"
+            style={{ background: "#b5472a", color: "white" }}>
+            Send
+          </button>
+        </div>
+      )}
     </div>
   );
 }

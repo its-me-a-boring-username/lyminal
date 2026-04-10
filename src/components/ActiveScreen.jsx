@@ -3,7 +3,7 @@ import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
-@keyframes fadeScaleIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }`;
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
 
 export function ActiveScreen({
   focusRound,
@@ -110,7 +110,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
   };
 
   return (
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeScaleIn 0.5s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
       <style>{FONTS}</style>
 
       {/* Remove goal modal */}
