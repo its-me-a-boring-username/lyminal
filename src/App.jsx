@@ -490,7 +490,7 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
     });
 
     return (
-      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter',sans-serif"}}>
+      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter',sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#2c1f14"}} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
@@ -654,7 +654,7 @@ const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:
   // ── PLAN STEP (placeholder) ──
   if (step === "plan") {
     return (
-      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter',sans-serif"}}>
+      <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter',sans-serif", animation:"fadeScaleIn 0.5s ease-out"}}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#2c1f14"}} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
