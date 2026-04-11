@@ -90,7 +90,7 @@ export function FlowScreens({
           <button
             onClick={() => addSphere(newSphere)}
             disabled={!newSphere.trim()}
-            className="absolute right-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
+            className="absolute right-2 px-3 py-1.5 text-xs font-semibold transition-all"
             style={{
               background: newSphere.trim() ? "#b5472a" : "transparent",
               color: newSphere.trim() ? "white" : "#8a7455",
@@ -126,7 +126,7 @@ export function FlowScreens({
             onClick={() => { setGoalStep(0); setStep("intro-goals"); saveChart(session, { spheres, connections }); }}
             disabled={spheres.length < 3}
             style={{ background: "#b5472a", color: "white", fontWeight: 500 }}
-            className="flex-1 hover:opacity-90 disabled:opacity-30 py-3 rounded-sm transition-opacity"
+            className="flex-1 hover:opacity-90 disabled:opacity-30 py-3 transition-opacity"
           >
             {spheres.length < 3 ? `Add at least ${3 - spheres.length} more sphere${3 - spheres.length === 1 ? "" : "s"} to continue` : `Continue with ${spheres.length} spheres →`}
           </button>
@@ -187,7 +187,7 @@ export function FlowScreens({
                     onKeyDown={e => { if (e.key === "Enter") addGoal(currentSphere.id, newGoal); }}
                   />
                   <button onClick={() => addGoal(currentSphere.id, newGoal)}
-                    className="text-white font-bold px-4 rounded-xl transition-colors text-sm"
+                    className="text-white font-bold px-4 transition-colors text-sm"
                     style={{ background: currentSphere.color }}>
                     Add
                   </button>
@@ -220,7 +220,7 @@ export function FlowScreens({
             </button>
             <button
               onClick={() => isLast ? (setGoalStep(0), setStep("intro-connections")) : setGoalStep(g => g + 1)}
-              className="flex-1 text-white font-bold py-3 rounded-xl transition-colors"
+              className="flex-1 text-white font-bold py-3 transition-colors"
               style={{ background: currentSphere?.color || "#6366f1" }}>
               {isLast ? "Map relationships →" : `Next: ${spheres[goalStep + 1]?.name} →`}
             </button>
@@ -296,7 +296,7 @@ export function FlowScreens({
             </button>
             <button
               onClick={() => isLast ? (setSelectedId(null), setStep("intro-results"), saveChart(session, { spheres, connections })) : setGoalStep(s => s + 1)}
-              className="flex-1 text-white font-bold py-3 rounded-xl transition-colors"
+              className="flex-1 text-white font-bold py-3 transition-colors"
               style={{ background: fromSphere?.color || "#6366f1" }}>
               {isLast ? "See my chart →" : `Next: ${spheres[connStep + 1]?.name} →`}
             </button>

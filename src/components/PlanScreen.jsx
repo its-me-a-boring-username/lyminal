@@ -449,6 +449,7 @@ export function PlanScreen({
   session,
   isMobile, isPaid, isPro,
   setStep, setAuthPrompt,
+  setChatContext, setChatMessages, setChatLoading,
 }) {
   const initialIndex = Math.max(0, activeGoals.findIndex(g => !completedGoals.has(g.goalId)));
   const [selIndex,    setSelIndex]    = useState(initialIndex);
@@ -457,6 +458,33 @@ export function PlanScreen({
   const [modal,       setModal]       = useState(null);
   const [findItem,    setFindItem]    = useState(null);
   const [introStep, setIntroStep] = useState(() => localStorage.getItem("lyminal_plan_intro_seen") ? null : 0);
+
+  const handleTalkToLyme = async (ag) => {
+    setChatContext(ag);
+    const introMsg = { role: "assistant", content: "Hi — I'm Lyme, your AI coach. I am here to help you identify steps you can take to achieve your goals. I'll ask a few questions, then we'll put together a checklist of action items that gets saved to your home screen so you can track your progress." };
+    setChatMessages([introMsg]);
+    setStep("chat");
+    setChatLoading(true);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: `You are Lyme, a warm and focused life coach inside the Lyminal app. Your job is to help someone build a concrete action plan for a specific goal.\n\nContext:\n- Sphere: ${ag.sphereName}\n- Goal: ${ag.goalText}\n\nOpen the conversation with a single, specific, thoughtful question that gets right to the heart of where this person stands with this goal. Do NOT use a generic opener — ask something directly relevant to the goal itself. Do NOT introduce yourself. Just ask your question directly. Keep it concise and warm.`,
+          messages: [{ role: "user", content: "Start the conversation." }],
+        }),
+      });
+      const data = await res.json();
+      const opener = data.content?.find(b => b.type === "text")?.text || `Let's talk about your goal: ${ag.goalText}. What does your current situation look like?`;
+      setChatMessages(prev => [...prev, { role: "assistant", content: opener }]);
+    } catch {
+      setChatMessages(prev => [...prev, { role: "assistant", content: `Let's talk about your goal: ${ag.goalText}. What does your current situation look like?` }]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (selIndex > activeGoals.length - 1) setSelIndex(Math.max(0, activeGoals.length - 1));
@@ -499,8 +527,7 @@ export function PlanScreen({
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-          {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-          {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+          <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
             <p className="text-xs uppercase tracking-widest" style={{ color: hc, opacity: 0.8, margin: "0 0 6px" }}>Your Plan</p>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
@@ -528,8 +555,7 @@ export function PlanScreen({
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-          {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-          {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+          <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16" style={{ textAlign: "center", paddingTop: "60px" }}>
             <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>No active goals yet</p>
             <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>Add a goal first to start planning.</p>
@@ -567,8 +593,7 @@ export function PlanScreen({
       {/* Right column — nav + header + body */}
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
 
-        {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-        {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+        <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
 
         {/* Plan header */}
         <div className="lg:px-16" style={{ background: hexToRgba(hc, 0.07), borderBottom: `1px solid ${hexToRgba(hc, 0.12)}`, padding: "28px 24px 24px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
@@ -643,11 +668,17 @@ export function PlanScreen({
               <div style={{ padding: "28px 18px", textAlign: "center" }}>
                 {allItems.length === 0 ? (
                   <>
-                    <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 14px", fontStyle: "italic" }}>No action items yet for this goal.</p>
-                    <button onClick={() => setStep("active")}
-                      style={{ fontSize: "11px", color: "white", background: hc, border: "none", padding: "8px 18px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px" }}>
-                      Add items on Home →
-                    </button>
+                    <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 16px", fontStyle: "italic" }}>No action items yet for this goal.</p>
+                    <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+                      <button onClick={() => goal && handleTalkToLyme(goal)}
+                        style={{ fontSize: "11px", fontWeight: 600, color: "white", background: hc, border: "none", padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px", letterSpacing: "0.04em" }}>
+                        Talk to Lyme →
+                      </button>
+                      <button onClick={() => setStep("active")}
+                        style={{ fontSize: "11px", color: "#6e5c4a", background: "none", border: "1px solid #d4c9bb", padding: "9px 18px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px" }}>
+                        Add on Home
+                      </button>
+                    </div>
                   </>
                 ) : (
                   <>

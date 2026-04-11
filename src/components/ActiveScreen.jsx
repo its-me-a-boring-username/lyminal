@@ -21,7 +21,6 @@ export function ActiveScreen({
   completedGoals, setCompletedGoals,
   editingAction, setEditingAction,
   newActionItem, setNewActionItem,
-  newActionType, setNewActionType,
   isPaid, session,
   pdfLoading, setPdfLoading,
   spheres, connections, counts, ranked,

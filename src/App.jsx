@@ -144,7 +144,6 @@ function GoalChart() {
   const [selectedGoalId, setSelectedGoalId] = useState(null);
   const { chatMessages, setChatMessages, chatInput, setChatInput, chatLoading, setChatLoading, chatContext, setChatContext, messagesEndRef } = useChatState();
   const [newActionItem, setNewActionItem] = useState("");
-  const [newActionType, setNewActionType] = useState("find");
   const [editingAction, setEditingAction] = useState(null); // {goalId, itemId, text}
   const [pdfLoading, setPdfLoading] = useState(null); // 'chart' | 'full' | null
   const [checkedItems, setCheckedItems] = useState({}); // { goalId: Set of checked action item ids }
@@ -350,8 +349,6 @@ function GoalChart() {
           setEditingAction={setEditingAction}
           newActionItem={newActionItem}
           setNewActionItem={setNewActionItem}
-          newActionType={newActionType}
-          setNewActionType={setNewActionType}
           isPaid={isPaid}
           session={session}
           pdfLoading={pdfLoading}
@@ -443,6 +440,9 @@ function GoalChart() {
           isMobile={isMobile} isPaid={isPaid} isPro={isPro}
           setStep={setStep}
           setAuthPrompt={setAuthPrompt}
+          setChatContext={setChatContext}
+          setChatMessages={setChatMessages}
+          setChatLoading={setChatLoading}
         />
       </Screen>
     );
