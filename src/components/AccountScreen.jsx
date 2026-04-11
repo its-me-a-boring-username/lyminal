@@ -30,7 +30,7 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
   });
 
   return (
-    <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter',sans-serif"}}>
+    <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter',sans-serif", animation:"fadeIn 0.2s ease-out"}}>
       <style>{FONTS}</style>
       <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#b5472a"}} />
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
