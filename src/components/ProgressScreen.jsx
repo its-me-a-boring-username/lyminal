@@ -6,6 +6,14 @@ const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Di
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
 const SLOT = 140;
 
+function hexToRgba(hex, alpha) {
+  if (!hex || hex.length < 7) return `rgba(74,122,114,${alpha})`;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 function ArcCircle({ cx, cy, r, pct, color, sw }) {
   if (pct >= 100) {
     return <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth={sw} />;
@@ -126,6 +134,7 @@ function DetailPanel({
               fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em",
               color: "#b5472a", background: "none", border: "1px solid #e8e0d5",
               padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif",
+              borderRadius: "6px",
             }}
           >
             ADD A GOAL →
@@ -233,12 +242,17 @@ Do NOT introduce yourself. Just ask your question directly.`,
         </button>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
-            <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: activeGoal.sphereColor, flexShrink: 0 }} />
-            <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: activeGoal.sphereColor, fontFamily: "'Inter', sans-serif" }}>
+            <span style={{
+              fontSize: "10px", fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase",
+              color: activeGoal.sphereColor, fontFamily: "'Inter', sans-serif",
+              background: hexToRgba(activeGoal.sphereColor, 0.10),
+              border: `1px solid ${hexToRgba(activeGoal.sphereColor, 0.22)}`,
+              borderRadius: "999px", padding: "3px 10px",
+            }}>
               {activeGoal.sphereName}
             </span>
             {isComplete && (
-              <span style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.06em", background: "#4a7a7215", color: "#4a7a72", padding: "2px 8px", fontFamily: "'Inter', sans-serif" }}>
+              <span style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.06em", background: "#4a7a7215", color: "#4a7a72", padding: "2px 8px", borderRadius: "999px", fontFamily: "'Inter', sans-serif" }}>
                 COMPLETE
               </span>
             )}
@@ -318,8 +332,9 @@ Do NOT introduce yourself. Just ask your question directly.`,
           onClick={handleStuckLyme}
           style={{
             width: "100%", padding: "11px", fontSize: "11px", fontWeight: 600,
-            letterSpacing: "0.05em", background: "#b5472a", color: "white",
+            letterSpacing: "0.05em", background: activeGoal.sphereColor, color: "white",
             border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif",
+            borderRadius: "6px",
           }}
         >
           FEELING STUCK? TALK TO LYME →
@@ -338,7 +353,7 @@ Do NOT introduce yourself. Just ask your question directly.`,
           style={{
             width: "100%", padding: "11px", fontSize: "11px", fontWeight: 500,
             color: "#5c4e40", border: "1px solid #d4c9bb", background: "none",
-            cursor: "pointer", fontFamily: "'Inter', sans-serif",
+            cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px",
           }}
         >
           Pick a new goal →
@@ -421,14 +436,14 @@ export function ProgressScreen({
           {!isMobile && <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
           {isMobile && <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
           <div className="px-6 py-10 max-w-2xl mx-auto w-full lg:px-16">
-            <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "40px 24px", textAlign: "center" }}>
+            <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "40px 24px", textAlign: "center", borderRadius: "8px" }}>
               <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>Nothing tracked yet</p>
               <p style={{ fontSize: "0.8rem", color: "#6e5c4a", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.6 }}>
                 Once you have an active goal and start adding steps, your progress will show up here.
               </p>
               <button
                 onClick={() => setStep("active")}
-                style={{ background: "#b5472a", color: "white", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer" }}
+                style={{ background: "#b5472a", color: "white", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", borderRadius: "6px" }}
               >
                 GO TO MY GOALS →
               </button>
@@ -457,9 +472,9 @@ export function ProgressScreen({
 
           {/* Colored header band — replaces the left strip on mobile, adds color on desktop */}
           <div style={{
-            background: `${headerColor}28`,
-            borderBottom: `2px solid ${headerColor}60`,
-            padding: "24px 24px 20px",
+            background: hexToRgba(headerColor, 0.07),
+            borderBottom: `1px solid ${hexToRgba(headerColor, 0.12)}`,
+            padding: "28px 24px 24px",
             transition: "background 0.35s ease, border-color 0.35s ease",
           }}>
             <div className="max-w-2xl mx-auto lg:px-16">

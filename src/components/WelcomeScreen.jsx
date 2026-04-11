@@ -101,7 +101,7 @@ export function WelcomeScreen({ setStep, DevReset, setAuthPrompt }) {
           <button
             onClick={() => setStep("intro-spheres")}
             style={{
-              display: "block", width: "100%", padding: "14px",
+              display: "inline-block", padding: "14px 48px",
               background: "#b5472a", color: "white",
               fontSize: "10px", fontWeight: 600,
               letterSpacing: "0.1em", textTransform: "uppercase",

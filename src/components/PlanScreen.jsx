@@ -269,13 +269,13 @@ function MiniTypeButtons({ active }) {
 function Caption({ text }) {
   return (
     <div style={{
-      marginTop: "14px",
-      background: "rgba(181,71,42,0.07)",
-      borderLeft: "3px solid #b5472a",
+      marginTop: "20px",
+      background: "rgba(74,122,114,0.09)",
+      borderLeft: "3px solid #4a7a72",
       borderRadius: "0 6px 6px 0",
-      padding: "10px 14px",
+      padding: "11px 14px",
     }}>
-      <p style={{ fontSize: "13px", color: "#2e2218", lineHeight: 1.55, fontWeight: 400, margin: 0, fontFamily: "'Inter', sans-serif" }}>{text}</p>
+      <p style={{ fontSize: "13px", color: "#1e3a36", lineHeight: 1.55, fontWeight: 400, margin: 0, fontFamily: "'Inter', sans-serif" }}>{text}</p>
     </div>
   );
 }
