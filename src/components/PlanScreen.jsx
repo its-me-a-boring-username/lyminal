@@ -783,11 +783,12 @@ export function PlanScreen({
   // ── Paywall ──
   if (!isPaid) {
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
           <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
+          <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
             <p className="text-xs uppercase tracking-widest" style={{ color: hc, opacity: 0.8, margin: "0 0 6px" }}>Your Plan</p>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
@@ -803,6 +804,7 @@ export function PlanScreen({
               </div>
             </button>
           </div>
+          </div>{/* end fade wrapper */}
         </div>
       </div>
     );
@@ -811,11 +813,12 @@ export function PlanScreen({
   // ── Empty ──
   if (activeGoals.length === 0) {
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
           <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
+          <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16" style={{ textAlign: "center", paddingTop: "60px" }}>
             <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>No active goals yet</p>
             <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>Add a goal first to start planning.</p>
@@ -823,6 +826,7 @@ export function PlanScreen({
               ADD A GOAL →
             </button>
           </div>
+          </div>{/* end fade wrapper */}
         </div>
       </div>
     );
@@ -844,7 +848,7 @@ export function PlanScreen({
         />
       )}
 
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
       <style>{FONTS}</style>
 
       {/* Left design strip — full height, desktop only */}
@@ -854,6 +858,7 @@ export function PlanScreen({
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
 
         <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
+        <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         {/* Plan header */}
         <div className="lg:px-16" style={{ background: hexToRgba(hc, 0.07), borderBottom: `1px solid ${hexToRgba(hc, 0.12)}`, padding: "28px 24px 24px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
@@ -1038,6 +1043,7 @@ export function PlanScreen({
         </div> {/* closes content */}
         </div> {/* closes centering wrapper */}
         </div> {/* closes body flex */}
+        </div>{/* end fade wrapper */}
       </div> {/* closes right column */}
     </div>
     </>

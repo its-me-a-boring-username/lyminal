@@ -95,12 +95,13 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
   };
 
   return (
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter',sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter',sans-serif" }}>
       <style>{FONTS}</style>
       <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#b5472a" }} />
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         {!isMobile && <NavBar />}
         {isMobile && <NavBar />}
+        <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <div className="lg:px-16" style={{ background: "rgba(181,71,42,0.07)", borderBottom: "1px solid rgba(181,71,42,0.12)", padding: "28px 24px 24px" }}>
           <p className="text-xs uppercase tracking-widest" style={{ color: "#b5472a", opacity: 0.8, margin: "0 0 6px" }}>Your Account</p>
           <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Settings</h2>
@@ -255,6 +256,7 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
             </div>
           </div>
         </div>
+        </div>{/* end fade wrapper */}
       </div>
     </div>
   );

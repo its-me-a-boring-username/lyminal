@@ -124,7 +124,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
   };
 
   return (
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
       <style>{FONTS}</style>
 
       {/* Remove goal modal */}
@@ -167,6 +167,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+        <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         {/* Page header with sphere tint */}
         <div style={{ background: hexToRgba(priorityColor, 0.07), borderBottom: `1px solid ${hexToRgba(priorityColor, 0.12)}`, padding: "28px 24px 24px", marginBottom: "0" }}
@@ -426,6 +427,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
             </button>
           </div>
         </div>
+        </div>{/* end fade wrapper */}
       </div>
     </div>
   );

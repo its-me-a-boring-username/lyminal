@@ -428,11 +428,12 @@ export function ProgressScreen({
 
   if (spheres.length === 0) {
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#4a7a72" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
           <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
+          <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16">
             <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "40px 24px", textAlign: "center", borderRadius: "8px" }}>
               <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>Nothing tracked yet</p>
@@ -447,13 +448,14 @@ export function ProgressScreen({
               </button>
             </div>
           </div>
+          </div>{/* end fade wrapper */}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
       <style>{FONTS}</style>
 
       {/* Left strip — transitions with sphere color */}
@@ -464,6 +466,7 @@ export function ProgressScreen({
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
+        <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         <div className="w-full pb-24 lg:pb-12">
 
@@ -532,6 +535,7 @@ export function ProgressScreen({
             />
           </div>
         </div>
+        </div>{/* end fade wrapper */}
       </div>
     </div>
   );
