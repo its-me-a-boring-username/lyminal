@@ -378,6 +378,8 @@ export function ProgressScreen({
   setChatLoading,
 }) {
   const firstActive = Math.max(0, spheres.findIndex(s => activeGoals.some(ag => ag.sphereId === s.id)));
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
   const [selected, setSelected] = useState(firstActive);
   const trackRef = useRef(null);
   const wrapRef = useRef(null);
@@ -426,7 +428,7 @@ export function ProgressScreen({
 
   if (spheres.length === 0) {
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#4a7a72" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
@@ -451,7 +453,7 @@ export function ProgressScreen({
   }
 
   return (
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
       <style>{FONTS}</style>
 
       {/* Left strip — transitions with sphere color */}

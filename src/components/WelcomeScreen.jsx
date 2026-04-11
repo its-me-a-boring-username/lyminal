@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { FONTS } from "../constants.js";
 import { TriangleLogo } from "./TriangleLogo.jsx";
 import constellationUrl from "../assets/sphere-constellation.svg";
@@ -12,6 +13,8 @@ const PILLS = [
 ];
 
 export function WelcomeScreen({ setStep, DevReset, setAuthPrompt }) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
   return (
     <>
       <DevReset />
@@ -24,6 +27,8 @@ export function WelcomeScreen({ setStep, DevReset, setAuthPrompt }) {
         position: "relative",
         overflow: "hidden",
         fontFamily: "'Inter', sans-serif",
+        opacity: visible ? 1 : 0,
+        transition: "opacity 0.3s ease-out",
       }}>
         <style>{FONTS}</style>
 

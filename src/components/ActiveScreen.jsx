@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 import { ACTION_TYPES } from "../utils/actionItems.js";
@@ -34,6 +34,8 @@ export function ActiveScreen({
   const allActive = focusRound >= 1 ? activeGoals : activeGoals.slice(0, 1);
   const [celebrating, setCelebrating] = React.useState(null);
   const [confirmRemove, setConfirmRemove] = React.useState(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
 
   const priorityColor = allActive[0]?.sphereColor || "#b5472a";
 
@@ -122,7 +124,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
   };
 
   return (
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
       <style>{FONTS}</style>
 
       {/* Remove goal modal */}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
@@ -17,6 +17,8 @@ export function ResultsFlow({
   session,
   DevReset,
 }) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
 
   // ── RESULTS ──
   if (step === "results") {
@@ -25,7 +27,7 @@ export function ResultsFlow({
 
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16"
-        style={{ background: "#4a7a72", fontFamily: "'Inter', sans-serif", animation: "fadeScaleIn 0.5s ease-out" }}>
+        style={{ background: "#4a7a72", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="max-w-lg w-full mx-auto">
@@ -86,7 +88,7 @@ export function ResultsFlow({
     const roundLabels = ["first", "second", "third"];
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: focusSphere?.color || "#b5472a" }} />
@@ -160,7 +162,7 @@ export function ResultsFlow({
     const focusSphere = spheres.find(b => b.id === selectedFocusSphereId) || ranked[0];
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: focusSphere?.color || "#b5472a" }} />

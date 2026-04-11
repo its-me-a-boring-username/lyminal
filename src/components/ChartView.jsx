@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { clearChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
@@ -341,8 +341,11 @@ export function ChartView({
     setStep("focus");
   };
 
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
+
   return (
-    <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
+    <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
       <style>{FONTS}</style>
 
       {/* Header */}

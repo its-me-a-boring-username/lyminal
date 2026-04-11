@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient.js";
 import { clearChart } from "../utils/supabase.js";
 import { FONTS } from "../constants.js";
@@ -17,6 +17,8 @@ const THEMES_LIST = [
 
 export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTheme, setSelectedTheme, appearance, setAppearance, isMobile, NavBar, AuthOverlay }) {
   const [confirmReset, setConfirmReset] = useState(false);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
 
   const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"#b5472a", fontWeight:600, margin:"0 0 12px", fontFamily:"'Inter',sans-serif" };
   const card = { background:"white", border:"1px solid #e8e0d5", marginBottom:"32px", borderRadius:"8px", overflow:"hidden" };
@@ -30,7 +32,7 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
   });
 
   return (
-    <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter',sans-serif"}}>
+    <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter',sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out"}}>
       <style>{FONTS}</style>
       <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#b5472a"}} />
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { SphereConnCard } from "./SphereConnCard.jsx";
 import { SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE, SPHERE_COLOR_MAP } from "../constants.js";
 import { saveChart } from "../utils/supabase.js";
@@ -68,9 +68,12 @@ export function FlowScreens({
     });
   };
 
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
+
   // ── SPHERES ──
   if (step === "spheres") return (
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
       <style>{FONTS}</style>
       <DevReset />
       <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#b5472a" }} />
@@ -141,7 +144,7 @@ export function FlowScreens({
     const isLast = goalStep === spheres.length - 1;
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: currentSphere?.color || "#b5472a" }} />
@@ -237,7 +240,7 @@ export function FlowScreens({
     const isLast = connStep === spheres.length - 1;
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: fromSphere?.color || "#4a7a72" }} />

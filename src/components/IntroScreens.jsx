@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeScaleIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }`;
 
 export function IntroScreens({ screen, setStep, spheres, setGoalStep, setFocusRound, setOverrideSphere, setSelectedFocusSphereId, setSelectedGoalId, DevReset }) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
   const base = {
     className: "min-h-screen flex flex-col items-center justify-center px-6 text-center",
-    style: { background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeScaleIn 0.5s ease-out" }
+    style: { background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }
   };
 
   const primaryBtn = (onClick, label, color = "#b5472a") => (

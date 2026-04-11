@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 import { normalizeActionItems, ACTION_TYPE_DESCRIPTIONS } from "../utils/actionItems.js";
@@ -78,6 +78,8 @@ export function ChatScreen({
   const pendingItems = chatMessages
     .filter(m => m.role === "assistant" && m.actionItems)
     .slice(-1)[0]?.actionItems || null;
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
 
   const sendMessage = async () => {
     if (!chatInput.trim()) return;
@@ -158,7 +160,7 @@ Do not ask follow-up questions after proposing action items unless the user want
   };
 
   return (
-    <div className="flex flex-col overflow-hidden" style={{ height: "100dvh", paddingBottom: isMobile ? "60px" : 0, background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+    <div className="flex flex-col overflow-hidden" style={{ height: "100dvh", paddingBottom: isMobile ? "60px" : 0, background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
       <style>{FONTS}</style>
       <DevReset />
       {isMobile && <Nav step="chat" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}

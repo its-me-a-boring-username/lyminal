@@ -452,6 +452,8 @@ export function PlanScreen({
   setChatContext, setChatMessages, setChatLoading,
 }) {
   const initialIndex = Math.max(0, activeGoals.findIndex(g => !completedGoals.has(g.goalId)));
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(true); }, []);
   const [selIndex,    setSelIndex]    = useState(initialIndex);
   const [activeType,  setActiveType]  = useState(null);
   const [bulkSel,     setBulkSel]     = useState(new Set());
@@ -523,7 +525,7 @@ export function PlanScreen({
   // ── Paywall ──
   if (!isPaid) {
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
@@ -551,7 +553,7 @@ export function PlanScreen({
   // ── Empty ──
   if (activeGoals.length === 0) {
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
@@ -584,7 +586,7 @@ export function PlanScreen({
         />
       )}
 
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
       <style>{FONTS}</style>
 
       {/* Left design strip — full height, desktop only */}
