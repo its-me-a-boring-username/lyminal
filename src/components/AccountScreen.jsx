@@ -36,13 +36,12 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         {!isMobile && <NavBar />}
         {isMobile && <NavBar />}
-        <div style={{background:"rgba(181,71,42,0.07)", borderBottom:"1px solid rgba(181,71,42,0.12)", padding:"28px 24px 24px"}}>
-          <div className="max-w-2xl mx-auto lg:px-16">
-            <p style={{fontSize:"0.65rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#8a7455", margin:"0 0 6px", fontFamily:"'Inter',sans-serif"}}>Account</p>
-            <h2 style={{fontFamily:"'Playfair Display',serif", fontSize:"1.75rem", fontWeight:600, color:"#1c1410", margin:0}}>Settings</h2>
-          </div>
+        <div className="lg:px-16" style={{background:"rgba(181,71,42,0.07)", borderBottom:"1px solid rgba(181,71,42,0.12)", padding:"28px 24px 24px"}}>
+          <p style={{fontSize:"0.65rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#8a7455", margin:"0 0 6px", fontFamily:"'Inter',sans-serif"}}>Your Account</p>
+          <h2 style={{fontFamily:"'Playfair Display',serif", fontSize:"1.75rem", fontWeight:600, color:"#1c1410", margin:"0 0 4px"}}>Settings</h2>
+          <p style={{fontSize:"0.8rem", color:"#5c4e40", fontWeight:300, margin:0, lineHeight:1.5, fontFamily:"'Inter',sans-serif"}}>Manage your profile, billing, and how the app looks and feels.</p>
         </div>
-        <div className="px-6 py-8 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
+        <div className="px-6 py-8 max-w-4xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
           <AuthOverlay />
 
           {/* Account & Data */}

@@ -432,7 +432,7 @@ export function ProgressScreen({
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
           {!isMobile && <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
           {isMobile && <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-          <div className="px-6 py-10 max-w-2xl mx-auto w-full lg:px-16">
+          <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16">
             <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "40px 24px", textAlign: "center", borderRadius: "8px" }}>
               <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>Nothing tracked yet</p>
               <p style={{ fontSize: "0.8rem", color: "#6e5c4a", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.6 }}>
@@ -468,20 +468,19 @@ export function ProgressScreen({
         <div className="w-full pb-24 lg:pb-12">
 
           {/* Colored header band — replaces the left strip on mobile, adds color on desktop */}
-          <div style={{
+          <div className="lg:px-16" style={{
             background: hexToRgba(headerColor, 0.07),
             borderBottom: `1px solid ${hexToRgba(headerColor, 0.12)}`,
             padding: "28px 24px 24px",
             transition: "background 0.35s ease, border-color 0.35s ease",
           }}>
-            <div className="max-w-2xl mx-auto lg:px-16">
-              <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>
-                Progress
-              </p>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>
-                How far you've come
-              </h2>
-            </div>
+            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>
+              Your Progress
+            </p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>
+              How far you've come
+            </h2>
+            <p style={{ fontSize: "0.8rem", color: "#5c4e40", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Track your progress, add new goals, and get unstuck with Lyme.</p>
           </div>
 
           {/* Ring carousel — full bleed so rings can slide freely */}
@@ -509,7 +508,7 @@ export function ProgressScreen({
           <div style={{ height: "1px", background: "#e8e0d5" }} />
 
           {/* Detail panel */}
-          <div className="px-6 lg:px-16 max-w-2xl mx-auto" style={{ paddingTop: "22px", paddingBottom: "32px" }}>
+          <div className="px-6 lg:px-16 max-w-4xl mx-auto" style={{ paddingTop: "22px", paddingBottom: "32px" }}>
             <DetailPanel
               sphere={currentSphere}
               activeGoal={activeGoal}

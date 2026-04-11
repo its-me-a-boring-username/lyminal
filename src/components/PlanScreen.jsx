@@ -501,9 +501,10 @@ export function PlanScreen({
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
           {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
           {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-          <div className="px-6 py-10 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
-            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 6px" }}>Plan</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 28px" }}>Get things done</h2>
+          <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
+            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 6px" }}>Your Plan</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
+            <p style={{ fontSize: "0.8rem", color: "#5c4e40", fontWeight: 300, margin: "0 0 28px", lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Forward tasks, schedule reminders, send messages, or search for resources.</p>
             <button onClick={() => setAuthPrompt("upgrade")} className="w-full text-left border-2" style={{ borderColor: "#e8e0d5", borderStyle: "dashed", background: "#faf8f5" }}>
               <div className="px-5 py-6 flex items-center gap-3">
                 <span style={{ fontSize: "1rem" }}>🔒</span>
@@ -529,7 +530,7 @@ export function PlanScreen({
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
           {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
           {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-          <div className="px-6 py-10 max-w-2xl mx-auto w-full lg:px-16" style={{ textAlign: "center", paddingTop: "60px" }}>
+          <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16" style={{ textAlign: "center", paddingTop: "60px" }}>
             <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>No active goals yet</p>
             <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>Add a goal first to start planning.</p>
             <button onClick={() => setStep("goal-picker")} style={{ background: "#b5472a", color: "white", fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
@@ -570,16 +571,15 @@ export function PlanScreen({
         {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
 
         {/* Plan header */}
-        <div style={{ background: hexToRgba(hc, 0.07), borderBottom: `1px solid ${hexToRgba(hc, 0.12)}`, padding: "28px 24px 24px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
-          <div className="max-w-2xl mx-auto lg:px-16">
-            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>Plan</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>Get things done</h2>
-          </div>
+        <div className="lg:px-16" style={{ background: hexToRgba(hc, 0.07), borderBottom: `1px solid ${hexToRgba(hc, 0.12)}`, padding: "28px 24px 24px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
+          <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>Your Plan</p>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
+          <p style={{ fontSize: "0.8rem", color: "#5c4e40", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Forward tasks, schedule reminders, send messages, or search for resources.</p>
         </div>
 
         {/* Body — ring sidebar + content, centered like other tabs */}
         <div style={{ flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
-        <div className="max-w-2xl mx-auto lg:px-8" style={{ display: "flex", height: "100%" }}>
+        <div className="max-w-4xl mx-auto lg:px-8" style={{ display: "flex", height: "100%" }}>
 
         {/* Ring sidebar */}
         <div style={{ width: "60px", flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "16px", gap: "4px", borderRight: "1px solid #e8e0d5", background: "#faf8f5" }}>
@@ -592,18 +592,9 @@ export function PlanScreen({
 
         {/* Content */}
         <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", padding: "16px 20px 16px 16px" }}>
-          <div style={{ background: "white", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
 
-          {/* Goal strip — solid sphere color card header */}
-          {goal && (
-            <div style={{ background: hc, padding: "14px 18px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", transition: "background 0.3s ease", flexShrink: 0 }}>
-              <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.75)", fontFamily: "'Inter', sans-serif", flexShrink: 0, fontWeight: 600 }}>{goal.sphereName}</span>
-              <span style={{ fontSize: "14px", color: "white", fontFamily: "'Playfair Display', serif", fontWeight: 600, lineHeight: 1.3 }}>{goal.goalText}</span>
-            </div>
-          )}
-
-          {/* Type buttons */}
-          <div style={{ display: "flex", borderBottom: "1px solid #e8e0d5" }}>
+          {/* Type pills — floating above the card */}
+          <div style={{ display: "flex", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
             {ACTION_TYPES.map(t => {
               const isAct  = activeType === t;
               const locked = t === "find" && !isPro;
@@ -613,26 +604,38 @@ export function PlanScreen({
                   setActiveType(activeType === t ? null : t);
                   setBulkSel(new Set()); setFindItem(null);
                 }} style={{
-                  flex: 1, padding: "10px 6px", border: "none", cursor: "pointer",
-                  fontFamily: "'Inter', sans-serif", fontSize: "10px", fontWeight: 600,
+                  padding: "7px 16px", cursor: "pointer",
+                  fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600,
                   letterSpacing: "0.06em", textTransform: "uppercase",
-                  borderBottom: `2px solid ${isAct ? TC[t] : "transparent"}`,
-                  borderRight: "1px solid #f0ebe3",
-                  background: isAct ? TBG[t] : "white",
-                  color: isAct ? TC[t] : "#8a7455",
-                  outline: isAct ? "none" : `1px solid ${TBORDER[t]}`,
-                  outlineOffset: "-1px",
+                  borderRadius: "999px",
+                  border: `1.5px solid ${isAct ? TC[t] : TBORDER[t]}`,
+                  background: isAct ? TC[t] : "white",
+                  color: isAct ? "white" : TC[t],
                   transition: "all 0.15s",
                 }}>
-                  {t}{locked ? " 🔒" : ""}
-                  <br />
-                  <span style={{ fontSize: "8px", fontWeight: 400, letterSpacing: "0.03em", opacity: 0.75 }}>
-                    {t === "forward" ? "send/delegate" : t === "schedule" ? "remind/cal" : "lyme search"}
-                  </span>
+                  {t === "forward" ? "Forward" : t === "schedule" ? "Schedule" : "Find"}{locked ? " 🔒" : ""}
                 </button>
               );
             })}
+            {activeType && (
+              <button onClick={() => { setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} style={{
+                padding: "7px 14px", cursor: "pointer",
+                fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 500,
+                borderRadius: "999px", border: "1.5px solid #e8e0d5",
+                background: "none", color: "#8a7455", transition: "all 0.15s",
+              }}>All</button>
+            )}
           </div>
+
+          <div style={{ background: "white", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+
+          {/* Goal strip — solid sphere color card header */}
+          {goal && (
+            <div style={{ background: hc, padding: "14px 18px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", transition: "background 0.3s ease", flexShrink: 0 }}>
+              <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.75)", fontFamily: "'Inter', sans-serif", flexShrink: 0, fontWeight: 600 }}>{goal.sphereName}</span>
+              <span style={{ fontSize: "14px", color: "white", fontFamily: "'Playfair Display', serif", fontWeight: 600, lineHeight: 1.3 }}>{goal.goalText}</span>
+            </div>
+          )}
 
           {/* Item list */}
           <div style={{ flex: 1 }}>
@@ -709,7 +712,7 @@ export function PlanScreen({
           )}
           </div> {/* closes white card */}
         </div> {/* closes content */}
-        </div> {/* closes max-w-2xl centering wrapper */}
+        </div> {/* closes centering wrapper */}
         </div> {/* closes body flex */}
       </div> {/* closes right column */}
     </div>

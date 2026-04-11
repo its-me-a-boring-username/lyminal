@@ -178,7 +178,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
           </p>
         </div>
 
-        <div className="px-6 py-8 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
+        <div className="px-6 py-8 max-w-4xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
 
           <div className="space-y-4 mb-8">
             {allActive.map((ag) => (
