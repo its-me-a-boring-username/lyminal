@@ -224,12 +224,19 @@ function GoalChart() {
 
   const BoundDevReset = () => <DevReset session={session} />;
 
-  if (step === "welcome") return <WelcomeScreen setStep={setStep} DevReset={BoundDevReset} setAuthPrompt={setAuthPrompt} />;
+  const Screen = ({ children }) => (
+    <div key={step} style={{ animation: "fadeIn 0.3s ease-out" }}>
+      <style>{`@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`}</style>
+      {children}
+    </div>
+  );
+
+  if (step === "welcome") return <Screen><WelcomeScreen setStep={setStep} DevReset={BoundDevReset} setAuthPrompt={setAuthPrompt} /></Screen>;
 
   // ── INTRO SCREENS ──
   if (["intro-spheres","intro-goals","intro-connections","intro-results","intro-active"].includes(step)) {
     return (
-      <>
+      <Screen>
         <IntroScreens
           screen={step}
           setStep={setStep}
@@ -241,14 +248,14 @@ function GoalChart() {
           setSelectedGoalId={setSelectedGoalId}
           DevReset={BoundDevReset}
         />
-      </>
+      </Screen>
     );
   }
 
   // ── FLOW SCREENS (spheres / goals / connections) ──
   if (["spheres","goals","connections"].includes(step)) {
     return (
-      <FlowScreens
+      <Screen><FlowScreens
         step={step}
         spheres={spheres} setSpheres={setSpheres}
         newSphere={newSphere} setNewSphere={setNewSphere}
@@ -259,14 +266,14 @@ function GoalChart() {
         setStep={setStep}
         session={session}
         DevReset={BoundDevReset}
-      />
+      /></Screen>
     );
   }
 
   // ── RESULTS FLOW (results / focus / action) ──
   if (["results","focus","action"].includes(step)) {
     return (
-      <>
+      <Screen>
         <ResultsFlow
           step={step}
           spheres={spheres}
@@ -283,7 +290,7 @@ function GoalChart() {
           session={session}
           DevReset={BoundDevReset}
         />
-      </>
+      </Screen>
     );
   }
 
@@ -293,7 +300,7 @@ function GoalChart() {
       setTimeout(() => { setAuthPrompt("save_chart"); setHasSeenChartPrompt(true); }, 6000);
     }
     return (
-      <>
+      <Screen>
         <AuthOverlay />
         <BoundDevReset />
         <ChartView
@@ -322,13 +329,13 @@ function GoalChart() {
           setActiveGoals={setActiveGoals}
           generateChartReport={generateChartReport}
         />
-      </>
+      </Screen>
     );
   }
 
   if (step === "active") {
     return (
-      <>
+      <Screen>
         <AuthOverlay />
         <BoundDevReset />
         <ActiveScreen
@@ -363,17 +370,17 @@ function GoalChart() {
           setChatLoading={setChatLoading}
           isMobile={isMobile}
         />
-      </>
+      </Screen>
     );
   }
 
   // ── ACCOUNT STEP ──
-  if (step === "account") return <AccountScreen session={session} tier={tier} isPaid={isPaid} setAuthPrompt={setAuthPrompt} selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} appearance={appearance} setAppearance={setAppearance} isMobile={isMobile} NavBar={NavBar} AuthOverlay={AuthOverlay} />;
+  if (step === "account") return <Screen><AccountScreen session={session} tier={tier} isPaid={isPaid} setAuthPrompt={setAuthPrompt} selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} appearance={appearance} setAppearance={setAppearance} isMobile={isMobile} NavBar={NavBar} AuthOverlay={AuthOverlay} /></Screen>;
 
   // ── PROGRESS STEP ──
   if (step === "progress") {
     return (
-      <>
+      <Screen>
         <AuthOverlay />
         <BoundDevReset />
         <ProgressScreen
@@ -393,14 +400,14 @@ function GoalChart() {
           setChatMessages={setChatMessages}
           setChatLoading={setChatLoading}
         />
-      </>
+      </Screen>
     );
   }
 
   // ── GOAL PICKER STEP ──
   if (step === "goal-picker") {
     return (
-      <>
+      <Screen>
         <AuthOverlay />
         <BoundDevReset />
         <GoalPicker
@@ -416,14 +423,14 @@ function GoalChart() {
           isMobile={isMobile}
           isPaid={isPaid}
         />
-      </>
+      </Screen>
     );
   }
 
   // ── PLAN STEP ──
   if (step === "plan") {
     return (
-      <>
+      <Screen>
         <AuthOverlay />
         <BoundDevReset />
         <PlanScreen
@@ -437,13 +444,13 @@ function GoalChart() {
           setStep={setStep}
           setAuthPrompt={setAuthPrompt}
         />
-      </>
+      </Screen>
     );
   }
 
   if (step === "chat") {
     return (
-      <>
+      <Screen>
         <AuthOverlay />
         <ChatScreen
           chatMessages={chatMessages}
@@ -467,7 +474,7 @@ function GoalChart() {
           messagesEndRef={messagesEndRef}
           DevReset={BoundDevReset}
         />
-      </>
+      </Screen>
     );
   }
 

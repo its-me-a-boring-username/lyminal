@@ -2,7 +2,8 @@ import React from "react";
 import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeScaleIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }`;
 
 export function ResultsFlow({
   step,
@@ -24,7 +25,7 @@ export function ResultsFlow({
 
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16"
-        style={{ background: "#4a7a72", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
+        style={{ background: "#4a7a72", fontFamily: "'Inter', sans-serif", animation: "fadeScaleIn 0.5s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="max-w-lg w-full mx-auto">
