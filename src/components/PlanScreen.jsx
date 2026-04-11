@@ -44,40 +44,40 @@ function ForwardModal({ items, color, onClose }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-      <div style={{ background: "white", maxWidth: "400px", width: "100%" }}>
-        <div style={{ padding: "18px 20px 14px", borderBottom: "1px solid #e8e0d5" }}>
-          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 3px", fontFamily: "'Inter', sans-serif" }}>Forward {items.length} item{items.length > 1 ? "s" : ""}</p>
-          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "16px", color: "#1c1410", margin: 0 }}>Who should handle these?</p>
+      <div style={{ background: "white", maxWidth: "480px", width: "100%" }}>
+        <div style={{ padding: "24px 28px 18px", borderBottom: "1px solid #e8e0d5" }}>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Forward {items.length} item{items.length > 1 ? "s" : ""}</p>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#1c1410", margin: 0 }}>Who should handle these?</p>
         </div>
         {sent ? (
-          <div style={{ padding: "24px 20px", textAlign: "center" }}>
-            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Forwarded ✓</p>
-            <p style={{ fontSize: "11px", color: "#8a7455", margin: "0 0 16px", fontFamily: "'Inter', sans-serif" }}>Your email client should have opened.</p>
-            <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "8px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
+          <div style={{ padding: "32px 28px", textAlign: "center" }}>
+            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Forwarded ✓</p>
+            <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 20px", fontFamily: "'Inter', sans-serif" }}>Your email client should have opened.</p>
+            <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
           </div>
         ) : (
           <>
-            <div style={{ padding: "16px 20px" }}>
-              <div style={{ marginBottom: "12px" }}>
+            <div style={{ padding: "20px 28px" }}>
+              <div style={{ marginBottom: "16px" }}>
                 {items.map(i => (
-                  <div key={i.id} style={{ display: "flex", alignItems: "flex-start", gap: "7px", marginBottom: "5px" }}>
-                    <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: color, marginTop: "5px", flexShrink: 0 }} />
-                    <p style={{ fontSize: "12px", color: "#1c1410", margin: 0, lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>{i.text}</p>
+                  <div key={i.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "7px" }}>
+                    <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: color, marginTop: "6px", flexShrink: 0 }} />
+                    <p style={{ fontSize: "13px", color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{i.text}</p>
                   </div>
                 ))}
               </div>
-              <div style={{ display: "grid", gap: "8px" }}>
+              <div style={{ display: "grid", gap: "10px" }}>
                 <input value={recipient} onChange={e => setRecipient(e.target.value)} placeholder="Recipient email or phone"
-                  style={{ border: "1px solid #d4c9bb", padding: "8px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />
                 <input value={subject} onChange={e => setSubject(e.target.value)} placeholder="Subject"
-                  style={{ border: "1px solid #d4c9bb", padding: "8px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />
-                <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="Add a note (optional)" rows={2}
-                  style={{ border: "1px solid #d4c9bb", padding: "8px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", resize: "none", width: "100%", boxSizing: "border-box" }} />
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />
+                <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="Add a note (optional)" rows={3}
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", resize: "none", width: "100%", boxSizing: "border-box" }} />
               </div>
             </div>
-            <div style={{ padding: "12px 20px", borderTop: "1px solid #e8e0d5", display: "flex", gap: "8px" }}>
-              <button onClick={onClose} style={{ flex: 1, padding: "9px", fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
-              <button onClick={handleSend} style={{ flex: 2, padding: "9px", fontSize: "12px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send →</button>
+            <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", gap: "10px" }}>
+              <button onClick={onClose} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
+              <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send →</button>
             </div>
           </>
         )}
@@ -103,40 +103,40 @@ function ScheduleModal({ items, color, onClose }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-      <div style={{ background: "white", maxWidth: "400px", width: "100%" }}>
-        <div style={{ padding: "18px 20px 14px", borderBottom: "1px solid #e8e0d5" }}>
-          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 3px", fontFamily: "'Inter', sans-serif" }}>Schedule {items.length} item{items.length > 1 ? "s" : ""}</p>
-          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "16px", color: "#1c1410", margin: 0 }}>When should these happen?</p>
+      <div style={{ background: "white", maxWidth: "480px", width: "100%" }}>
+        <div style={{ padding: "24px 28px 18px", borderBottom: "1px solid #e8e0d5" }}>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Schedule {items.length} item{items.length > 1 ? "s" : ""}</p>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#1c1410", margin: 0 }}>When should these happen?</p>
         </div>
         {saved ? (
-          <div style={{ padding: "24px 20px", textAlign: "center" }}>
-            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Reminder set ✓</p>
-            <p style={{ fontSize: "11px", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>{date} at {time} · {repeat === "once" ? "One time" : repeat === "daily" ? "Every day" : "Every week"}</p>
-            <p style={{ fontSize: "10px", color: "#8a7455", margin: "0 0 16px", fontStyle: "italic", fontFamily: "'Inter', sans-serif" }}>Push notifications coming soon.</p>
-            <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "8px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
+          <div style={{ padding: "32px 28px", textAlign: "center" }}>
+            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Reminder set ✓</p>
+            <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>{date} at {time} · {repeat === "once" ? "One time" : repeat === "daily" ? "Every day" : "Every week"}</p>
+            <p style={{ fontSize: "11px", color: "#8a7455", margin: "0 0 20px", fontStyle: "italic", fontFamily: "'Inter', sans-serif" }}>Push notifications coming soon.</p>
+            <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
           </div>
         ) : (
           <>
-            <div style={{ padding: "16px 20px" }}>
-              <div style={{ marginBottom: "12px" }}>
+            <div style={{ padding: "20px 28px" }}>
+              <div style={{ marginBottom: "16px" }}>
                 {items.map(i => (
-                  <div key={i.id} style={{ display: "flex", alignItems: "flex-start", gap: "7px", marginBottom: "5px" }}>
-                    <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: color, marginTop: "5px", flexShrink: 0 }} />
-                    <p style={{ fontSize: "12px", color: "#1c1410", margin: 0, lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>{i.text}</p>
+                  <div key={i.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "7px" }}>
+                    <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: color, marginTop: "6px", flexShrink: 0 }} />
+                    <p style={{ fontSize: "13px", color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{i.text}</p>
                   </div>
                 ))}
               </div>
-              <div style={{ display: "grid", gap: "8px" }}>
-                <div style={{ display: "flex", gap: "8px" }}>
+              <div style={{ display: "grid", gap: "10px" }}>
+                <div style={{ display: "flex", gap: "10px" }}>
                   <input type="date" value={date} onChange={e => setDate(e.target.value)}
-                    style={{ flex: 1, border: "1px solid #d4c9bb", padding: "8px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
+                    style={{ flex: 1, border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
                   <input type="time" value={time} onChange={e => setTime(e.target.value)}
-                    style={{ width: "90px", border: "1px solid #d4c9bb", padding: "8px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
+                    style={{ width: "100px", border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
                 </div>
-                <div style={{ display: "flex", gap: "6px" }}>
+                <div style={{ display: "flex", gap: "8px" }}>
                   {["once", "daily", "weekly"].map(r => (
                     <button key={r} onClick={() => setRepeat(r)} style={{
-                      flex: 1, padding: "6px", fontSize: "11px", cursor: "pointer",
+                      flex: 1, padding: "8px", fontSize: "12px", cursor: "pointer",
                       fontFamily: "'Inter', sans-serif", fontWeight: repeat === r ? 600 : 400,
                       background: repeat === r ? color : "white",
                       color: repeat === r ? "white" : "#6e5c4a",
@@ -146,16 +146,16 @@ function ScheduleModal({ items, color, onClose }) {
                 </div>
               </div>
             </div>
-            <div style={{ padding: "12px 20px", borderTop: "1px solid #e8e0d5", display: "grid", gap: "8px" }}>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button onClick={onClose} style={{ flex: 1, padding: "9px", fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
+            <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "grid", gap: "10px" }}>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button onClick={onClose} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
                 <button onClick={() => date && setSaved(true)} disabled={!date}
-                  style={{ flex: 2, padding: "9px", fontSize: "12px", fontWeight: 600, color: "white", background: date ? color : "#c4b8a8", border: "none", cursor: date ? "pointer" : "default", fontFamily: "'Inter', sans-serif" }}>
+                  style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: date ? color : "#c4b8a8", border: "none", cursor: date ? "pointer" : "default", fontFamily: "'Inter', sans-serif" }}>
                   Set reminder →
                 </button>
               </div>
               <button onClick={openGCal}
-                style={{ width: "100%", padding: "9px", fontSize: "12px", fontWeight: 500, color: color, background: "none", border: `1px solid ${color}`, cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+                style={{ width: "100%", padding: "11px", fontSize: "13px", fontWeight: 500, color: color, background: "none", border: `1px solid ${color}`, cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
                 Open in Google Calendar instead →
               </button>
             </div>
@@ -401,15 +401,15 @@ function IntroModal({ step, onNext, onBack, onDot }) {
   const StepComponent = INTRO_STEPS[step];
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-      <div style={{ background: "white", maxWidth: "400px", width: "100%", maxHeight: "90vh", overflowY: "auto" }}>
-        <div style={{ padding: "20px 22px 14px", borderBottom: "1px solid #e8e0d5" }}>
-          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 3px", fontFamily: "'Inter', sans-serif" }}>Welcome to</p>
-          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", fontWeight: 600, color: "#1c1410", margin: 0 }}>The Plan tab</p>
+      <div style={{ background: "white", maxWidth: "480px", width: "100%", maxHeight: "90vh", overflowY: "auto" }}>
+        <div style={{ padding: "24px 28px 18px", borderBottom: "1px solid #e8e0d5" }}>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Welcome to</p>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "22px", fontWeight: 600, color: "#1c1410", margin: 0 }}>The Plan tab</p>
         </div>
-        <div style={{ padding: "18px 22px" }} key={step}>
+        <div style={{ padding: "22px 28px" }} key={step}>
           <StepComponent />
         </div>
-        <div style={{ padding: "12px 22px", borderTop: "1px solid #e8e0d5", display: "flex", alignItems: "center", gap: "10px" }}>
+        <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ display: "flex", gap: "6px", flex: 1 }}>
             {Array.from({ length: INTRO_TOTAL }).map((_, i) => (
               <div key={i} onClick={() => onDot(i)} style={{ width: "8px", height: "8px", borderRadius: "50%", background: i === step ? "#b5472a" : "#d4c9bb", cursor: "pointer", transition: "background 0.2s" }} />
@@ -548,25 +548,25 @@ export function PlanScreen({
         />
       )}
 
-      {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-      {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+      {/* Left design strip — full height, desktop only */}
+      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
 
-      {/* Plan header */}
-      <div style={{ background: `${hc}1e`, borderBottom: `2px solid ${hc}55`, padding: "24px 24px 20px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
-        <div className="max-w-2xl mx-auto lg:px-16">
-          <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>Plan</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>Get things done</h2>
+      {/* Right column — nav + header + body */}
+      <div className="w-full lg:flex-1 lg:flex lg:flex-col">
+
+        {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+        {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+
+        {/* Plan header */}
+        <div style={{ background: `${hc}1e`, borderBottom: `2px solid ${hc}55`, padding: "24px 24px 20px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
+          <div className="max-w-2xl mx-auto lg:px-16">
+            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>Plan</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>Get things done</h2>
+          </div>
         </div>
-      </div>
 
-      {/* Body */}
-      <div style={{ display: "flex", flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
-
-        {/* Left design strip — desktop only */}
-        <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
-
-        {/* Ring sidebar + content */}
-        <div style={{ flex: 1, minWidth: 0, display: "flex" }}>
+        {/* Body — ring sidebar + content */}
+        <div style={{ display: "flex", flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
 
         {/* Ring sidebar */}
         <div style={{ width: "56px", flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "16px", gap: "4px", borderRight: "1px solid #e8e0d5", background: "#faf8f5" }}>
@@ -693,9 +693,9 @@ export function PlanScreen({
               </button>
             </div>
           )}
-        </div>
-        </div> {/* closes ring+content wrapper */}
-      </div>
+        </div> {/* closes content */}
+        </div> {/* closes body flex */}
+      </div> {/* closes right column */}
     </div>
   );
 }
