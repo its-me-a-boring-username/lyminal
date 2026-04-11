@@ -523,7 +523,7 @@ export function PlanScreen({
   // ── Paywall ──
   if (!isPaid) {
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
@@ -551,7 +551,7 @@ export function PlanScreen({
   // ── Empty ──
   if (activeGoals.length === 0) {
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
@@ -584,7 +584,7 @@ export function PlanScreen({
         />
       )}
 
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
       <style>{FONTS}</style>
 
       {/* Left design strip — full height, desktop only */}
