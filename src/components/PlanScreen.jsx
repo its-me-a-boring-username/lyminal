@@ -529,13 +529,9 @@ export function PlanScreen({
   }
 
   return (
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
-      <style>{FONTS}</style>
-
+    <>
       {modal === "forward"  && <ForwardModal  items={bulkItems} color={hc} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
       {modal === "schedule" && <ScheduleModal items={bulkItems} color={hc} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
-
-      {/* First-visit intro walkthrough */}
       {introStep !== null && (
         <IntroModal
           step={introStep}
@@ -548,8 +544,11 @@ export function PlanScreen({
         />
       )}
 
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.2s ease-out" }}>
+      <style>{FONTS}</style>
+
       {/* Left design strip — full height, desktop only */}
-      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
+      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: hc, transition: "background 0.3s ease" }} />
 
       {/* Right column — nav + header + body */}
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
@@ -697,5 +696,6 @@ export function PlanScreen({
         </div> {/* closes body flex */}
       </div> {/* closes right column */}
     </div>
+    </>
   );
 }
