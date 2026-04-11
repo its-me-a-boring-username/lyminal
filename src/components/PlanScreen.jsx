@@ -562,6 +562,12 @@ export function PlanScreen({
       {/* Body */}
       <div style={{ display: "flex", flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
 
+        {/* Left design strip — desktop only */}
+        <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
+
+        {/* Ring sidebar + content */}
+        <div style={{ flex: 1, minWidth: 0, display: "flex" }}>
+
         {/* Ring sidebar */}
         <div style={{ width: "56px", flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "16px", gap: "4px", borderRight: "1px solid #e8e0d5", background: "#faf8f5" }}>
           {activeGoals.map((ag, i) => (
@@ -688,6 +694,7 @@ export function PlanScreen({
             </div>
           )}
         </div>
+        </div> {/* closes ring+content wrapper */}
       </div>
     </div>
   );
