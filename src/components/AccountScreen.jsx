@@ -19,10 +19,10 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
   const [confirmReset, setConfirmReset] = useState(false);
 
   const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"#b5472a", fontWeight:600, margin:"0 0 12px", fontFamily:"'Inter',sans-serif" };
-  const card = { background:"white", border:"1px solid #e8e0d5", marginBottom:"28px" };
+  const card = { background:"white", border:"1px solid #e8e0d5", marginBottom:"28px", borderRadius:"8px", overflow:"hidden" };
   const row = (last) => ({ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 18px", borderBottom: last ? "none" : "1px solid #f0e8df" });
   const btn = (variant) => ({
-    fontSize:"12px", fontWeight:500, padding:"6px 14px", cursor:"pointer", border:"none",
+    fontSize:"12px", fontWeight:500, padding:"6px 14px", cursor:"pointer", border:"none", borderRadius:"6px",
     ...(variant === "primary" ? { background:"#b5472a", color:"white", fontWeight:600, padding:"6px 16px" } : {}),
     ...(variant === "danger"  ? { background:"none", color:"#9b2a2a", border:"1px solid #e8aaaa" } : {}),
     ...(variant === "default" ? { background:"none", color:"#5c4e40", border:"1px solid #e8e0d5" } : {}),
@@ -32,14 +32,18 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
   return (
     <div className="min-h-screen lg:flex" style={{background:"#faf8f5", fontFamily:"'Inter',sans-serif"}}>
       <style>{FONTS}</style>
-      <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#2c1f14"}} />
+      <div className="hidden lg:block flex-shrink-0" style={{width:"350px", background:"#b5472a"}} />
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         {!isMobile && <NavBar />}
         {isMobile && <NavBar />}
-        <div className="px-6 py-10 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
+        <div style={{background:"rgba(181,71,42,0.07)", borderBottom:"1px solid rgba(181,71,42,0.12)", padding:"28px 24px 24px"}}>
+          <div className="max-w-2xl mx-auto lg:px-16">
+            <p style={{fontSize:"0.65rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#8a7455", margin:"0 0 6px", fontFamily:"'Inter',sans-serif"}}>Account</p>
+            <h2 style={{fontFamily:"'Playfair Display',serif", fontSize:"1.75rem", fontWeight:600, color:"#1c1410", margin:0}}>Settings</h2>
+          </div>
+        </div>
+        <div className="px-6 py-8 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
           <AuthOverlay />
-          <p style={{fontSize:"0.65rem", letterSpacing:"0.12em", textTransform:"uppercase", color:"#8a7455", margin:"0 0 6px", fontFamily:"'Inter',sans-serif"}}>Account</p>
-          <h2 style={{fontFamily:"'Playfair Display',serif", fontSize:"1.75rem", fontWeight:600, color:"#1c1410", margin:"0 0 32px"}}>Settings</h2>
 
           {/* Account & Data */}
           <p style={sectionLabel}>Account & Data</p>
@@ -113,6 +117,7 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
                     background: appearance === mode ? "#1c1410" : "none",
                     color: appearance === mode ? "white" : "#8a7455",
                     border: appearance === mode ? "1px solid #1c1410" : "1px solid #e8e0d5",
+                    borderRadius: "6px",
                   }}>
                     {mode.charAt(0).toUpperCase() + mode.slice(1)}
                   </button>

@@ -6,6 +6,14 @@ import { normalizeActionItems, ACTION_TYPE_DESCRIPTIONS } from "../utils/actionI
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
 
+function hexToRgba(hex, alpha) {
+  if (!hex || hex.length < 7) return `rgba(181,71,42,${alpha})`;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 const processBold = (text) => {
   const parts = text.split(/\*\*([^*]+)\*\*/g);
   return parts.map((part, i) =>
@@ -156,17 +164,22 @@ Do not ask follow-up questions after proposing action items unless the user want
       {isMobile && <Nav step="chat" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
 
       {/* Header */}
-      <div className="px-6 py-4 flex items-center gap-4 border-b" style={{ background: "white", borderColor: "#c4b8a8" }}>
+      <div className="px-6 py-4 flex items-center gap-4" style={{ background: hexToRgba(chatContext?.sphereColor, 0.07), borderBottom: `1px solid ${hexToRgba(chatContext?.sphereColor, 0.12)}` }}>
         <div className="flex items-center gap-2 flex-1">
-          <div className="w-2.5 h-2.5 rounded-full" style={{ background: chatContext?.sphereColor }} />
-          <div>
-            <p className="text-xs" style={{ color: "#6e5c4a" }}>{chatContext?.sphereName}</p>
-            <p className="text-sm font-medium" style={{ color: "#1c1410" }}>{chatContext?.goalText}</p>
-          </div>
+          <span style={{
+            fontSize: "10px", fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase",
+            color: chatContext?.sphereColor, fontFamily: "'Inter', sans-serif",
+            background: hexToRgba(chatContext?.sphereColor, 0.10),
+            border: `1px solid ${hexToRgba(chatContext?.sphereColor, 0.22)}`,
+            borderRadius: "999px", padding: "3px 10px", flexShrink: 0,
+          }}>
+            {chatContext?.sphereName}
+          </span>
+          <p className="text-sm font-medium" style={{ color: "#1c1410", margin: 0 }}>{chatContext?.goalText}</p>
         </div>
         <button onClick={() => setStep("active")} className="text-xs px-4 py-2 font-medium hover:opacity-80 transition-opacity"
-          style={{ border: "1px solid #d4c9bb", color: "#5c4e40" }}>
-          Exit conversation
+          style={{ border: "1px solid #d4c9bb", color: "#5c4e40", borderRadius: "6px", flexShrink: 0 }}>
+          Exit
         </button>
       </div>
 
@@ -176,7 +189,7 @@ Do not ask follow-up questions after proposing action items unless the user want
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start", gap: "8px", maxWidth: "340px" }}>
               <div className="px-4 py-3 text-sm leading-relaxed" style={{
-                background: m.role === "user" ? "#b5472a" : "white",
+                background: m.role === "user" ? (chatContext?.sphereColor || "#b5472a") : "white",
                 color: m.role === "user" ? "white" : "#1c1410",
                 border: m.role === "assistant" ? "1px solid #e8e0d5" : "none",
                 borderRadius: m.role === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px"
@@ -195,7 +208,7 @@ Do not ask follow-up questions after proposing action items unless the user want
                     ))}
                   </div>
                   <button onClick={saveAndFinish} className="w-full py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity"
-                    style={{ background: "#b5472a", color: "white" }}>
+                    style={{ background: chatContext?.sphereColor || "#b5472a", color: "white", borderRadius: "6px" }}>
                     Save & finish →
                   </button>
                   <p className="text-xs text-center mt-2" style={{ color: "#8a7455" }}>Not quite right? Keep chatting to refine.</p>
@@ -227,7 +240,7 @@ Do not ask follow-up questions after proposing action items unless the user want
           />
           <button onClick={sendMessage} disabled={!chatInput.trim() || chatLoading}
             className="px-5 py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-30 transition-opacity"
-            style={{ background: "#b5472a", color: "white" }}>
+            style={{ background: chatContext?.sphereColor || "#b5472a", color: "white", borderRadius: "6px" }}>
             Send
           </button>
         </div>
