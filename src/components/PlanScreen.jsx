@@ -240,11 +240,12 @@ export function PlanScreen({
   setStep, setAuthPrompt,
 }) {
   const initialIndex = Math.max(0, activeGoals.findIndex(g => !completedGoals.has(g.goalId)));
-  const [selIndex,   setSelIndex]   = useState(initialIndex);
-  const [activeType, setActiveType] = useState(null);
-  const [bulkSel,    setBulkSel]    = useState(new Set());
-  const [modal,      setModal]      = useState(null);
-  const [findItem,   setFindItem]   = useState(null);
+  const [selIndex,    setSelIndex]    = useState(initialIndex);
+  const [activeType,  setActiveType]  = useState(null);
+  const [bulkSel,     setBulkSel]     = useState(new Set());
+  const [modal,       setModal]       = useState(null);
+  const [findItem,    setFindItem]    = useState(null);
+  const [showIntro,   setShowIntro]   = useState(() => !localStorage.getItem("lyminal_plan_intro_seen"));
 
   useEffect(() => {
     if (selIndex > activeGoals.length - 1) setSelIndex(Math.max(0, activeGoals.length - 1));
@@ -336,13 +337,57 @@ export function PlanScreen({
       {modal === "forward"  && <ForwardModal  items={bulkItems} color={hc} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
       {modal === "schedule" && <ScheduleModal items={bulkItems} color={hc} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
 
+      {/* First-visit intro modal */}
+      {showIntro && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+          <div style={{ background: "white", maxWidth: "400px", width: "100%" }}>
+            <div style={{ padding: "22px 24px 16px", borderBottom: "1px solid #e8e0d5" }}>
+              <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Welcome to</p>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", fontWeight: 600, color: "#1c1410", margin: 0 }}>The Plan tab</p>
+            </div>
+            <div style={{ padding: "18px 24px" }}>
+              <p style={{ fontSize: "13px", color: "#5c4e40", margin: "0 0 16px", lineHeight: 1.6, fontFamily: "'Inter', sans-serif" }}>
+                This is where you actually get things done. Use the three action types to handle your items:
+              </p>
+              {[
+                { type: "forward", label: "Forward", desc: "Delegate or communicate — send items to your EA, teammate, or anyone else who should handle them." },
+                { type: "schedule", label: "Schedule", desc: "Block time or set reminders — for anything that needs a calendar event or a nudge." },
+                { type: "find",    label: "Find", desc: "Ask Lyme to research, source or help you buy — powered by web search." },
+              ].map(({ type, label, desc }) => (
+                <div key={type} style={{ display: "flex", gap: "12px", marginBottom: "14px" }}>
+                  <div style={{ width: "52px", flexShrink: 0, paddingTop: "2px" }}>
+                    <span style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.05em", padding: "3px 7px", background: TBG[type], color: TC[type], fontFamily: "'Inter', sans-serif" }}>
+                      {label.toUpperCase()}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: "12px", color: "#5c4e40", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{desc}</p>
+                </div>
+              ))}
+              <p style={{ fontSize: "11px", color: "#8a7455", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Inter', sans-serif" }}>
+                Select a type to filter your items and handle them one by one or in bulk.
+              </p>
+            </div>
+            <div style={{ padding: "14px 24px", borderTop: "1px solid #e8e0d5" }}>
+              <button
+                onClick={() => { setShowIntro(false); localStorage.setItem("lyminal_plan_intro_seen", "1"); }}
+                style={{ width: "100%", padding: "10px", fontSize: "12px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}
+              >
+                GOT IT →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
       {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
 
       {/* Plan header */}
-      <div style={{ background: `${hc}1e`, borderBottom: `2px solid ${hc}55`, padding: "16px 24px 14px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
-        <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 3px" }}>Plan</p>
-        <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>Get things done</p>
+      <div style={{ background: `${hc}1e`, borderBottom: `2px solid ${hc}55`, padding: "24px 24px 20px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
+        <div className="max-w-2xl mx-auto lg:px-16">
+          <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>Plan</p>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>Get things done</h2>
+        </div>
       </div>
 
       {/* Body */}
