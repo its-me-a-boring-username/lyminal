@@ -474,7 +474,7 @@ export function ProgressScreen({
             padding: "28px 24px 24px",
             transition: "background 0.35s ease, border-color 0.35s ease",
           }}>
-            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>
+            <p className="text-xs uppercase tracking-widest" style={{ color: headerColor, opacity: 0.8, margin: "0 0 4px" }}>
               Your Progress
             </p>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>

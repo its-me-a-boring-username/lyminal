@@ -1,4 +1,4 @@
-export const ACTION_TYPES = ["forward", "schedule", "find"];
+export const ACTION_TYPES = ["forward", "schedule", "find", "none"];
 
 export const ACTION_TYPE_DESCRIPTIONS = `Use these definitions when assigning type:
 - forward: communicate, delegate, or send to another person (e.g. email, text, share with EA, ask a teammate)
@@ -31,7 +31,8 @@ export function normalizeActionItem(item, index = 0) {
 
   const text = String(item.text || "").trim();
   const rawType = String(item.type || "").toLowerCase();
-  const type = ACTION_TYPES.includes(rawType) ? rawType : inferActionType(text);
+  // "none" = explicitly unassigned; anything unrecognised falls back to inference for legacy data
+  const type = rawType === "none" ? "none" : (["forward", "schedule", "find"].includes(rawType) ? rawType : inferActionType(text));
 
   return {
     id: item.id || `legacy_${Date.now()}_${index}`,

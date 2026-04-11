@@ -55,4 +55,24 @@ const PALETTE = [
 ];
 
 
-export { MAP_BG, FONTS, SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE };
+// Hardcoded colors for the 15 suggested sphere names.
+// Custom sphere names fall back to PALETTE in FlowScreens.
+const SPHERE_COLOR_MAP = {
+  "Finances":         "#4a7c8e", // slate blue
+  "Work":             "#5c6b7a", // warm slate
+  "Family":           "#9e6b7a", // dusty rose
+  "Health":           "#6b8f71", // sage green
+  "Mental Health":    "#7a5c8a", // faded plum
+  "Social Life":      "#c4973a", // ochre
+  "Creativity":       "#b5693a", // terracotta
+  "Fun":              "#4e857a", // muted teal
+  "Education":        "#4e6b8a", // dusty navy
+  "Community":        "#5c7a5c", // forest green
+  "Entrepreneurship": "#8a7a4e", // olive gold
+  "Dating":           "#8a5c5c", // muted crimson
+  "Practical Skills": "#7a6b4e", // warm brown
+  "Self-Reliance":    "#5c8a7a", // seafoam
+  "Spirituality":     "#6b5c8a", // soft violet
+};
+
+export { MAP_BG, FONTS, SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE, SPHERE_COLOR_MAP };

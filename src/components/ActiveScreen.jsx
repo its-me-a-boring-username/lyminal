@@ -86,7 +86,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
   };
 
   const addActionItem = (goalId, text, type) => {
-    const itemType = ACTION_TYPES.includes(type) ? type : "find";
+    const itemType = type === "none" ? "none" : (["forward", "schedule", "find"].includes(type) ? type : "none");
     const item = { id: `m${Date.now()}`, text: text.trim(), type: itemType };
     const updated = activeGoals.map(g =>
       g.goalId === goalId ? { ...g, actionItems: [...g.actionItems, item] } : g
@@ -298,16 +298,6 @@ Do NOT introduce yourself or explain what you do — that has already been handl
 
                   {/* Manual action item input */}
                   <div className="flex items-center gap-2 mt-3">
-                    <select
-                      value={newActionType}
-                      onChange={e => setNewActionType(e.target.value)}
-                      className="text-xs outline-none"
-                      style={{ border: "1px solid #d4c9bb", borderRadius: "6px", padding: "6px 8px", background: "#faf8f5", color: "#5c4e40", textTransform: "capitalize" }}
-                    >
-                      <option value="forward">forward</option>
-                      <option value="schedule">schedule</option>
-                      <option value="find">find</option>
-                    </select>
                     <input
                       className="flex-1 text-xs outline-none transition-colors"
                       style={{ border: "1px solid #d4c9bb", borderRadius: "6px", padding: "6px 12px", background: "#faf8f5" }}
@@ -316,7 +306,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                       onChange={e => setNewActionItem(e.target.value)}
                       onKeyDown={e => {
                         if (e.key === "Enter" && newActionItem.trim()) {
-                          addActionItem(ag.goalId, newActionItem, newActionType);
+                          addActionItem(ag.goalId, newActionItem, "none");
                           setNewActionItem("");
                         }
                       }}
@@ -324,7 +314,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                     <button
                       onClick={() => {
                         if (!newActionItem.trim()) return;
-                        addActionItem(ag.goalId, newActionItem, newActionType);
+                        addActionItem(ag.goalId, newActionItem, "none");
                         setNewActionItem("");
                       }}
                       disabled={!newActionItem.trim()}

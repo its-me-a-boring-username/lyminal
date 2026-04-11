@@ -1,6 +1,6 @@
 import React from "react";
 import { SphereConnCard } from "./SphereConnCard.jsx";
-import { SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE } from "../constants.js";
+import { SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE, SPHERE_COLOR_MAP } from "../constants.js";
 import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
@@ -33,7 +33,7 @@ export function FlowScreens({
   const addSphere = (name) => {
     const n = name.trim();
     if (!n || spheres.some(b => b.name.toLowerCase() === n.toLowerCase())) return;
-    setSpheres(prev => [...prev, { id: `b${Date.now()}`, name: n, color: PALETTE[prev.length % PALETTE.length], goals: [] }]);
+    setSpheres(prev => [...prev, { id: `b${Date.now()}`, name: n, color: SPHERE_COLOR_MAP[n] || PALETTE[prev.length % PALETTE.length], goals: [] }]);
     setNewSphere("");
   };
 

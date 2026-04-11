@@ -14,9 +14,9 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-const TC     = { forward: "#8a5a44", schedule: "#4a7a72", find: "#5c6f9b" };
-const TBG    = { forward: "#f7f0ec", schedule: "#edf4f1", find: "#eef0f6" };
-const TBORDER = { forward: "#d4a890", schedule: "#9fd4c4", find: "#b0bcd8" };
+const TC     = { forward: "#8a5a44", schedule: "#4a7a72", find: "#5c6f9b", none: "#6e5c4a" };
+const TBG    = { forward: "#f7f0ec", schedule: "#edf4f1", find: "#eef0f6", none: "#f5f2ee" };
+const TBORDER = { forward: "#d4a890", schedule: "#9fd4c4", find: "#b0bcd8", none: "#d4c9bb" };
 
 // ── Ring sidebar button ──────────────────────────────────────────────────────
 function RingButton({ color, isActive, onClick }) {
@@ -502,7 +502,7 @@ export function PlanScreen({
           {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
           {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
-            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 6px" }}>Your Plan</p>
+            <p className="text-xs uppercase tracking-widest" style={{ color: hc, opacity: 0.8, margin: "0 0 6px" }}>Your Plan</p>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
             <p style={{ fontSize: "0.8rem", color: "#5c4e40", fontWeight: 300, margin: "0 0 28px", lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Forward tasks, schedule reminders, send messages, or search for resources.</p>
             <button onClick={() => setAuthPrompt("upgrade")} className="w-full text-left border-2" style={{ borderColor: "#e8e0d5", borderStyle: "dashed", background: "#faf8f5" }}>
@@ -572,7 +572,7 @@ export function PlanScreen({
 
         {/* Plan header */}
         <div className="lg:px-16" style={{ background: hexToRgba(hc, 0.07), borderBottom: `1px solid ${hexToRgba(hc, 0.12)}`, padding: "28px 24px 24px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
-          <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>Your Plan</p>
+          <p className="text-xs uppercase tracking-widest" style={{ color: hc, opacity: 0.8, margin: "0 0 4px" }}>Your Plan</p>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
           <p style={{ fontSize: "0.8rem", color: "#5c4e40", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Forward tasks, schedule reminders, send messages, or search for resources.</p>
         </div>
@@ -613,7 +613,7 @@ export function PlanScreen({
                   color: isAct ? "white" : TC[t],
                   transition: "all 0.15s",
                 }}>
-                  {t === "forward" ? "Forward" : t === "schedule" ? "Schedule" : "Find"}{locked ? " 🔒" : ""}
+                  {t === "forward" ? "Forward" : t === "schedule" ? "Schedule" : t === "find" ? "Find" : "Unassigned"}{locked ? " 🔒" : ""}
                 </button>
               );
             })}
@@ -641,11 +641,23 @@ export function PlanScreen({
           <div style={{ flex: 1 }}>
             {filteredItems.length === 0 ? (
               <div style={{ padding: "28px 18px", textAlign: "center" }}>
-                <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 14px", fontStyle: "italic" }}>No {activeType} items for this goal yet.</p>
-                <button onClick={() => { setActiveType(null); setBulkSel(new Set()); }}
-                  style={{ fontSize: "11px", color: "#b5472a", background: "none", border: "1px solid #e8e0d5", padding: "7px 16px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
-                  Show all items
-                </button>
+                {allItems.length === 0 ? (
+                  <>
+                    <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 14px", fontStyle: "italic" }}>No action items yet for this goal.</p>
+                    <button onClick={() => setStep("active")}
+                      style={{ fontSize: "11px", color: "white", background: hc, border: "none", padding: "8px 18px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px" }}>
+                      Add items on Home →
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 14px", fontStyle: "italic" }}>No {activeType === "none" ? "unassigned" : activeType} items for this goal.</p>
+                    <button onClick={() => { setActiveType(null); setBulkSel(new Set()); }}
+                      style={{ fontSize: "11px", color: "#b5472a", background: "none", border: "1px solid #e8e0d5", padding: "7px 16px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+                      Show all items
+                    </button>
+                  </>
+                )}
               </div>
             ) : filteredItems.map(item => {
               const isDone   = checkedItems[goal.goalId]?.has(item.id) || false;
@@ -687,7 +699,7 @@ export function PlanScreen({
                     )}
                     <select value={item.type} onChange={e => retagItem(item.id, e.target.value)}
                       style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.04em", padding: "2px 6px", border: "none", background: TBG[item.type], color: TC[item.type], cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
-                      {ACTION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                      {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t}</option>)}
                     </select>
                   </div>
                   {findOpen && <FindPanel item={item} goal={goal} onClose={() => setFindItem(null)} />}
