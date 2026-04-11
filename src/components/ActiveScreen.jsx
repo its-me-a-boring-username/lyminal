@@ -184,47 +184,39 @@ Do NOT introduce yourself or explain what you do — that has already been handl
             {allActive.map((ag) => (
               <div key={ag.sphereId} style={{ borderRadius: "8px", border: `1px solid ${hexToRgba(ag.sphereColor, 0.2)}`, background: "white", overflow: "hidden" }}>
 
-                {/* Card header — pale tint with pill sphere label */}
-                <div style={{ background: hexToRgba(ag.sphereColor, 0.07), padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${hexToRgba(ag.sphereColor, 0.12)}` }}>
-                  <span style={{
-                    fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em",
-                    color: ag.sphereColor, fontWeight: 600, fontFamily: "'Inter', sans-serif",
-                    background: hexToRgba(ag.sphereColor, 0.12),
-                    border: `1px solid ${hexToRgba(ag.sphereColor, 0.22)}`,
-                    borderRadius: "999px", padding: "3px 10px",
-                  }}>
-                    {ag.sphereName}
-                  </span>
-                  <button
-                    onClick={() => setConfirmRemove(ag)}
-                    style={{ background: "none", border: "none", color: "#8a7455", cursor: "pointer", fontSize: "13px", padding: 0, lineHeight: 1 }}
-                    title="Remove this goal"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                {/* Goal */}
-                <div className="px-5 py-4 border-b" style={{ borderColor: "#f0ebe3" }}>
-                  <div className="flex items-start gap-3">
+                {/* Card header — solid sphere color */}
+                <div style={{ background: ag.sphereColor, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, minWidth: 0 }}>
                     <button
                       onClick={() => setCompletedGoals(prev => {
                         const next = new Set(prev);
                         prev.has(ag.goalId) ? next.delete(ag.goalId) : next.add(ag.goalId);
                         return next;
                       })}
-                      className="w-5 h-5 flex items-center justify-center flex-shrink-0 mt-1 transition-all"
-                      style={{ borderRadius: "4px", border: `2px solid ${ag.sphereColor}`, background: completedGoals.has(ag.goalId) ? ag.sphereColor : "white" }}
+                      style={{ width: "18px", height: "18px", borderRadius: "4px", flexShrink: 0, border: `2px solid ${completedGoals.has(ag.goalId) ? "white" : "rgba(255,255,255,0.5)"}`, background: completedGoals.has(ag.goalId) ? "white" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, transition: "all 0.2s" }}
                     >
-                      {completedGoals.has(ag.goalId) && <span className="text-white" style={{ fontSize: "10px", fontWeight: "bold" }}>✓</span>}
+                      {completedGoals.has(ag.goalId) && <span style={{ color: ag.sphereColor, fontSize: "10px", fontWeight: "bold" }}>✓</span>}
                     </button>
-                    <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: completedGoals.has(ag.goalId) ? "#6e5c4a" : "#1c1410", textDecoration: completedGoals.has(ag.goalId) ? "line-through" : "none" }}>{ag.goalText}</p>
+                    <div style={{ minWidth: 0 }}>
+                      <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.7)", fontWeight: 600, fontFamily: "'Inter', sans-serif", display: "block", marginBottom: "2px" }}>{ag.sphereName}</span>
+                      <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1rem", color: completedGoals.has(ag.goalId) ? "rgba(255,255,255,0.6)" : "white", margin: 0, lineHeight: 1.3, textDecoration: completedGoals.has(ag.goalId) ? "line-through" : "none" }}>{ag.goalText}</p>
+                    </div>
                   </div>
+                  <button
+                    onClick={() => setConfirmRemove(ag)}
+                    style={{ background: "none", border: "none", color: "rgba(255,255,255,0.6)", cursor: "pointer", fontSize: "13px", padding: 0, lineHeight: 1, flexShrink: 0 }}
+                    title="Remove this goal"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Celebrate / pick new goal — only shown when relevant */}
+                {(celebrating === ag.goalId || completedGoals.has(ag.goalId)) && (
+                <div className="px-5 py-3 border-b" style={{ borderColor: "#f0ebe3" }}>
                   {celebrating === ag.goalId ? (
-                    <p className="mt-3 ml-8 text-xs font-medium" style={{ color: "#4a7a72" }}>
-                      🎉 Well done! Choosing your next goal...
-                    </p>
-                  ) : completedGoals.has(ag.goalId) && (
+                    <p className="text-xs font-medium" style={{ color: "#4a7a72" }}>🎉 Well done! Choosing your next goal...</p>
+                  ) : (
                     <button
                       onClick={() => {
                         setCelebrating(ag.goalId);
@@ -234,13 +226,14 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                           setStep("goal-picker");
                         }, 1500);
                       }}
-                      className="mt-3 ml-8 text-xs font-semibold hover:opacity-80 transition-opacity"
-                      style={{ color: ag.sphereColor }}
+                      className="text-xs font-semibold hover:opacity-80 transition-opacity"
+                      style={{ color: ag.sphereColor, background: "none", border: "none", cursor: "pointer", padding: 0 }}
                     >
                       Pick a new goal →
                     </button>
                   )}
                 </div>
+                )}
 
                 {/* Action items */}
                 <div className="px-5 py-3 border-b" style={{ borderColor: "#f0ebe3" }}>

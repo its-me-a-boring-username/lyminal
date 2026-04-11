@@ -19,8 +19,8 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
   const [confirmReset, setConfirmReset] = useState(false);
 
   const sectionLabel = { fontSize:"0.65rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"#b5472a", fontWeight:600, margin:"0 0 12px", fontFamily:"'Inter',sans-serif" };
-  const card = { background:"white", border:"1px solid #e8e0d5", marginBottom:"28px", borderRadius:"8px", overflow:"hidden" };
-  const row = (last) => ({ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 18px", borderBottom: last ? "none" : "1px solid #f0e8df" });
+  const card = { background:"white", border:"1px solid #e8e0d5", marginBottom:"32px", borderRadius:"8px", overflow:"hidden" };
+  const row = (last) => ({ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"18px 22px", borderBottom: last ? "none" : "1px solid #f0e8df" });
   const btn = (variant) => ({
     fontSize:"12px", fontWeight:500, padding:"6px 14px", cursor:"pointer", border:"none", borderRadius:"6px",
     ...(variant === "primary" ? { background:"#b5472a", color:"white", fontWeight:600, padding:"6px 16px" } : {}),

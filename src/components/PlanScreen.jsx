@@ -577,8 +577,9 @@ export function PlanScreen({
           </div>
         </div>
 
-        {/* Body — ring sidebar + content */}
-        <div style={{ display: "flex", flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
+        {/* Body — ring sidebar + content, centered like other tabs */}
+        <div style={{ flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
+        <div className="max-w-2xl mx-auto lg:px-8" style={{ display: "flex", height: "100%" }}>
 
         {/* Ring sidebar */}
         <div style={{ width: "60px", flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "16px", gap: "4px", borderRight: "1px solid #e8e0d5", background: "#faf8f5" }}>
@@ -590,8 +591,8 @@ export function PlanScreen({
         </div>
 
         {/* Content */}
-        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", margin: "12px 12px 12px 0" }}>
-          <div style={{ background: "white", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column", flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", padding: "16px 20px 16px 16px" }}>
+          <div style={{ background: "white", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
 
           {/* Goal strip — solid sphere color card header */}
           {goal && (
@@ -708,6 +709,7 @@ export function PlanScreen({
           )}
           </div> {/* closes white card */}
         </div> {/* closes content */}
+        </div> {/* closes max-w-2xl centering wrapper */}
         </div> {/* closes body flex */}
       </div> {/* closes right column */}
     </div>
