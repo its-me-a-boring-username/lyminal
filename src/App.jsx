@@ -37,14 +37,6 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-function TabFade({ children }) {
-  return (
-    <div style={{ animation: "tabFadeIn 0.25s ease-out" }}>
-      <style>{`@keyframes tabFadeIn { from { opacity: 0.4; } to { opacity: 1; } }`}</style>
-      {children}
-    </div>
-  );
-}
 
 function GoalChart() {
   const [step, setStep] = useState("welcome");
@@ -332,7 +324,7 @@ function GoalChart() {
 
   if (step === "active") {
     return (
-      <TabFade>
+      <>
         <AuthOverlay />
         <BoundDevReset />
         <ActiveScreen
@@ -365,17 +357,17 @@ function GoalChart() {
           setChatLoading={setChatLoading}
           isMobile={isMobile}
         />
-      </TabFade>
+      </>
     );
   }
 
   // ── ACCOUNT STEP ──
-  if (step === "account") return <TabFade><AccountScreen session={session} tier={tier} isPaid={isPaid} setAuthPrompt={setAuthPrompt} selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} appearance={appearance} setAppearance={setAppearance} isMobile={isMobile} NavBar={NavBar} AuthOverlay={AuthOverlay} /></TabFade>;
+  if (step === "account") return <AccountScreen session={session} tier={tier} isPaid={isPaid} setAuthPrompt={setAuthPrompt} selectedTheme={selectedTheme} setSelectedTheme={setSelectedTheme} appearance={appearance} setAppearance={setAppearance} isMobile={isMobile} NavBar={NavBar} AuthOverlay={AuthOverlay} />;
 
   // ── PROGRESS STEP ──
   if (step === "progress") {
     return (
-      <TabFade>
+      <>
         <AuthOverlay />
         <BoundDevReset />
         <ProgressScreen
@@ -395,7 +387,7 @@ function GoalChart() {
           setChatMessages={setChatMessages}
           setChatLoading={setChatLoading}
         />
-      </TabFade>
+      </>
     );
   }
 
@@ -425,7 +417,7 @@ function GoalChart() {
   // ── PLAN STEP ──
   if (step === "plan") {
     return (
-      <TabFade>
+      <>
         <AuthOverlay />
         <BoundDevReset />
         <PlanScreen
@@ -442,7 +434,7 @@ function GoalChart() {
           setChatMessages={setChatMessages}
           setChatLoading={setChatLoading}
         />
-      </TabFade>
+      </>
     );
   }
 
