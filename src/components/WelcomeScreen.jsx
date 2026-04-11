@@ -49,18 +49,18 @@ export function WelcomeScreen({ setStep, DevReset, setAuthPrompt }) {
           zIndex: 1,
           background: "rgba(250,248,245,0.93)",
           boxShadow: "0 4px 40px rgba(28,20,16,0.10)",
-          padding: "28px 64px 32px",
-          width: "min(820px, calc(100vw - 48px))",
+          padding: "52px 88px 60px",
+          width: "min(960px, calc(100vw - 48px))",
           textAlign: "center",
         }}>
 
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "28px" }}>
             <TriangleLogo size={64} />
           </div>
 
           <p style={{
             fontSize: "10px", letterSpacing: "0.2em", textTransform: "uppercase",
-            color: "#b5472a", fontWeight: 500, marginBottom: "10px",
+            color: "#b5472a", fontWeight: 500, marginBottom: "16px",
             fontFamily: "'Inter', sans-serif",
           }}>
             Lyminal
@@ -68,17 +68,17 @@ export function WelcomeScreen({ setStep, DevReset, setAuthPrompt }) {
 
           <h1 style={{
             fontFamily: "'Playfair Display', serif",
-            fontSize: "3rem", fontWeight: 700,
+            fontSize: "2.75rem", fontWeight: 700,
             color: "#1c1410", lineHeight: 1.0,
-            marginBottom: "14px", letterSpacing: "-0.02em",
+            marginBottom: "24px", letterSpacing: "-0.02em",
           }}>
             Find Your <em style={{ color: "#b5472a", fontStyle: "italic" }}>Focus</em>
           </h1>
 
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "7px", marginBottom: "16px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px", marginBottom: "28px" }}>
             {PILLS.map(p => (
               <span key={p.label} style={{
-                padding: "5px 14px", borderRadius: "999px",
+                padding: "6px 16px", borderRadius: "999px",
                 fontSize: "11px", fontWeight: 500,
                 background: p.bg, color: p.color,
                 border: `1px solid ${p.border}`,
@@ -92,7 +92,7 @@ export function WelcomeScreen({ setStep, DevReset, setAuthPrompt }) {
           <p style={{
             fontSize: "14px", color: "#5c4e40",
             lineHeight: 1.6, fontWeight: 300,
-            marginBottom: "24px", fontFamily: "'Inter', sans-serif",
+            marginBottom: "40px", fontFamily: "'Inter', sans-serif",
           }}>
             Map the areas of your life, see how they support each other,
             and find where to focus first.
@@ -101,13 +101,13 @@ export function WelcomeScreen({ setStep, DevReset, setAuthPrompt }) {
           <button
             onClick={() => setStep("intro-spheres")}
             style={{
-              display: "block", width: "100%", padding: "13px",
+              display: "block", width: "100%", padding: "14px",
               background: "#b5472a", color: "white",
               fontSize: "10px", fontWeight: 600,
               letterSpacing: "0.1em", textTransform: "uppercase",
               border: "none", cursor: "pointer",
               fontFamily: "'Inter', sans-serif",
-              marginBottom: "10px",
+              marginBottom: "16px",
               transition: "opacity 0.15s",
             }}
             onMouseEnter={e => e.target.style.opacity = "0.88"}

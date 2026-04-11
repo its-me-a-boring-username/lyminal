@@ -6,6 +6,14 @@ import { ACTION_TYPES, normalizeActionItems, buildForwardBody } from "../utils/a
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
 
+function hexToRgba(hex, alpha) {
+  if (!hex || hex.length < 7) return `rgba(181,71,42,${alpha})`;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 const TC     = { forward: "#8a5a44", schedule: "#4a7a72", find: "#5c6f9b" };
 const TBG    = { forward: "#f7f0ec", schedule: "#edf4f1", find: "#eef0f6" };
 const TBORDER = { forward: "#d4a890", schedule: "#9fd4c4", find: "#b0bcd8" };
@@ -260,9 +268,14 @@ function MiniTypeButtons({ active }) {
 
 function Caption({ text }) {
   return (
-    <div style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginTop: "12px" }}>
-      <div style={{ width: "3px", flexShrink: 0, background: "#b5472a", borderRadius: "2px", alignSelf: "stretch", minHeight: "36px" }} />
-      <p style={{ fontSize: "13px", fontWeight: 500, color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{text}</p>
+    <div style={{
+      marginTop: "14px",
+      background: "rgba(181,71,42,0.07)",
+      borderLeft: "3px solid #b5472a",
+      borderRadius: "0 6px 6px 0",
+      padding: "10px 14px",
+    }}>
+      <p style={{ fontSize: "13px", color: "#2e2218", lineHeight: 1.55, fontWeight: 400, margin: 0, fontFamily: "'Inter', sans-serif" }}>{text}</p>
     </div>
   );
 }
@@ -402,9 +415,9 @@ function IntroModal({ step, onNext, onBack, onDot }) {
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
       <div style={{ background: "white", maxWidth: "480px", width: "100%", maxHeight: "90vh", overflowY: "auto" }}>
-        <div style={{ padding: "24px 28px 18px", borderBottom: "1px solid #e8e0d5" }}>
+        <div style={{ background: "rgba(181,71,42,0.13)", borderBottom: "1px solid rgba(181,71,42,0.20)", padding: "24px 28px 18px" }}>
           <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Welcome to</p>
-          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "22px", fontWeight: 600, color: "#1c1410", margin: 0 }}>The Plan tab</p>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "22px", fontWeight: 600, color: "#1c1410", margin: 0 }}>The Plan</p>
         </div>
         <div style={{ padding: "22px 28px" }} key={step}>
           <StepComponent />
@@ -557,7 +570,7 @@ export function PlanScreen({
         {isMobile  && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
 
         {/* Plan header */}
-        <div style={{ background: `${hc}1e`, borderBottom: `2px solid ${hc}55`, padding: "24px 24px 20px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
+        <div style={{ background: hexToRgba(hc, 0.07), borderBottom: `1px solid ${hexToRgba(hc, 0.12)}`, padding: "28px 24px 24px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
           <div className="max-w-2xl mx-auto lg:px-16">
             <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 4px" }}>Plan</p>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>Get things done</h2>

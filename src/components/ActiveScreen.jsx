@@ -6,6 +6,14 @@ import { ACTION_TYPES } from "../utils/actionItems.js";
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
 
+function hexToRgba(hex, alpha) {
+  if (!hex || hex.length < 7) return `rgba(181,71,42,${alpha})`;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 export function ActiveScreen({
   focusRound,
   activeGoals, setActiveGoals,
@@ -26,7 +34,9 @@ export function ActiveScreen({
 }) {
   const allActive = focusRound >= 1 ? activeGoals : activeGoals.slice(0, 1);
   const [celebrating, setCelebrating] = React.useState(null);
-  const [confirmRemove, setConfirmRemove] = React.useState(null); // stores ag object pending removal
+  const [confirmRemove, setConfirmRemove] = React.useState(null);
+
+  const priorityColor = allActive[0]?.sphereColor || "#b5472a";
 
   const handleTalkToLyme = async (ag) => {
     setChatContext(ag);
@@ -119,7 +129,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
       {/* Remove goal modal */}
       {confirmRemove && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-          <div style={{ background: "white", maxWidth: "400px", width: "100%", padding: "28px 24px" }}>
+          <div style={{ background: "white", borderRadius: "12px", maxWidth: "400px", width: "100%", padding: "28px 24px" }}>
             <p style={{ fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 8px", fontFamily: "'Inter', sans-serif" }}>Remove goal</p>
             <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 10px", lineHeight: 1.4 }}>
               {confirmRemove.goalText}
@@ -130,7 +140,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
             <div style={{ display: "flex", gap: "10px" }}>
               <button
                 onClick={() => setConfirmRemove(null)}
-                style={{ flex: 1, padding: "10px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}
+                style={{ flex: 1, padding: "10px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px" }}
               >
                 Keep it
               </button>
@@ -142,7 +152,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                   setConfirmRemove(null);
                   if (updated.length === 0) setStep("goal-picker");
                 }}
-                style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, color: "white", background: "#9b2a2a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}
+                style={{ flex: 1, padding: "10px", fontSize: "13px", fontWeight: 600, color: "white", background: "#9b2a2a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px" }}
               >
                 Remove
               </button>
@@ -150,30 +160,44 @@ Do NOT introduce yourself or explain what you do — that has already been handl
           </div>
         </div>
       )}
-      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: allActive[0]?.sphereColor || "#b5472a" }} />
+
+      {/* Design strip */}
+      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: priorityColor }} />
+
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-        <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
-          {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
 
-          <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "#6e5c4a" }}>Your Active Goals</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", fontWeight: 600, color: "#1c1410" }} className="mb-1">Here's what you're working on</h2>
-          <p className="text-sm mb-8" style={{ color: "#5c4e40", fontWeight: 300 }}>
+        {/* Page header with sphere tint */}
+        <div style={{ background: hexToRgba(priorityColor, 0.07), borderBottom: `1px solid ${hexToRgba(priorityColor, 0.12)}`, padding: "28px 24px 24px", marginBottom: "0" }}
+          className="lg:px-16">
+          {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+          <p className="text-xs uppercase tracking-widest mb-1" style={{ color: priorityColor, opacity: 0.8 }}>Your Active Goals</p>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", marginBottom: "6px" }}>Here's what you're working on</h2>
+          <p className="text-sm" style={{ color: "#5c4e40", fontWeight: 300 }}>
             Select a goal to talk through your plan with Lyme, or add action items yourself.
           </p>
+        </div>
+
+        <div className="px-6 py-8 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
 
           <div className="space-y-4 mb-8">
             {allActive.map((ag) => (
-              <div key={ag.sphereId} className="border" style={{ borderColor: "#e8e0d5", background: "white" }}>
+              <div key={ag.sphereId} style={{ borderRadius: "8px", border: `1px solid ${hexToRgba(ag.sphereColor, 0.2)}`, background: "white", overflow: "hidden" }}>
 
-                {/* Header */}
-                <div style={{ background: ag.sphereColor, padding: "10px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "white", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>
+                {/* Card header — pale tint with pill sphere label */}
+                <div style={{ background: hexToRgba(ag.sphereColor, 0.07), padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${hexToRgba(ag.sphereColor, 0.12)}` }}>
+                  <span style={{
+                    fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em",
+                    color: ag.sphereColor, fontWeight: 600, fontFamily: "'Inter', sans-serif",
+                    background: hexToRgba(ag.sphereColor, 0.12),
+                    border: `1px solid ${hexToRgba(ag.sphereColor, 0.22)}`,
+                    borderRadius: "999px", padding: "3px 10px",
+                  }}>
                     {ag.sphereName}
                   </span>
                   <button
                     onClick={() => setConfirmRemove(ag)}
-                    style={{ background: "none", border: "none", color: "rgba(255,255,255,0.65)", cursor: "pointer", fontSize: "13px", padding: 0, lineHeight: 1 }}
+                    style={{ background: "none", border: "none", color: "#8a7455", cursor: "pointer", fontSize: "13px", padding: 0, lineHeight: 1 }}
                     title="Remove this goal"
                   >
                     ✕
@@ -189,8 +213,8 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                         prev.has(ag.goalId) ? next.delete(ag.goalId) : next.add(ag.goalId);
                         return next;
                       })}
-                      className="w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 transition-all"
-                      style={{ borderColor: ag.sphereColor, background: completedGoals.has(ag.goalId) ? ag.sphereColor : "white" }}
+                      className="w-5 h-5 flex items-center justify-center flex-shrink-0 mt-1 transition-all"
+                      style={{ borderRadius: "4px", border: `2px solid ${ag.sphereColor}`, background: completedGoals.has(ag.goalId) ? ag.sphereColor : "white" }}
                     >
                       {completedGoals.has(ag.goalId) && <span className="text-white" style={{ fontSize: "10px", fontWeight: "bold" }}>✓</span>}
                     </button>
@@ -211,7 +235,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                         }, 1500);
                       }}
                       className="mt-3 ml-8 text-xs font-semibold hover:opacity-80 transition-opacity"
-                      style={{ color: "#b5472a" }}
+                      style={{ color: ag.sphereColor }}
                     >
                       Pick a new goal →
                     </button>
@@ -235,16 +259,16 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                               })}
                               className="flex-shrink-0 mt-0.5"
                             >
-                              <div className="w-4 h-4 rounded border-2 flex items-center justify-center transition-all"
-                                style={{ borderColor: ag.sphereColor, background: checked ? ag.sphereColor : "white" }}>
+                              <div className="w-4 h-4 flex items-center justify-center transition-all"
+                                style={{ borderRadius: "3px", border: `2px solid ${ag.sphereColor}`, background: checked ? ag.sphereColor : "white" }}>
                                 {checked && <span className="text-white" style={{ fontSize: "9px", fontWeight: "bold" }}>✓</span>}
                               </div>
                             </button>
                             {isEditing ? (
                               <input
                                 autoFocus
-                                className="flex-1 text-xs border rounded px-2 py-0.5 outline-none"
-                                style={{ borderColor: ag.sphereColor, color: "#4a3828" }}
+                                className="flex-1 text-xs px-2 py-0.5 outline-none"
+                                style={{ border: `1px solid ${ag.sphereColor}`, borderRadius: "4px", color: "#4a3828" }}
                                 value={editingAction.text}
                                 onChange={e => setEditingAction(prev => ({ ...prev, text: e.target.value }))}
                                 onKeyDown={e => {
@@ -284,16 +308,16 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                     <select
                       value={newActionType}
                       onChange={e => setNewActionType(e.target.value)}
-                      className="border rounded px-2 py-1.5 text-xs outline-none"
-                      style={{ borderColor: "#d4c9bb", background: "#faf8f5", color: "#5c4e40", textTransform: "capitalize" }}
+                      className="text-xs outline-none"
+                      style={{ border: "1px solid #d4c9bb", borderRadius: "6px", padding: "6px 8px", background: "#faf8f5", color: "#5c4e40", textTransform: "capitalize" }}
                     >
                       <option value="forward">forward</option>
                       <option value="schedule">schedule</option>
                       <option value="find">find</option>
                     </select>
                     <input
-                      className="flex-1 border rounded px-3 py-1.5 text-xs outline-none transition-colors"
-                      style={{ borderColor: "#d4c9bb", background: "#faf8f5" }}
+                      className="flex-1 text-xs outline-none transition-colors"
+                      style={{ border: "1px solid #d4c9bb", borderRadius: "6px", padding: "6px 12px", background: "#faf8f5" }}
                       placeholder="Add an action item..."
                       value={newActionItem}
                       onChange={e => setNewActionItem(e.target.value)}
@@ -311,8 +335,9 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                         setNewActionItem("");
                       }}
                       disabled={!newActionItem.trim()}
-                      className="px-3 py-1.5 text-xs font-semibold rounded transition-all"
+                      className="text-xs font-semibold transition-all"
                       style={{
+                        borderRadius: "6px", padding: "6px 14px",
                         background: newActionItem.trim() ? ag.sphereColor : "transparent",
                         color: newActionItem.trim() ? "white" : "#8a7455",
                         border: newActionItem.trim() ? "none" : "1px solid #d4c9bb",
@@ -328,14 +353,13 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                   <button
                     onClick={() => handleTalkToLyme(ag)}
                     className="flex-1 py-2 text-xs font-semibold hover:opacity-90 transition-opacity"
-                    style={{ background: "#b5472a", color: "white", letterSpacing: "0.04em" }}
+                    style={{ background: ag.sphereColor, color: "white", letterSpacing: "0.04em", borderRadius: "6px" }}
                   >
                     Talk to Lyme
                   </button>
-                  {/* V3: Talk to a Coach button — re-enable when coaching network is live */}
                   <button
                     className="py-2 px-3 text-xs font-semibold border hover:opacity-80 transition-opacity"
-                    style={{ borderColor: "#d4c9bb", color: "#6e5c4a" }}
+                    style={{ borderColor: "#d4c9bb", color: "#6e5c4a", borderRadius: "6px" }}
                     onClick={() => {
                       setActiveGoals(prev => prev.filter(g => g.goalId !== ag.goalId));
                       setSelectedFocusSphereId(ag.sphereId);
@@ -353,8 +377,8 @@ Do NOT introduce yourself or explain what you do — that has already been handl
             {isPaid && allActive.length < 5 && (
               <button
                 onClick={() => setStep("goal-picker")}
-                className="w-full text-left border transition-all hover:opacity-90"
-                style={{ borderColor: "#e8e0d5", background: "#faf8f5" }}
+                className="w-full text-left transition-all hover:opacity-90"
+                style={{ borderRadius: "8px", border: "1px solid #e8e0d5", background: "#faf8f5" }}
               >
                 <div className="px-5 py-4 flex items-center gap-3">
                   <span style={{ fontSize: "1rem", color: "#b5472a" }}>+</span>
@@ -367,19 +391,17 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               </button>
             )}
 
-            {/* Max goals reached — paid users at limit */}
             {isPaid && allActive.length >= 5 && (
               <p className="text-xs text-center" style={{ color: "#8a7455", padding: "12px 0" }}>
                 You're tracking 5 goals — the maximum. Complete one before adding another.
               </p>
             )}
 
-            {/* Locked second goal slot — free users */}
             {!isPaid && allActive.length >= 1 && (
               <button
                 onClick={() => setAuthPrompt("upgrade")}
-                className="w-full text-left border-2 transition-all hover:opacity-90"
-                style={{ borderColor: "#e8e0d5", borderStyle: "dashed", background: "#faf8f5" }}
+                className="w-full text-left transition-all hover:opacity-90"
+                style={{ borderRadius: "8px", border: "2px dashed #e8e0d5", background: "#faf8f5" }}
               >
                 <div className="px-5 py-4 flex items-center gap-3">
                   <span style={{ fontSize: "1rem" }}>🔒</span>
@@ -400,6 +422,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               disabled={!!pdfLoading}
               className="w-full py-3 text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
               style={{
+                borderRadius: "6px",
                 background: isPaid ? "#4a7a72" : "#f0ebe3",
                 color: isPaid ? "white" : "#6e5c4a",
                 border: isPaid ? "none" : "1px dashed #d4c9bb",
@@ -413,7 +436,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
             <button
               onClick={() => setStep("chart-view")}
               className="w-full py-3 text-sm font-medium text-center"
-              style={{ color: "#5c4e40", border: "1px solid #d4c9bb" }}
+              style={{ color: "#5c4e40", border: "1px solid #d4c9bb", borderRadius: "6px" }}
             >
               View your chart
             </button>
