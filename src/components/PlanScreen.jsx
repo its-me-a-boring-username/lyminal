@@ -780,35 +780,7 @@ export function PlanScreen({
     updateGoalItems((items) => items.map((i) => i.id === itemId ? { ...i, type: newType } : i));
   };
 
-  // ── Paywall ──
-  if (!isPaid) {
-    return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
-        <style>{FONTS}</style>
-        <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
-        <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-          <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
-          <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
-          <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
-            <p className="text-xs uppercase tracking-widest" style={{ color: hc, opacity: 0.8, margin: "0 0 6px" }}>Your Plan</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
-            <p style={{ fontSize: "0.8rem", color: "#5c4e40", fontWeight: 300, margin: "0 0 28px", lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Forward tasks, schedule reminders, send messages, or search for resources.</p>
-            <button onClick={() => setAuthPrompt("upgrade")} className="w-full text-left border-2" style={{ borderColor: "#e8e0d5", borderStyle: "dashed", background: "#faf8f5" }}>
-              <div className="px-5 py-6 flex items-center gap-3">
-                <span style={{ fontSize: "1rem" }}>🔒</span>
-                <div className="flex-1">
-                  <p className="text-sm font-medium" style={{ color: "#6e5c4a", margin: "0 0 4px" }}>The Plan tab is a premium feature</p>
-                  <p className="text-xs" style={{ color: "#8a7455", margin: 0, lineHeight: 1.5 }}>Upgrade to forward, schedule and find help completing your action items.</p>
-                </div>
-                <span className="text-xs font-semibold" style={{ color: "#b5472a", flexShrink: 0 }}>Upgrade →</span>
-              </div>
-            </button>
-          </div>
-          </div>{/* end fade wrapper */}
-        </div>
-      </div>
-    );
-  }
+  // (free users see the full Plan UI in preview mode — action buttons are locked)
 
   // ── Empty ──
   if (activeGoals.length === 0) {
@@ -883,11 +855,21 @@ export function PlanScreen({
         {/* Content */}
         <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", padding: "16px 20px 16px 16px" }}>
 
+          {/* Free preview banner */}
+          {!isPaid && (
+            <button onClick={() => setAuthPrompt("upgrade")} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", marginBottom: "10px", padding: "9px 14px", background: "rgba(181,71,42,0.06)", border: "1px solid rgba(181,71,42,0.18)", borderRadius: "8px", width: "100%", cursor: "pointer", textAlign: "left" }}>
+              <p style={{ fontSize: "11px", color: "#5c4e40", margin: 0, lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>
+                <span style={{ fontWeight: 600, color: "#b5472a" }}>Preview mode.</span> Upgrade to use Forward, Schedule, and Find.
+              </p>
+              <span style={{ fontSize: "11px", fontWeight: 600, color: "#b5472a", flexShrink: 0, fontFamily: "'Inter', sans-serif" }}>Upgrade →</span>
+            </button>
+          )}
+
           {/* Type pills — floating above the card */}
           <div style={{ display: "flex", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
             {ACTION_TYPES.map(t => {
               const isAct  = activeType === t;
-              const locked = t === "find" && !isPro;
+              const locked = (!isPaid && t !== "none") || (t === "find" && !isPro);
               return (
                 <button key={t} onClick={() => {
                   if (locked) { setAuthPrompt("upgrade"); return; }

@@ -6,15 +6,15 @@ export const DEFAULT_THEME = {
 };
 
 const THEME_VARS = {
-  warm_earth: { "--ly-bg": "#faf8f5", "--ly-ink": "#1c1410", "--ly-accent": "#b5472a" },
-  terracotta_sage: { "--ly-bg": "#faf8f5", "--ly-ink": "#1c1410", "--ly-accent": "#b5614a" },
-  plum_teal: { "--ly-bg": "#f8f6f8", "--ly-ink": "#231b24", "--ly-accent": "#9b6b8a" },
-  blush_eucalyptus: { "--ly-bg": "#faf7f6", "--ly-ink": "#231c1a", "--ly-accent": "#c17a6f" },
-  forest: { "--ly-bg": "#f4f8f5", "--ly-ink": "#102516", "--ly-accent": "#1a4a30" },
-  violet: { "--ly-bg": "#f7f6fa", "--ly-ink": "#1e1828", "--ly-accent": "#4a1a7a" },
-  rose: { "--ly-bg": "#faf6f7", "--ly-ink": "#261217", "--ly-accent": "#6e1a2e" },
-  ocean: { "--ly-bg": "#f5f8fb", "--ly-ink": "#0f1f2a", "--ly-accent": "#0e3a5c" },
-  ink: { "--ly-bg": "#f5f5f5", "--ly-ink": "#0a0a0a", "--ly-accent": "#0a0a0a" },
+  warm_earth:       { "--ly-bg": "#faf8f5", "--ly-ink": "#1c1410", "--ly-accent": "#8a2010", "--ly-accent2": "#1e3c20" },
+  terracotta_sage:  { "--ly-bg": "#faf7f5", "--ly-ink": "#1c1410", "--ly-accent": "#7a3020", "--ly-accent2": "#2a4828" },
+  plum_teal:        { "--ly-bg": "#f8f5f8", "--ly-ink": "#1a1020", "--ly-accent": "#4a1050", "--ly-accent2": "#0a3840" },
+  blush_eucalyptus: { "--ly-bg": "#faf5f5", "--ly-ink": "#201518", "--ly-accent": "#701828", "--ly-accent2": "#1a3828" },
+  forest:           { "--ly-bg": "#f4f8f5", "--ly-ink": "#0a1a10", "--ly-accent": "#143820", "--ly-accent2": "#60c870" },
+  violet:           { "--ly-bg": "#f6f4fa", "--ly-ink": "#180e28", "--ly-accent": "#380870", "--ly-accent2": "#9060d0" },
+  rose:             { "--ly-bg": "#faf4f5", "--ly-ink": "#220a12", "--ly-accent": "#680818", "--ly-accent2": "#c86070" },
+  ocean:            { "--ly-bg": "#f4f8fc", "--ly-ink": "#081828", "--ly-accent": "#081838", "--ly-accent2": "#4090c8" },
+  ink:              { "--ly-bg": "#f5f5f5", "--ly-ink": "#0a0a0a", "--ly-accent": "#0a0a0a", "--ly-accent2": "#606060" },
 };
 
 function resolveMode(appearance) {
