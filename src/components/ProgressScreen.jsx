@@ -221,59 +221,55 @@ Do NOT introduce yourself. Just ask your question directly.`,
   };
 
   return (
-    <>
-      {/* Goal header with completion toggle */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", marginBottom: "18px" }}>
+    <div style={{ background: "white", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden" }}>
+      {/* Card header — solid sphere color */}
+      <div style={{ background: activeGoal.sphereColor, padding: "12px 18px", display: "flex", alignItems: "center", gap: "10px" }}>
         <button
           onClick={toggleGoalComplete}
           style={{
-            width: "22px", height: "22px", borderRadius: "50%", flexShrink: 0, marginTop: "3px",
-            border: `2px solid ${isComplete ? activeGoal.sphereColor : "#d4c9bb"}`,
-            background: isComplete ? activeGoal.sphereColor : "white",
+            width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0,
+            border: `2px solid ${isComplete ? "white" : "rgba(255,255,255,0.5)"}`,
+            background: isComplete ? "white" : "transparent",
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", padding: 0, transition: "all 0.2s",
           }}
         >
           {isComplete && (
             <svg width="10" height="10" viewBox="0 0 10 10">
-              <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <path d="M2 5L4 7L8 3" stroke={activeGoal.sphereColor} strokeWidth="1.8" fill="none" strokeLinecap="round" />
             </svg>
           )}
         </button>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
-            <span style={{
-              fontSize: "10px", fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase",
-              color: activeGoal.sphereColor, fontFamily: "'Inter', sans-serif",
-              background: hexToRgba(activeGoal.sphereColor, 0.10),
-              border: `1px solid ${hexToRgba(activeGoal.sphereColor, 0.22)}`,
-              borderRadius: "999px", padding: "3px 10px",
-            }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.7)", fontFamily: "'Inter', sans-serif" }}>
               {activeGoal.sphereName}
             </span>
             {isComplete && (
-              <span style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.06em", background: "#4a7a7215", color: "#4a7a72", padding: "2px 8px", borderRadius: "999px", fontFamily: "'Inter', sans-serif" }}>
+              <span style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.06em", background: "rgba(255,255,255,0.2)", color: "white", padding: "1px 8px", borderRadius: "999px", fontFamily: "'Inter', sans-serif" }}>
                 COMPLETE
               </span>
             )}
           </div>
           <p style={{
-            fontFamily: "'Playfair Display', serif", fontSize: "1.05rem",
-            color: isComplete ? "#8a7455" : "#1c1410", margin: 0, lineHeight: 1.4,
+            fontFamily: "'Playfair Display', serif", fontSize: "1rem",
+            color: isComplete ? "rgba(255,255,255,0.6)" : "white", margin: "2px 0 0", lineHeight: 1.3,
             textDecoration: isComplete ? "line-through" : "none",
           }}>
             {activeGoal.goalText}
           </p>
         </div>
         {total > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "3px", flexShrink: 0 }}>
-            <MiniPie done={done} total={total} color={activeGoal.sphereColor} />
-            <span style={{ fontSize: "9px", color: "#8a7455", fontFamily: "'Inter', sans-serif", whiteSpace: "nowrap" }}>
-              {done}/{total} steps
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", flexShrink: 0 }}>
+            <MiniPie done={done} total={total} color="white" />
+            <span style={{ fontSize: "9px", color: "rgba(255,255,255,0.7)", fontFamily: "'Inter', sans-serif", whiteSpace: "nowrap" }}>
+              {done}/{total}
             </span>
           </div>
         )}
       </div>
+      {/* Card body */}
+      <div style={{ padding: "18px 18px 18px" }}>
 
       {/* Action items journey */}
       {total === 0 ? (
@@ -359,7 +355,8 @@ Do NOT introduce yourself. Just ask your question directly.`,
           Pick a new goal →
         </button>
       )}
-    </>
+      </div>{/* closes card body */}
+    </div>
   );
 }
 
@@ -512,7 +509,7 @@ export function ProgressScreen({
           <div style={{ height: "1px", background: "#e8e0d5" }} />
 
           {/* Detail panel */}
-          <div className="px-6 lg:px-16 max-w-2xl mx-auto" style={{ paddingTop: "22px" }}>
+          <div className="px-6 lg:px-16 max-w-2xl mx-auto" style={{ paddingTop: "22px", paddingBottom: "32px" }}>
             <DetailPanel
               sphere={currentSphere}
               activeGoal={activeGoal}

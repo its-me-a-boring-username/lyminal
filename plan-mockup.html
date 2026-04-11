@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plan Tab — Whitespace Experiments</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e0d8cf; font-family: 'Inter', sans-serif; padding: 40px 24px; display: flex; flex-direction: column; gap: 48px; }
+
+  .section-label { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #5c4e40; font-weight: 600; margin-bottom: 14px; }
+
+  /* ── Shared components ── */
+  .nav { display: flex; border-bottom: 1px solid #e8e0d5; background: #faf8f5; flex-shrink: 0; }
+  .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; font-size: 10px; color: #8a7455; border-bottom: 2px solid transparent; cursor: pointer; }
+  .nav-tab.active { color: #b5472a; border-bottom-color: #b5472a; }
+  .nav-icon { width: 18px; height: 18px; }
+
+  .page-header { padding: 28px 24px 24px; border-bottom: 1px solid rgba(181,71,42,0.12); background: rgba(181,71,42,0.07); flex-shrink: 0; }
+  .eyebrow { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a7455; margin-bottom: 6px; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 600; color: #1c1410; }
+
+  .ring-col { background: #faf8f5; border-right: 1px solid #e8e0d5; display: flex; flex-direction: column; align-items: center; padding: 16px 0; gap: 8px; flex-shrink: 0; }
+
+  .type-row { display: flex; border-top: 1px solid #e8e0d5; border-bottom: 1px solid #e8e0d5; flex-shrink: 0; }
+  .type-btn { flex: 1; padding: 10px 4px; text-align: center; font-size: 9px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #8a7455; background: white; border: none; border-right: 1px solid #f0ebe3; border-bottom: 2px solid transparent; }
+  .type-btn-sub { display: block; font-size: 7px; font-weight: 400; opacity: 0.7; margin-top: 2px; }
+
+  .item { display: flex; align-items: flex-start; gap: 10px; border-bottom: 1px solid #f0ebe3; background: white; }
+  .circle { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #d4c9bb; background: white; flex-shrink: 0; margin-top: 2px; }
+  .item-text { font-size: 12px; color: #1c1410; line-height: 1.5; flex: 1; }
+  .tag { font-size: 9px; font-weight: 600; padding: 2px 7px; background: #f7f0ec; color: #8a5a44; flex-shrink: 0; border-radius: 3px; }
+  .pill { display: inline-flex; align-items: center; font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 999px; padding: 3px 10px; }
+
+  /* desktop strip */
+  .desktop-strip { width: 200px; background: #b5472a; flex-shrink: 0; }
+
+  /* ── MOBILE frames ── */
+  .mobile-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .mobile-frame { width: 390px; background: #faf8f5; box-shadow: 0 4px 24px rgba(0,0,0,0.12); overflow: hidden; }
+
+  /* ── DESKTOP frame ── */
+  .desktop-frame { width: 100%; max-width: 1100px; background: #faf8f5; box-shadow: 0 4px 24px rgba(0,0,0,0.12); overflow: hidden; }
+  .desktop-inner { display: flex; min-height: 560px; }
+  .desktop-right { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     MOBILE — Current vs Proposed
+     ═══════════════════════════════════════════════ -->
+<div>
+  <div class="section-label">Mobile — Current (left) vs Proposed (right)</div>
+  <div class="mobile-row">
+
+    <!-- CURRENT MOBILE -->
+    <div class="mobile-frame">
+      <div class="nav">
+        <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M7 18v-6h6v6"/></svg>Home</div>
+        <div class="nav-tab active"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#b5472a" stroke-width="1.6"><rect x="3" y="4" width="14" height="13" rx="1.5"/><path d="M7 2v4M13 2v4M3 8h14"/><path d="M7 12h2M7 15h4"/></svg>Plan</div>
+        <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><path d="M3 15l4-5 3 3 3-4 4 4"/><path d="M3 17h14"/></svg>Progress</div>
+        <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><circle cx="5" cy="10" r="2.5"/><circle cx="15" cy="5" r="2.5"/><circle cx="15" cy="15" r="2.5"/><path d="M7.5 10h4M7 8.5l5.5-2M7 11.5l5.5 2"/></svg>Chart</div>
+        <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><circle cx="10" cy="7" r="3"/><path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5"/></svg>Account</div>
+      </div>
+      <div class="page-header" style="padding:22px 20px 18px;">
+        <div class="eyebrow">Plan</div>
+        <div class="page-title" style="font-size:22px;">Get things done</div>
+      </div>
+      <div style="display:flex;">
+        <div class="ring-col" style="width:60px;">
+          <div style="width:44px;height:44px;border-radius:50%;border:5px solid #b5472a;background:rgba(181,71,42,0.12);"></div>
+          <div style="width:32px;height:32px;border-radius:50%;border:3px solid #4a7a72;opacity:0.35;"></div>
+          <div style="width:32px;height:32px;border-radius:50%;border:3px solid #5c6f9b;opacity:0.35;"></div>
+        </div>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
+          <!-- Solid goal strip — current -->
+          <div style="background:#b5472a;padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.7);font-weight:500;">Creativity</span>
+            <span style="font-size:13px;color:white;font-family:'Playfair Display',serif;font-weight:600;line-height:1.3;">Collaborate with another creative</span>
+          </div>
+          <div class="type-row">
+            <div class="type-btn">Forward<span class="type-btn-sub">send/delegate</span></div>
+            <div class="type-btn">Schedule<span class="type-btn-sub">remind/cal</span></div>
+            <div class="type-btn">Find<span class="type-btn-sub">lyme search</span></div>
+          </div>
+          <div class="item" style="padding:12px 14px;"><div class="circle"></div><span class="item-text">Research and identify 3-5 potential creative collaborators in your field</span><span class="tag">find</span></div>
+          <div class="item" style="padding:12px 14px;"><div class="circle"></div><span class="item-text">Reach out to one potential collaborator with a specific project idea</span><span class="tag">forward</span></div>
+          <div class="item" style="padding:12px 14px;"><div class="circle"></div><span class="item-text">Schedule a coffee chat or video call to discuss interests</span><span class="tag">schedule</span></div>
+          <div class="item" style="padding:12px 14px;"><div class="circle"></div><span class="item-text">Block time for regular creative collaboration sessions</span><span class="tag">schedule</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROPOSED MOBILE — ring carousel + padded content -->
+    <div class="mobile-frame">
+      <div class="nav">
+        <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M7 18v-6h6v6"/></svg>Home</div>
+        <div class="nav-tab active"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#b5472a" stroke-width="1.6"><rect x="3" y="4" width="14" height="13" rx="1.5"/><path d="M7 2v4M13 2v4M3 8h14"/><path d="M7 12h2M7 15h4"/></svg>Plan</div>
+        <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><path d="M3 15l4-5 3 3 3-4 4 4"/><path d="M3 17h14"/></svg>Progress</div>
+        <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><circle cx="5" cy="10" r="2.5"/><circle cx="15" cy="5" r="2.5"/><circle cx="15" cy="15" r="2.5"/><path d="M7.5 10h4M7 8.5l5.5-2M7 11.5l5.5 2"/></svg>Chart</div>
+        <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><circle cx="10" cy="7" r="3"/><path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5"/></svg>Account</div>
+      </div>
+      <div class="page-header" style="padding:22px 20px 18px;">
+        <div class="eyebrow">Plan</div>
+        <div class="page-title" style="font-size:22px;">Get things done</div>
+      </div>
+      <!-- Body with outer padding -->
+      <div style="display:flex;padding:16px 16px 16px 0;gap:0;background:#faf8f5;">
+        <!-- Ring carousel — narrower, with padding -->
+        <div class="ring-col" style="width:64px;padding:4px 0 4px;border-right:1px solid #e8e0d5;">
+          <div style="width:44px;height:44px;border-radius:50%;border:5px solid #b5472a;background:rgba(181,71,42,0.12);"></div>
+          <div style="width:32px;height:32px;border-radius:50%;border:3px solid #4a7a72;opacity:0.35;"></div>
+          <div style="width:32px;height:32px;border-radius:50%;border:3px solid #5c6f9b;opacity:0.35;"></div>
+        </div>
+        <!-- Content card -->
+        <div style="flex:1;min-width:0;background:white;border:1px solid #e8e0d5;border-radius:8px;overflow:hidden;margin-left:12px;">
+          <!-- Goal header — tinted -->
+          <div style="background:rgba(181,71,42,0.07);border-bottom:1px solid rgba(181,71,42,0.15);padding:14px 16px;">
+            <span class="pill" style="color:#b5472a;background:rgba(181,71,42,0.10);border:1px solid rgba(181,71,42,0.22);margin-bottom:8px;display:inline-flex;">Creativity</span>
+            <div style="font-size:14px;color:#1c1410;font-family:'Playfair Display',serif;font-weight:600;line-height:1.3;">Collaborate with another creative</div>
+          </div>
+          <div class="type-row">
+            <div class="type-btn">Forward<span class="type-btn-sub">send/delegate</span></div>
+            <div class="type-btn">Schedule<span class="type-btn-sub">remind/cal</span></div>
+            <div class="type-btn">Find<span class="type-btn-sub">lyme search</span></div>
+          </div>
+          <div class="item" style="padding:13px 16px;"><div class="circle"></div><span class="item-text">Research and identify 3-5 potential creative collaborators</span><span class="tag">find</span></div>
+          <div class="item" style="padding:13px 16px;"><div class="circle"></div><span class="item-text">Reach out with a specific project idea or proposal</span><span class="tag">forward</span></div>
+          <div class="item" style="padding:13px 16px;"><div class="circle"></div><span class="item-text">Schedule a coffee chat to discuss shared interests</span><span class="tag">schedule</span></div>
+          <div class="item" style="padding:13px 16px;border-bottom:none;"><div class="circle"></div><span class="item-text">Block time for regular creative sessions</span><span class="tag">schedule</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     DESKTOP — Proposed full width
+     ═══════════════════════════════════════════════ -->
+<div>
+  <div class="section-label">Desktop — Proposed full width</div>
+  <div class="desktop-frame">
+    <div class="desktop-inner">
+      <div class="desktop-strip"></div>
+      <div class="desktop-right">
+        <!-- Desktop nav -->
+        <div class="nav">
+          <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M7 18v-6h6v6"/></svg>Home</div>
+          <div class="nav-tab active"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#b5472a" stroke-width="1.6"><rect x="3" y="4" width="14" height="13" rx="1.5"/><path d="M7 2v4M13 2v4M3 8h14"/><path d="M7 12h2M7 15h4"/></svg>Plan</div>
+          <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><path d="M3 15l4-5 3 3 3-4 4 4"/><path d="M3 17h14"/></svg>Progress</div>
+          <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><circle cx="5" cy="10" r="2.5"/><circle cx="15" cy="5" r="2.5"/><circle cx="15" cy="15" r="2.5"/><path d="M7.5 10h4M7 8.5l5.5-2M7 11.5l5.5 2"/></svg>My Chart</div>
+          <div class="nav-tab"><svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#8a7455" stroke-width="1.6"><circle cx="10" cy="7" r="3"/><path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5"/></svg>Account</div>
+        </div>
+        <div class="page-header">
+          <div class="eyebrow">Plan</div>
+          <div class="page-title">Get things done</div>
+        </div>
+        <!-- Body -->
+        <div style="display:flex;flex:1;padding:24px 32px 24px 0;gap:0;background:#faf8f5;">
+          <!-- Ring carousel -->
+          <div class="ring-col" style="width:72px;padding:8px 0;border-right:1px solid #e8e0d5;">
+            <div style="width:44px;height:44px;border-radius:50%;border:5px solid #b5472a;background:rgba(181,71,42,0.12);"></div>
+            <div style="width:32px;height:32px;border-radius:50%;border:3px solid #4a7a72;opacity:0.35;"></div>
+            <div style="width:32px;height:32px;border-radius:50%;border:3px solid #5c6f9b;opacity:0.35;"></div>
+          </div>
+          <!-- Content card, max-width constrained -->
+          <div style="flex:1;min-width:0;max-width:640px;margin-left:24px;">
+            <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;overflow:hidden;">
+              <div style="background:rgba(181,71,42,0.07);border-bottom:1px solid rgba(181,71,42,0.15);padding:18px 20px;">
+                <span class="pill" style="color:#b5472a;background:rgba(181,71,42,0.10);border:1px solid rgba(181,71,42,0.22);margin-bottom:10px;display:inline-flex;">Creativity</span>
+                <div style="font-size:15px;color:#1c1410;font-family:'Playfair Display',serif;font-weight:600;line-height:1.3;">Collaborate with another creative</div>
+              </div>
+              <div class="type-row">
+                <div class="type-btn" style="padding:11px 8px;">Forward<span class="type-btn-sub">send/delegate</span></div>
+                <div class="type-btn" style="padding:11px 8px;">Schedule<span class="type-btn-sub">remind/cal</span></div>
+                <div class="type-btn" style="padding:11px 8px;">Find<span class="type-btn-sub">lyme search</span></div>
+              </div>
+              <div class="item" style="padding:14px 20px;"><div class="circle"></div><span class="item-text" style="font-size:13px;">Research and identify 3-5 potential creative collaborators in your field through online portfolios, social media, or creative communities</span><span class="tag">find</span></div>
+              <div class="item" style="padding:14px 20px;"><div class="circle"></div><span class="item-text" style="font-size:13px;">Reach out to one potential collaborator with a specific project idea or collaboration proposal</span><span class="tag">forward</span></div>
+              <div class="item" style="padding:14px 20px;"><div class="circle"></div><span class="item-text" style="font-size:13px;">Schedule a coffee chat or video call to discuss shared interests and potential projects</span><span class="tag">schedule</span></div>
+              <div class="item" style="padding:14px 20px;border-bottom:none;"><div class="circle"></div><span class="item-text" style="font-size:13px;">Block time in your calendar for regular creative collaboration sessions</span><span class="tag">schedule</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

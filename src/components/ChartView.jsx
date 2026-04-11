@@ -4,6 +4,14 @@ import { clearChart } from "../utils/supabase.js";
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
 
+function hexToRgba(hex, alpha) {
+  if (!hex || hex.length < 7) return `rgba(181,71,42,${alpha})`;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 // ── Pill ──
 const Pill = ({ b }) => (
   <div
@@ -217,28 +225,27 @@ const SidePanel = ({ spheres, connections, counts, ranked, selectedId, setSelect
   if (selected) {
     return (
       <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l overflow-y-auto" style={{ background: "#faf8f5", borderColor: "#e8e0d5" }}>
-        <div className="p-6" style={{ fontFamily: "'Inter', sans-serif" }}>
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-4 h-4 rounded-full" style={{ background: selected.color }} />
-            <h3 className="text-xl font-bold" style={{ color: selected.color }}>{selected.name}</h3>
-            <button onClick={() => setSelectedId(null)} className="ml-auto text-gray-300 hover:text-gray-500 text-sm">✕</button>
+        <div style={{ padding: "24px", fontFamily: "'Inter', sans-serif" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase", color: selected.color, background: hexToRgba(selected.color, 0.10), border: `1px solid ${hexToRgba(selected.color, 0.22)}`, borderRadius: "999px", padding: "3px 10px" }}>{selected.name}</span>
+            <button onClick={() => setSelectedId(null)} style={{ marginLeft: "auto", background: "none", border: "none", cursor: "pointer", color: "#8a7455", fontSize: "14px", padding: "2px 6px" }}>✕</button>
           </div>
-          <div className="grid grid-cols-2 gap-3 mb-5">
-            <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <div className="text-2xl font-bold text-gray-900">{selectedCounts?.out || 0}</div>
-              <div className="text-xs text-gray-500 mt-0.5">Outgoing</div>
-              <div className="text-xs text-gray-400">supports others</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
+            <div style={{ background: hexToRgba(selected.color, 0.07), border: `1px solid ${hexToRgba(selected.color, 0.12)}`, borderRadius: "8px", padding: "12px", textAlign: "center" }}>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#1c1410", fontFamily: "'Playfair Display', serif" }}>{selectedCounts?.out || 0}</div>
+              <div style={{ fontSize: "11px", color: "#6e5c4a", marginTop: "2px" }}>Outgoing</div>
+              <div style={{ fontSize: "10px", color: "#8a7455" }}>supports others</div>
             </div>
-            <div className="bg-gray-50 rounded-xl p-3 text-center">
-              <div className="text-2xl font-bold text-gray-900">{selectedCounts?.in || 0}</div>
-              <div className="text-xs text-gray-500 mt-0.5">Incoming</div>
-              <div className="text-xs text-gray-400">needs support</div>
+            <div style={{ background: hexToRgba(selected.color, 0.07), border: `1px solid ${hexToRgba(selected.color, 0.12)}`, borderRadius: "8px", padding: "12px", textAlign: "center" }}>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#1c1410", fontFamily: "'Playfair Display', serif" }}>{selectedCounts?.in || 0}</div>
+              <div style={{ fontSize: "11px", color: "#6e5c4a", marginTop: "2px" }}>Incoming</div>
+              <div style={{ fontSize: "10px", color: "#8a7455" }}>needs support</div>
             </div>
           </div>
           {(connections[selected.id] || []).length > 0 && (
-            <div className="mb-4">
-              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-medium">Supports</p>
-              <div className="flex flex-wrap gap-1.5">
+            <div style={{ marginBottom: "16px" }}>
+              <p style={{ fontSize: "10px", color: "#8a7455", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 8px" }}>Supports</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                 {(connections[selected.id] || []).map(toId => {
                   const b = spheres.find(b => b.id === toId);
                   return b ? <Pill key={toId} b={b} /> : null;
@@ -248,15 +255,13 @@ const SidePanel = ({ spheres, connections, counts, ranked, selectedId, setSelect
           )}
           {selected.goals.length > 0 && (
             <div>
-              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-medium">Goals ({selected.goals.length})</p>
-              <div className="space-y-1.5">
-                {selected.goals.map(g => (
-                  <div key={g.id} className="flex items-start gap-2 text-sm text-gray-700 py-1.5 border-b border-gray-50">
-                    <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: selected.color }} />
-                    {g.text}
-                  </div>
-                ))}
-              </div>
+              <p style={{ fontSize: "10px", color: "#8a7455", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 8px" }}>Goals ({selected.goals.length})</p>
+              {selected.goals.map(g => (
+                <div key={g.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", fontSize: "13px", color: "#4a3828", paddingBottom: "8px", marginBottom: "8px", borderBottom: "1px solid #f0ebe3" }}>
+                  <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: selected.color, flexShrink: 0, marginTop: "5px" }} />
+                  {g.text}
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -266,36 +271,36 @@ const SidePanel = ({ spheres, connections, counts, ranked, selectedId, setSelect
 
   return (
     <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l overflow-y-auto" style={{ background: "#faf8f5", borderColor: "#e8e0d5" }}>
-      <div className="p-6" style={{ fontFamily: "'Inter', sans-serif" }}>
-        <h3 style={{ fontFamily: "'Playfair Display', serif", color: "#1c1410" }} className="font-semibold mb-1">Priority Ranking</h3>
-        <p className="text-xs mb-5" style={{ color: "#6e5c4a" }}>Ranked by how many areas each sphere supports</p>
-        <div className="space-y-2">
+      <div style={{ padding: "24px", fontFamily: "'Inter', sans-serif" }}>
+        <p style={{ fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8a7455", fontWeight: 600, margin: "0 0 4px" }}>Priority Ranking</p>
+        <p style={{ fontSize: "11px", color: "#8a7455", margin: "0 0 16px" }}>Ranked by how many areas each sphere supports</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
           {ranked.map((b, i) => (
-            <button
-              key={b.id}
-              onClick={() => setSelectedId(b.id)}
-              className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left border border-transparent hover:border-gray-100"
+            <button key={b.id} onClick={() => setSelectedId(b.id)} style={{
+              display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px",
+              background: "none", border: "1px solid transparent", borderRadius: "8px",
+              cursor: "pointer", textAlign: "left", width: "100%",
+              transition: "background 0.15s, border-color 0.15s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = hexToRgba(b.color, 0.05); e.currentTarget.style.borderColor = hexToRgba(b.color, 0.15); }}
+            onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.borderColor = "transparent"; }}
             >
-              <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                style={{ background: i === 0 ? b.color : b.color + "60" }}
-              >
+              <div style={{ width: "26px", height: "26px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: 700, color: "white", flexShrink: 0, background: i === 0 ? b.color : b.color + "60" }}>
                 {i + 1}
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold text-gray-800 truncate">{b.name}</div>
-                <div className="text-xs text-gray-400">↓{b.out} out · ↑{b.in} in</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: "13px", fontWeight: 600, color: "#1c1410", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.name}</div>
+                <div style={{ fontSize: "10px", color: "#8a7455" }}>↓{b.out} out · ↑{b.in} in</div>
               </div>
               {i === 0 && (
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white flex-shrink-0" style={{ background: b.color }}>
-                  Focus
-                </span>
+                <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.06em", color: "white", background: b.color, padding: "3px 9px", borderRadius: "999px", flexShrink: 0 }}>Focus</span>
               )}
             </button>
           ))}
         </div>
-        <div className="mt-6 p-4 rounded-sm" style={{ background: "#f0ebe3", border: "1px solid #ddd3c5" }}>
-          <p className="text-xs font-semibold mb-1" style={{ color: "#6b4a2a" }}>How to read this</p>
-          <p className="text-xs leading-relaxed" style={{ color: "#8a6040" }}>
+        <div style={{ marginTop: "20px", background: "rgba(74,122,114,0.09)", borderLeft: "3px solid #4a7a72", borderRadius: "0 6px 6px 0", padding: "10px 14px" }}>
+          <p style={{ fontSize: "11px", fontWeight: 600, color: "#1e3a36", margin: "0 0 4px" }}>How to read this</p>
+          <p style={{ fontSize: "11px", color: "#2e5a52", lineHeight: 1.55, margin: 0 }}>
             The top-ranked sphere has the most outgoing connections — improving it creates the most downstream benefits. Start there.
           </p>
         </div>
@@ -341,30 +346,25 @@ export function ChartView({
       <style>{FONTS}</style>
 
       {/* Header */}
-      <div style={{ background: "#faf8f5", borderBottom: "1px solid #e8e0d5" }} className="px-6 py-4 flex items-center justify-between">
-        <div>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.25rem", color: "#1c1410" }} className="font-semibold">Your Goal Chart</h2>
-          <p className="text-xs" style={{ color: "#6e5c4a" }}>{spheres.length} spheres · {Object.values(connections).flat().length} connections</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button onClick={() => { setDragOffsets({}); setStep("connections"); }} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: "#b5693a" }}>← Edit connections</button>
-          <button onClick={handleRedoChart} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: "#6e5c4a" }}>↺ Redo chart</button>
-          {Object.keys(dragOffsets).length > 0 && (
-            <button onClick={() => setDragOffsets({})} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: "#4a7a72" }}>↺ Reset layout</button>
-          )}
-          {mode === "chart-view" ? (
-            <button onClick={() => setStep("active")} className="text-xs px-4 py-2 font-medium hover:opacity-80 transition-opacity" style={{ border: "1px solid #d4c9bb", color: "#5c4e40" }}>
-              Exit chart
-            </button>
-          ) : activeGoals.length > 0 ? (
-            <button onClick={() => setStep("active")} className="text-xs px-4 py-2 font-medium hover:opacity-80 transition-opacity" style={{ border: "1px solid #d4c9bb", color: "#5c4e40" }}>
-              Exit chart
-            </button>
-          ) : (
-            <button onClick={handleChooseFocus} className="px-4 py-2 text-sm font-semibold hover:opacity-90 transition-opacity" style={{ background: "#b5472a", color: "white", letterSpacing: "0.04em" }}>
-              Choose My Focus →
-            </button>
-          )}
+      <div style={{ background: hexToRgba(ranked[0]?.color, 0.07), borderBottom: `1px solid ${hexToRgba(ranked[0]?.color, 0.12)}`, padding: "28px 24px 24px", fontFamily: "'Inter', sans-serif" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px" }}>
+          <div>
+            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 6px" }}>My Chart</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Your Goal Chart</h2>
+            <p style={{ fontSize: "0.7rem", color: "#8a7455", margin: 0 }}>{spheres.length} spheres · {Object.values(connections).flat().length} connections</p>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
+            <button onClick={() => { setDragOffsets({}); setStep("connections"); }} style={{ fontSize: "11px", fontWeight: 500, color: "#b5472a", background: "none", border: "1px solid rgba(181,71,42,0.25)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>← Edit</button>
+            <button onClick={handleRedoChart} style={{ fontSize: "11px", fontWeight: 500, color: "#6e5c4a", background: "none", border: "1px solid #e8e0d5", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>↺ Redo</button>
+            {Object.keys(dragOffsets).length > 0 && (
+              <button onClick={() => setDragOffsets({})} style={{ fontSize: "11px", fontWeight: 500, color: "#4a7a72", background: "none", border: "1px solid rgba(74,122,114,0.3)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>↺ Reset layout</button>
+            )}
+            {mode === "chart-view" || activeGoals.length > 0 ? (
+              <button onClick={() => setStep("active")} style={{ fontSize: "11px", fontWeight: 500, color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>Exit chart</button>
+            ) : (
+              <button onClick={handleChooseFocus} style={{ fontSize: "11px", fontWeight: 600, background: ranked[0]?.color || "#b5472a", color: "white", border: "none", padding: "8px 16px", cursor: "pointer", borderRadius: "6px", letterSpacing: "0.04em" }}>Choose My Focus →</button>
+            )}
+          </div>
         </div>
       </div>
 

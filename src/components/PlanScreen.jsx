@@ -20,15 +20,15 @@ const TBORDER = { forward: "#d4a890", schedule: "#9fd4c4", find: "#b0bcd8" };
 
 // ── Ring sidebar button ──────────────────────────────────────────────────────
 function RingButton({ color, isActive, onClick }) {
-  const size = isActive ? 76 : 56;
-  const sw   = isActive ? 8  : 5;
+  const size = isActive ? 44 : 32;
+  const sw   = isActive ? 5  : 3;
   const cx = size / 2, cy = size / 2, r = size / 2 - sw / 2 - 1;
   return (
     <button onClick={onClick} style={{
       background: "none", border: "none", padding: 0, cursor: "pointer",
       opacity: isActive ? 1 : 0.38, transition: "opacity 0.2s",
       display: "flex", alignItems: "center", justifyContent: "center",
-      width: "84px", height: "84px", flexShrink: 0,
+      width: "52px", height: "52px", flexShrink: 0,
     }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <circle cx={cx} cy={cy} r={r} fill={color + (isActive ? "28" : "18")} stroke={color} strokeWidth={sw} />
@@ -581,7 +581,7 @@ export function PlanScreen({
         <div style={{ display: "flex", flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
 
         {/* Ring sidebar */}
-        <div style={{ width: "96px", flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "16px", gap: "4px", borderRight: "1px solid #e8e0d5", background: "#faf8f5" }}>
+        <div style={{ width: "60px", flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "16px", gap: "4px", borderRight: "1px solid #e8e0d5", background: "#faf8f5" }}>
           {activeGoals.map((ag, i) => (
             <RingButton key={ag.goalId} color={ag.sphereColor} isActive={i === selIndex}
               onClick={() => { setSelIndex(i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }}
@@ -590,12 +590,13 @@ export function PlanScreen({
         </div>
 
         {/* Content */}
-        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", margin: "12px 12px 12px 0" }}>
+          <div style={{ background: "white", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column", flex: 1 }}>
 
-          {/* Goal strip — solid sphere color */}
+          {/* Goal strip — solid sphere color card header */}
           {goal && (
-            <div style={{ background: hc, padding: "10px 18px", display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", transition: "background 0.3s ease" }}>
-              <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.7)", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>{goal.sphereName}</span>
+            <div style={{ background: hc, padding: "14px 18px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", transition: "background 0.3s ease", flexShrink: 0 }}>
+              <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.75)", fontFamily: "'Inter', sans-serif", flexShrink: 0, fontWeight: 600 }}>{goal.sphereName}</span>
               <span style={{ fontSize: "14px", color: "white", fontFamily: "'Playfair Display', serif", fontWeight: 600, lineHeight: 1.3 }}>{goal.goalText}</span>
             </div>
           )}
@@ -650,7 +651,7 @@ export function PlanScreen({
 
               return (
                 <div key={item.id}>
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", padding: "12px 18px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", padding: "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
                     {showBulk && (
                       <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
                         style={{ marginTop: "2px", flexShrink: 0, accentColor: hc }} />
@@ -705,6 +706,7 @@ export function PlanScreen({
               </button>
             </div>
           )}
+          </div> {/* closes white card */}
         </div> {/* closes content */}
         </div> {/* closes body flex */}
       </div> {/* closes right column */}

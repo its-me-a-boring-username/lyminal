@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chart Page — Design Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f0ebe3; font-family: 'Inter', sans-serif; padding: 40px 24px; }
+  .label { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #6e5c4a; font-weight: 600; margin-bottom: 12px; margin-top: 40px; }
+  .label:first-child { margin-top: 0; }
+  .frame { background: #faf8f5; max-width: 860px; overflow: hidden; box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+
+  /* Shared */
+  .chart-body { display: flex; min-height: 420px; }
+  .chart-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; }
+  .side-panel { width: 280px; border-left: 1px solid #e8e0d5; background: #faf8f5; padding: 24px; flex-shrink: 0; }
+
+  /* Chart SVG placeholder */
+  .chart-svg-placeholder { width: 100%; max-width: 340px; height: 260px; position: relative; }
+  .node { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px; font-weight: 700; font-size: 12px; cursor: pointer; }
+  .node-label { font-size: 9px; font-weight: 500; opacity: 0.5; }
+  .node-ring { position: absolute; border-radius: 50%; border: 2px dashed; animation: spin 20s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* Direction 1 header — top sphere tint */
+  .header-d1 { padding: 28px 28px 24px; border-bottom: 1px solid rgba(181,71,42,0.12); background: rgba(181,71,42,0.07); display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  /* Direction 2 header — neutral */
+  .header-d2 { padding: 28px 28px 24px; border-bottom: 1px solid #e8e0d5; background: #faf8f5; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+
+  .header-text .eyebrow { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a7455; margin-bottom: 6px; }
+  .header-text .title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: #1c1410; margin-bottom: 4px; }
+  .header-text .subtitle { font-size: 11px; color: #8a7455; }
+  .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; padding-top: 4px; }
+  .btn-outline { font-size: 11px; font-weight: 500; color: #6e5c4a; background: none; border: 1px solid #e8e0d5; padding: 6px 12px; cursor: pointer; border-radius: 6px; }
+  .btn-outline-red { font-size: 11px; font-weight: 500; color: #b5472a; background: none; border: 1px solid rgba(181,71,42,0.25); padding: 6px 12px; cursor: pointer; border-radius: 6px; }
+  .btn-primary { font-size: 11px; font-weight: 600; color: white; background: #b5472a; border: none; padding: 8px 16px; cursor: pointer; border-radius: 6px; }
+
+  /* Side panel — Priority ranking */
+  .rank-eyebrow { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a7455; font-weight: 600; margin-bottom: 4px; }
+  .rank-sub { font-size: 11px; color: #8a7455; margin-bottom: 16px; }
+  .rank-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; margin-bottom: 4px; cursor: pointer; }
+  .rank-item:hover { background: rgba(0,0,0,0.03); }
+  .rank-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+  .rank-name { font-size: 13px; font-weight: 600; color: #1c1410; }
+  .rank-meta { font-size: 10px; color: #8a7455; }
+  .focus-pill { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; color: white; padding: 3px 9px; border-radius: 999px; margin-left: auto; }
+  .how-to { margin-top: 20px; background: rgba(74,122,114,0.09); border-left: 3px solid #4a7a72; border-radius: 0 6px 6px 0; padding: 10px 14px; }
+  .how-to-title { font-size: 11px; font-weight: 600; color: #1e3a36; margin-bottom: 4px; }
+  .how-to-body { font-size: 11px; color: #2e5a52; line-height: 1.55; }
+
+  /* Download button */
+  .download-btn { margin-top: 16px; padding: 10px 0; font-size: 11px; font-weight: 600; background: #4a7a72; color: white; width: 100%; border: none; cursor: pointer; border-radius: 6px; letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+<div class="label">Direction 1 — Top-sphere tinted header (header shifts with whoever ranks #1)</div>
+<div class="frame">
+  <div class="header-d1">
+    <div class="header-text">
+      <div class="eyebrow">My Chart</div>
+      <div class="title">Your Goal Chart</div>
+      <div class="subtitle">3 spheres · 4 connections</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline-red">← Edit</button>
+      <button class="btn-outline">↺ Redo</button>
+      <button class="btn-outline">Exit chart</button>
+    </div>
+  </div>
+  <div class="chart-body">
+    <div class="chart-area">
+      <!-- SVG chart placeholder -->
+      <svg viewBox="0 0 400 280" style="width:100%;max-width:340px;">
+        <!-- Connections -->
+        <path d="M200,60 Q150,140 100,200" fill="none" stroke="#b5472a" stroke-width="1.8" stroke-opacity="0.5" marker-end="url(#arr1)"/>
+        <path d="M200,60 Q250,140 300,200" fill="none" stroke="#b5472a" stroke-width="1.8" stroke-opacity="0.5" marker-end="url(#arr2)"/>
+        <path d="M300,200 Q200,220 100,200" fill="none" stroke="#4a7a72" stroke-width="1.8" stroke-opacity="0.5" marker-end="url(#arr3)"/>
+        <path d="M100,200 Q200,160 300,200" fill="none" stroke="#5c6f9b" stroke-width="1.8" stroke-opacity="0.5" marker-end="url(#arr4)"/>
+        <defs>
+          <marker id="arr1" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#b5472a" opacity="0.7"/></marker>
+          <marker id="arr2" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#b5472a" opacity="0.7"/></marker>
+          <marker id="arr3" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#4a7a72" opacity="0.7"/></marker>
+          <marker id="arr4" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#5c6f9b" opacity="0.7"/></marker>
+        </defs>
+        <!-- Spinning ring on top node -->
+        <circle cx="200" cy="60" r="56" fill="none" stroke="#b5472a" stroke-width="2" stroke-opacity="0.2" stroke-dasharray="4 3"/>
+        <!-- Nodes -->
+        <circle cx="200" cy="60" r="46" fill="white" stroke="#b5472a" stroke-width="2.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"/>
+        <text x="200" y="56" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#b5472a">Creativity</text>
+        <text x="200" y="70" text-anchor="middle" font-family="Inter" font-size="9" font-weight="500" fill="rgba(0,0,0,0.3)">↑1 ↓2</text>
+        <circle cx="200" cy="60" r="0"/>
+        <circle cx="238" cy="22" r="11" fill="#b5472a"/>
+        <text x="238" y="26" text-anchor="middle" font-family="Inter" font-size="10" fill="white" font-weight="bold">★</text>
+
+        <circle cx="100" cy="210" r="46" fill="white" stroke="#4a7a72" stroke-width="2.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"/>
+        <text x="100" y="206" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#4a7a72">Education</text>
+        <text x="100" y="220" text-anchor="middle" font-family="Inter" font-size="9" font-weight="500" fill="rgba(0,0,0,0.3)">↑1 ↓1</text>
+
+        <circle cx="300" cy="210" r="46" fill="white" stroke="#5c6f9b" stroke-width="2.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"/>
+        <text x="300" y="202" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#5c6f9b">Practical</text>
+        <text x="300" y="216" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#5c6f9b">Skills</text>
+        <text x="300" y="228" text-anchor="middle" font-family="Inter" font-size="9" font-weight="500" fill="rgba(0,0,0,0.3)">↑2 ↓1</text>
+      </svg>
+      <button class="download-btn" style="max-width:280px;">↓ DOWNLOAD SIMPLE CHART</button>
+    </div>
+    <div class="side-panel">
+      <div class="rank-eyebrow">Priority Ranking</div>
+      <div class="rank-sub">Ranked by outgoing connections</div>
+      <div class="rank-item">
+        <div class="rank-num" style="background:#b5472a;">1</div>
+        <div>
+          <div class="rank-name">Creativity</div>
+          <div class="rank-meta">↓2 out · ↑1 in</div>
+        </div>
+        <span class="focus-pill" style="background:#b5472a;">Focus</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num" style="background:#4a7a7260;">2</div>
+        <div>
+          <div class="rank-name">Education</div>
+          <div class="rank-meta">↓1 out · ↑1 in</div>
+        </div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num" style="background:#5c6f9b60;">3</div>
+        <div>
+          <div class="rank-name">Practical Skills</div>
+          <div class="rank-meta">↓1 out · ↑2 in</div>
+        </div>
+      </div>
+      <div class="how-to">
+        <div class="how-to-title">How to read this</div>
+        <div class="how-to-body">The top-ranked sphere has the most outgoing connections — improving it creates the most downstream benefits. Start there.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="label">Direction 2 — Neutral header (no sphere tint, clean warm white)</div>
+<div class="frame">
+  <div class="header-d2">
+    <div class="header-text">
+      <div class="eyebrow">My Chart</div>
+      <div class="title">Your Goal Chart</div>
+      <div class="subtitle">3 spheres · 4 connections</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline-red">← Edit</button>
+      <button class="btn-outline">↺ Redo</button>
+      <button class="btn-outline">Exit chart</button>
+    </div>
+  </div>
+  <div class="chart-body">
+    <div class="chart-area">
+      <svg viewBox="0 0 400 280" style="width:100%;max-width:340px;">
+        <path d="M200,60 Q150,140 100,200" fill="none" stroke="#b5472a" stroke-width="1.8" stroke-opacity="0.5" marker-end="url(#b1)"/>
+        <path d="M200,60 Q250,140 300,200" fill="none" stroke="#b5472a" stroke-width="1.8" stroke-opacity="0.5" marker-end="url(#b2)"/>
+        <path d="M300,200 Q200,220 100,200" fill="none" stroke="#4a7a72" stroke-width="1.8" stroke-opacity="0.5" marker-end="url(#b3)"/>
+        <path d="M100,200 Q200,160 300,200" fill="none" stroke="#5c6f9b" stroke-width="1.8" stroke-opacity="0.5" marker-end="url(#b4)"/>
+        <defs>
+          <marker id="b1" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#b5472a" opacity="0.7"/></marker>
+          <marker id="b2" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#b5472a" opacity="0.7"/></marker>
+          <marker id="b3" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#4a7a72" opacity="0.7"/></marker>
+          <marker id="b4" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L0,7 L7,3.5 z" fill="#5c6f9b" opacity="0.7"/></marker>
+        </defs>
+        <circle cx="200" cy="60" r="56" fill="none" stroke="#b5472a" stroke-width="2" stroke-opacity="0.2" stroke-dasharray="4 3"/>
+        <circle cx="200" cy="60" r="46" fill="white" stroke="#b5472a" stroke-width="2.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"/>
+        <text x="200" y="56" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#b5472a">Creativity</text>
+        <text x="200" y="70" text-anchor="middle" font-family="Inter" font-size="9" font-weight="500" fill="rgba(0,0,0,0.3)">↑1 ↓2</text>
+        <circle cx="238" cy="22" r="11" fill="#b5472a"/>
+        <text x="238" y="26" text-anchor="middle" font-family="Inter" font-size="10" fill="white" font-weight="bold">★</text>
+        <circle cx="100" cy="210" r="46" fill="white" stroke="#4a7a72" stroke-width="2.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"/>
+        <text x="100" y="206" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#4a7a72">Education</text>
+        <text x="100" y="220" text-anchor="middle" font-family="Inter" font-size="9" font-weight="500" fill="rgba(0,0,0,0.3)">↑1 ↓1</text>
+        <circle cx="300" cy="210" r="46" fill="white" stroke="#5c6f9b" stroke-width="2.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"/>
+        <text x="300" y="202" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#5c6f9b">Practical</text>
+        <text x="300" y="216" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#5c6f9b">Skills</text>
+        <text x="300" y="228" text-anchor="middle" font-family="Inter" font-size="9" font-weight="500" fill="rgba(0,0,0,0.3)">↑2 ↓1</text>
+      </svg>
+      <button class="download-btn" style="max-width:280px;">↓ DOWNLOAD SIMPLE CHART</button>
+    </div>
+    <div class="side-panel">
+      <div class="rank-eyebrow">Priority Ranking</div>
+      <div class="rank-sub">Ranked by outgoing connections</div>
+      <div class="rank-item">
+        <div class="rank-num" style="background:#b5472a;">1</div>
+        <div>
+          <div class="rank-name">Creativity</div>
+          <div class="rank-meta">↓2 out · ↑1 in</div>
+        </div>
+        <span class="focus-pill" style="background:#b5472a;">Focus</span>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num" style="background:#4a7a7260;">2</div>
+        <div>
+          <div class="rank-name">Education</div>
+          <div class="rank-meta">↓1 out · ↑1 in</div>
+        </div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num" style="background:#5c6f9b60;">3</div>
+        <div>
+          <div class="rank-name">Practical Skills</div>
+          <div class="rank-meta">↓1 out · ↑2 in</div>
+        </div>
+      </div>
+      <div class="how-to">
+        <div class="how-to-title">How to read this</div>
+        <div class="how-to-body">The top-ranked sphere has the most outgoing connections — improving it creates the most downstream benefits. Start there.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
