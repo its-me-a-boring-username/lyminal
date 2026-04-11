@@ -237,6 +237,229 @@ Search the web if needed and give one clear, useful response. Include specific n
   );
 }
 
+function NewForwardModal({ items, color, onClose, onCommit }) {
+  const [recipient, setRecipient] = useState("");
+  const [subject, setSubject] = useState("Action items from Lyminal");
+  const [note, setNote] = useState("");
+  const [channel, setChannel] = useState("email");
+  const [sent, setSent] = useState(false);
+
+  const handleSend = () => {
+    if (!recipient.trim()) return;
+    const body = buildForwardBody(items) + (note.trim() ? `\n\nNote: ${note.trim()}` : "");
+    if (channel === "sms") {
+      window.open(`sms:${recipient}?&body=${encodeURIComponent(body)}`);
+    } else {
+      window.open(`mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+    }
+    onCommit?.({ channel, recipient: recipient.trim(), subject: subject.trim(), note: note.trim() });
+    setSent(true);
+  };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+      <div style={{ background: "white", maxWidth: "480px", width: "100%" }}>
+        <div style={{ padding: "24px 28px 18px", borderBottom: "1px solid #e8e0d5" }}>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Forward {items.length} item{items.length > 1 ? "s" : ""}</p>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#1c1410", margin: 0 }}>Who should handle these?</p>
+        </div>
+        {sent ? (
+          <div style={{ padding: "32px 28px", textAlign: "center" }}>
+            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Forward initiated</p>
+            <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 20px", fontFamily: "'Inter', sans-serif" }}>Your {channel === "sms" ? "text" : "email"} app should have opened.</p>
+            <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
+          </div>
+        ) : (
+          <>
+            <div style={{ padding: "20px 28px" }}>
+              <div style={{ marginBottom: "16px" }}>
+                {items.map((i) => (
+                  <div key={i.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "7px" }}>
+                    <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: color, marginTop: "6px", flexShrink: 0 }} />
+                    <p style={{ fontSize: "13px", color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{i.text}</p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: "8px", marginBottom: "10px" }}>
+                {["email", "sms"].map((mode) => (
+                  <button key={mode} onClick={() => setChannel(mode)} style={{ flex: 1, padding: "8px", fontSize: "12px", border: `1px solid ${channel === mode ? "#b5472a" : "#d4c9bb"}`, background: channel === mode ? "#b5472a" : "white", color: channel === mode ? "white" : "#6e5c4a", cursor: "pointer" }}>{mode === "email" ? "Email" : "Text"}</button>
+                ))}
+              </div>
+              <div style={{ display: "grid", gap: "10px" }}>
+                <input value={recipient} onChange={(e) => setRecipient(e.target.value)} placeholder={channel === "sms" ? "Phone number" : "Recipient email"}
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />
+                {channel === "email" && <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />}
+                <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note (optional)" rows={3}
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", resize: "none", width: "100%", boxSizing: "border-box" }} />
+              </div>
+            </div>
+            <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", gap: "10px" }}>
+              <button onClick={onClose} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
+              <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send</button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function NewScheduleModal({ items, color, onClose, onCommit, session }) {
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("09:00");
+  const [repeat, setRepeat] = useState("once");
+  const [saved, setSaved] = useState(false);
+  const [busyWindows, setBusyWindows] = useState([]);
+  const [conflictError, setConflictError] = useState(null);
+
+  const startIso = date && time ? new Date(`${date}T${time}`).toISOString() : null;
+  const endIso = startIso ? new Date(Date.parse(startIso) + 30 * 60000).toISOString() : null;
+
+  const detectConflicts = async () => {
+    setConflictError(null);
+    const accessToken = localStorage.getItem("google_calendar_access_token");
+    if (!accessToken || !startIso || !endIso) {
+      setConflictError("Connect Google Calendar and pick a date/time to check conflicts.");
+      return;
+    }
+    try {
+      const res = await fetch("/api/google/freebusy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: session?.access_token ? `Bearer ${session.access_token}` : "",
+        },
+        body: JSON.stringify({ accessToken, startIso, endIso }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Could not check calendar conflicts.");
+      setBusyWindows(data.busy || []);
+      if ((data.busy || []).length === 0) setConflictError("No conflicts found.");
+    } catch (e) {
+      setConflictError(e.message || "Could not check calendar conflicts.");
+    }
+  };
+
+  const connectGoogle = async () => {
+    if (!session) return;
+    const res = await fetch("/api/google/connect", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+      body: JSON.stringify({}),
+    });
+    const data = await res.json();
+    if (res.ok && data?.url) window.open(data.url, "_blank");
+  };
+
+  const openGCal = () => {
+    const text = items.map((i) => i.text).join(", ");
+    const details = items.map((i, n) => `${n + 1}. ${i.text}`).join("\n");
+    const dt = date && time ? `${date.replace(/-/g, "")}T${time.replace(":", "")}00` : "";
+    const url = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(text)}&details=${encodeURIComponent(details)}${dt ? `&dates=${dt}/${dt}` : ""}`;
+    window.open(url, "_blank");
+  };
+
+  const saveSchedule = () => {
+    if (!date) return;
+    onCommit?.({ scheduledFor: startIso, repeat, status: "scheduled", busyWindows });
+    setSaved(true);
+  };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+      <div style={{ background: "white", maxWidth: "480px", width: "100%" }}>
+        <div style={{ padding: "24px 28px 18px", borderBottom: "1px solid #e8e0d5" }}>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Schedule {items.length} item{items.length > 1 ? "s" : ""}</p>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#1c1410", margin: 0 }}>When should these happen?</p>
+        </div>
+        {saved ? (
+          <div style={{ padding: "32px 28px", textAlign: "center" }}>
+            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Reminder set</p>
+            <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 20px", fontFamily: "'Inter', sans-serif" }}>{date} at {time} - {repeat}</p>
+            <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
+          </div>
+        ) : (
+          <>
+            <div style={{ padding: "20px 28px" }}>
+              <div style={{ marginBottom: "16px" }}>{items.map((i) => <div key={i.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "7px" }}><div style={{ width: "5px", height: "5px", borderRadius: "50%", background: color, marginTop: "6px", flexShrink: 0 }} /><p style={{ fontSize: "13px", color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{i.text}</p></div>)}</div>
+              <div style={{ display: "grid", gap: "10px" }}>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ flex: 1, border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
+                  <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={{ width: "100px", border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
+                </div>
+                <div style={{ display: "flex", gap: "8px" }}>{["once", "daily", "weekly"].map((r) => <button key={r} onClick={() => setRepeat(r)} style={{ flex: 1, padding: "8px", fontSize: "12px", cursor: "pointer", fontFamily: "'Inter', sans-serif", fontWeight: repeat === r ? 600 : 400, background: repeat === r ? color : "white", color: repeat === r ? "white" : "#6e5c4a", border: `1px solid ${repeat === r ? color : "#d4c9bb"}` }}>{r.charAt(0).toUpperCase() + r.slice(1)}</button>)}</div>
+                {conflictError && <p style={{ fontSize: "11px", color: "#8a7455", margin: 0 }}>{conflictError}</p>}
+                {busyWindows.length > 0 && <p style={{ fontSize: "11px", color: "#9b2a2a", margin: 0 }}>{busyWindows.length} conflict(s) found for this time.</p>}
+              </div>
+            </div>
+            <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "grid", gap: "10px" }}>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button onClick={onClose} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
+                <button onClick={saveSchedule} disabled={!date} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: date ? color : "#c4b8a8", border: "none", cursor: date ? "pointer" : "default", fontFamily: "'Inter', sans-serif" }}>Set reminder</button>
+              </div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button onClick={connectGoogle} style={{ flex: 1, width: "100%", padding: "11px", fontSize: "12px", fontWeight: 500, color: color, background: "none", border: `1px solid ${color}`, cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Connect Google</button>
+                <button onClick={detectConflicts} style={{ flex: 1, width: "100%", padding: "11px", fontSize: "12px", fontWeight: 500, color: color, background: "none", border: `1px solid ${color}`, cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Check conflicts</button>
+              </div>
+              <button onClick={openGCal} style={{ width: "100%", padding: "11px", fontSize: "13px", fontWeight: 500, color: color, background: "none", border: `1px solid ${color}`, cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Open in Google Calendar instead</button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function NewFindPanel({ item, goal, onClose, onSaveFact }) {
+  const [input, setInput] = useState(item.text);
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState(item.findFacts?.[0]?.response || null);
+
+  const ask = async () => {
+    if (!input.trim() || loading) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 600,
+          tools: [{ type: "web_search_20250305", name: "web_search" }],
+          system: `You are Lyme in search mode inside the Lyminal app. The user needs a direct, practical answer to a research or sourcing question related to their goal.\n\nSphere: ${goal.sphereName}\nGoal: ${goal.goalText}\nAction item: ${item.text}\n\nSearch the web if needed and give one clear, useful response. Include specific names, links, prices or hours where relevant. Be concise and practical.`,
+          messages: [{ role: "user", content: input.trim() }],
+        }),
+      });
+      const data = await res.json();
+      const text = data.content?.find((b) => b.type === "text")?.text || "I had trouble with that. Try rephrasing.";
+      setResponse(text);
+      onSaveFact?.({ prompt: input.trim(), response: text, savedAt: new Date().toISOString() });
+    } catch {
+      setResponse("Something went wrong. Try again in a moment.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ borderTop: "1px solid #e8e0d5", background: "#faf8f5" }}>
+      <div style={{ display: "flex", gap: "8px", padding: "10px 18px" }}>
+        <input autoFocus value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && ask()} disabled={loading}
+          placeholder={loading ? "Lyme is searching..." : "Ask Lyme to find something..."}
+          style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "white", outline: "none", opacity: loading ? 0.6 : 1 }}
+        />
+        <button onClick={ask} disabled={loading || !input.trim()} style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "#b5472a", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>Ask</button>
+      </div>
+      {response && (
+        <div style={{ padding: "14px 18px", background: "white", borderTop: "1px solid #f0ebe3" }}>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "#b5472a", margin: "0 0 8px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
+          <p style={{ fontSize: "13px", color: "#1c1410", margin: "0 0 12px", lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: "'Inter', sans-serif" }}>{response}</p>
+          <button onClick={onClose} style={{ fontSize: "11px", fontWeight: 600, color: "#b5472a", background: "none", border: "1px solid #b5472a", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Intro walkthrough modal ──────────────────────────────────────────────────
 const DEMO_ITEMS = [
   { id: "d1", text: "Email James about getting the group together", type: "forward" },
@@ -513,13 +736,48 @@ export function PlanScreen({
     return next;
   });
 
-  const retagItem = (itemId, newType) => {
-    const updated = activeGoals.map(ag => {
+  const updateGoalItems = (updater) => {
+    const updated = activeGoals.map((ag) => {
       if (ag.goalId !== goal.goalId) return ag;
-      return { ...ag, actionItems: normalizeActionItems(ag.actionItems || []).map(i => i.id === itemId ? { ...i, type: newType } : i) };
+      return {
+        ...ag,
+        actionItems: updater(normalizeActionItems(ag.actionItems || [])),
+      };
     });
     setActiveGoals(updated);
     saveChart(session, { spheres, connections, activeGoals: updated, checkedItems, completedGoals });
+  };
+
+  const applyForward = (payload) => {
+    const selectedIds = new Set(bulkItems.map((i) => i.id));
+    updateGoalItems((items) => items.map((item) => {
+      if (!selectedIds.has(item.id)) return item;
+      const logs = Array.isArray(item.forwardLogs) ? item.forwardLogs : [];
+      return {
+        ...item,
+        forwardLogs: [...logs, { ...payload, initiatedAt: new Date().toISOString(), status: "initiated" }],
+      };
+    }));
+  };
+
+  const applySchedule = (payload) => {
+    const selectedIds = new Set(bulkItems.map((i) => i.id));
+    updateGoalItems((items) => items.map((item) => {
+      if (!selectedIds.has(item.id)) return item;
+      return { ...item, schedule: payload };
+    }));
+  };
+
+  const saveFindFact = (itemId, fact) => {
+    updateGoalItems((items) => items.map((item) => {
+      if (item.id !== itemId) return item;
+      const facts = Array.isArray(item.findFacts) ? item.findFacts : [];
+      return { ...item, findFacts: [fact, ...facts].slice(0, 20) };
+    }));
+  };
+
+  const retagItem = (itemId, newType) => {
+    updateGoalItems((items) => items.map((i) => i.id === itemId ? { ...i, type: newType } : i));
   };
 
   // ── Paywall ──
@@ -572,8 +830,8 @@ export function PlanScreen({
 
   return (
     <>
-      {modal === "forward"  && <ForwardModal  items={bulkItems} color={hc} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
-      {modal === "schedule" && <ScheduleModal items={bulkItems} color={hc} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
+      {modal === "forward"  && <NewForwardModal  items={bulkItems} color={hc} onCommit={applyForward} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
+      {modal === "schedule" && <NewScheduleModal items={bulkItems} color={hc} session={session} onCommit={applySchedule} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
       {introStep !== null && (
         <IntroModal
           step={introStep}
@@ -713,9 +971,30 @@ export function PlanScreen({
                     }}>
                       {isDone && <svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" /></svg>}
                     </button>
-                    <span style={{ flex: 1, fontSize: "13px", lineHeight: 1.5, color: isDone ? "#8a7455" : "#1c1410", textDecoration: isDone ? "line-through" : "none" }}>
-                      {item.text}
-                    </span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{ display: "block", fontSize: "13px", lineHeight: 1.5, color: isDone ? "#8a7455" : "#1c1410", textDecoration: isDone ? "line-through" : "none" }}>
+                        {item.text}
+                      </span>
+                      {(item.schedule || item.forwardLogs?.length || item.findFacts?.length) && (
+                        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "4px" }}>
+                          {item.schedule && (
+                            <span style={{ fontSize: "10px", color: "#4a7a72", border: "1px solid #cde3dc", padding: "2px 6px", borderRadius: "999px" }}>
+                              {item.schedule.status || "scheduled"} {item.schedule.scheduledFor ? new Date(item.schedule.scheduledFor).toLocaleString() : ""}
+                            </span>
+                          )}
+                          {item.forwardLogs?.length > 0 && (
+                            <span style={{ fontSize: "10px", color: "#8a5a44", border: "1px solid #e8d4ca", padding: "2px 6px", borderRadius: "999px" }}>
+                              forwarded {item.forwardLogs.length}x
+                            </span>
+                          )}
+                          {item.findFacts?.length > 0 && (
+                            <span style={{ fontSize: "10px", color: "#5c6f9b", border: "1px solid #d5dcee", padding: "2px 6px", borderRadius: "999px" }}>
+                              saved facts: {item.findFacts.length}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
                     {isFind && activeType === "find" && (
                       isPro ? (
                         <button onClick={() => setFindItem(findOpen ? null : item)}
@@ -735,7 +1014,7 @@ export function PlanScreen({
                       {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t}</option>)}
                     </select>
                   </div>
-                  {findOpen && <FindPanel item={item} goal={goal} onClose={() => setFindItem(null)} />}
+                  {findOpen && <NewFindPanel item={item} goal={goal} onSaveFact={(fact) => saveFindFact(item.id, fact)} onClose={() => setFindItem(null)} />}
                 </div>
               );
             })}

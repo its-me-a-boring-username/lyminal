@@ -15,9 +15,11 @@ import { PlanScreen } from "./components/PlanScreen.jsx";
 import { DevReset } from "./components/DevReset.jsx";
 import { WelcomeScreen } from "./components/WelcomeScreen.jsx";
 import { AccountScreen } from "./components/AccountScreen.jsx";
-import { normalizeActionItems } from "./utils/actionItems.js";
 import { generateChartReport, generateFullReport } from "./utils/pdf.js";
-import { saveChart, loadChart, clearChart } from "./utils/supabase.js";
+import { loadChart, makeLocalState, readLocalState, writeLocalState } from "./utils/supabase.js";
+import { getCapabilities } from "./utils/entitlements.js";
+import { applyTheme, loadThemeFromStorage, persistThemeToStorage } from "./utils/theme.js";
+import { loadUserProfile, saveThemePreference } from "./utils/profile.js";
 
 class ErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null }; }
@@ -52,12 +54,14 @@ function GoalChart() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [session, setSession] = useState(null);
   const [tier, setTier] = useState("free"); // "free" | "paid_1" | "paid_2"
-  const isPaid = tier !== "free";
-  const isPro = tier === "paid_2";
+  const capabilities = useMemo(() => getCapabilities(tier), [tier]);
+  const isPaid = capabilities.isPaid;
+  const isPro = capabilities.isPro;
   const [authPrompt, setAuthPrompt] = useState(null); // "save_chart" | "save_plan" | "upgrade" | null
   const [hasSeenChartPrompt, setHasSeenChartPrompt] = useState(false);
-  const [selectedTheme, setSelectedTheme] = useState("warm_earth");
-  const [appearance, setAppearance] = useState("system");
+  const storedTheme = loadThemeFromStorage();
+  const [selectedTheme, setSelectedTheme] = useState(storedTheme.selectedTheme);
+  const [appearance, setAppearance] = useState(storedTheme.appearance);
   const [hasSeenPlanPrompt, setHasSeenPlanPrompt] = useState(false);
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768);
@@ -65,35 +69,37 @@ function GoalChart() {
     return () => window.removeEventListener('resize', handler);
   }, []);
 
-  // Auth session listener + tier fetch
+  // Auth session listener + profile/chart fetch
   useEffect(() => {
-    const fetchTier = async (session) => {
-      if (!session) { setTier("free"); return; }
-      setTier("paid_2"); // hardcoded until Stripe is live — all logged-in users get full access
-      /* Production tier check — uncomment before launch:
-      const { data } = await supabase.from('profiles').select('tier').eq('id', session.user.id).single();
-      const t = data?.tier;
-      setTier(t === 'paid_2' || t === 'paid_1' ? t : 'free');
-      */
-    };
+    const hydrateSessionData = async (activeSession) => {
+      if (!activeSession) {
+        setTier("free");
+        return;
+      }
 
-    const applySupabaseData = async (session) => {
-      const data = await loadChart(session);
+      const [profile, data] = await Promise.all([
+        loadUserProfile(activeSession),
+        loadChart(activeSession),
+      ]);
+
+      setTier(profile.tier);
+      setAppearance(profile.appearance);
+      setSelectedTheme(profile.selectedTheme);
+
       if (data) {
         setSpheres(data.spheres);
         setConnections(data.connections);
         setActiveGoals(data.activeGoals);
         setCheckedItems(data.checkedItems);
         setCompletedGoals(data.completedGoals);
-        if (data.activeGoals.length > 0) setStep('active');
+        if (data.activeGoals.length > 0) setStep("active");
       }
     };
 
-    // getSession handles the initial load — sets session, tier, and loads from Supabase if needed
+    // getSession handles the initial load — sets session, profile, and chart
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      fetchTier(session);
-      applySupabaseData(session);
+      hydrateSessionData(session);
     });
 
     // onAuthStateChange handles subsequent changes (sign in, sign out, token refresh)
@@ -101,12 +107,28 @@ function GoalChart() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') return;
       setSession(session);
-      fetchTier(session);
-      if (event === 'SIGNED_IN') applySupabaseData(session);
+      hydrateSessionData(session);
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    applyTheme({ appearance, selectedTheme });
+    persistThemeToStorage({ appearance, selectedTheme });
+    if (session) {
+      saveThemePreference(session, appearance, selectedTheme).catch((error) => {
+        console.warn("[Profile] Failed to persist theme preference:", error);
+      });
+    }
+  }, [appearance, selectedTheme, session]);
+
+  useEffect(() => {
+    if (step !== "plan") return;
+    if (capabilities.canUsePlan) return;
+    setStep("active");
+    setAuthPrompt(session ? "upgrade" : "save_plan");
+  }, [step, capabilities.canUsePlan, session]);
 
   // Auto-dismiss auth overlay when session is established
   useEffect(() => {
@@ -118,6 +140,7 @@ function GoalChart() {
     <MagicLinkAuth
       context={authPrompt}
       isLoggedIn={!!session}
+      session={session}
       onSkip={() => setAuthPrompt(null)}
       onSuccess={() => {}}
       leftOffset={!isMobile && (authPrompt === "save_plan" || authPrompt === "upgrade") ? 350 : 0}
@@ -150,38 +173,29 @@ function GoalChart() {
   const [checkedItems, setCheckedItems] = useState({}); // { goalId: Set of checked action item ids }
   const [completedGoals, setCompletedGoals] = useState(new Set()); // set of completed goalIds
 
-  // LocalStorage save/restore
+  // Local state restore for fast boot before cloud hydration
   useEffect(() => {
-    const saved = localStorage.getItem("goalchart_state");
-    if (saved) {
-      try {
-        const s = JSON.parse(saved);
-        if (s.spheres) setSpheres(s.spheres);
-        if (s.connections) setConnections(s.connections);
-        if (s.activeGoals) {
-          const normalizedGoals = s.activeGoals.map((goal) => ({
-            ...goal,
-            actionItems: normalizeActionItems(goal.actionItems || []),
-          }));
-          setActiveGoals(normalizedGoals);
-        }
-        if (s.step) setStep(s.step);
-        if (s.completedGoals) setCompletedGoals(new Set(s.completedGoals));
-        if (s.checkedItems) {
-          const restored = {};
-          Object.entries(s.checkedItems).forEach(([k, v]) => { restored[k] = new Set(v); });
-          setCheckedItems(restored);
-        }
-      } catch {}
-    }
+    const localState = readLocalState();
+    if (!localState) return;
+    if (localState.spheres) setSpheres(localState.spheres);
+    if (localState.connections) setConnections(localState.connections);
+    if (localState.activeGoals) setActiveGoals(localState.activeGoals);
+    if (localState.step) setStep(localState.step);
+    if (localState.completedGoals) setCompletedGoals(localState.completedGoals);
+    if (localState.checkedItems) setCheckedItems(localState.checkedItems);
   }, []);
 
   useEffect(() => {
     if (spheres.length > 0) {
-      const serializedChecked = {};
-      Object.entries(checkedItems).forEach(([k, v]) => { serializedChecked[k] = [...v]; });
-      const state = { spheres, connections, activeGoals, step, completedGoals: [...completedGoals], checkedItems: serializedChecked };
-      localStorage.setItem("goalchart_state", JSON.stringify(state));
+      writeLocalState(makeLocalState({
+        spheres,
+        connections,
+        activeGoals,
+        step,
+        completedGoals,
+        checkedItems,
+        updatedAt: new Date().toISOString(),
+      }));
     }
   }, [spheres, connections, activeGoals, step, completedGoals, checkedItems]);
 
