@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ':*)",
+      "Bash(node patch9.js)",
+      "Bash(rm patch9.js)"
+    ]
+  }
+}

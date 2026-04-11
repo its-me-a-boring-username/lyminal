@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lyminal — Design Drafts v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #e8e0d5; padding: 40px 24px; }
+
+  .page-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #1c1410; margin-bottom: 6px; }
+  .page-desc { font-size: 13px; color: #6e5c4a; margin-bottom: 24px; line-height: 1.6; }
+  .page-sep { height: 2px; background: #c8b8a8; margin: 48px 0 32px; }
+
+  .drafts-row { display: flex; flex-direction: column; gap: 0; margin-bottom: 48px; }
+  .draft-col { width: 100%; }
+  .draft-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #6e5c4a; font-weight: 600; margin-bottom: 12px; }
+  .direction-divider { height: 1px; background: #c8b8a8; margin: 32px 0; }
+
+  /* ── SHARED CHROME ── */
+  .app-shell { background: #faf8f5; border: 1px solid #d4c9bb; box-shadow: 0 8px 40px rgba(0,0,0,0.14); overflow: hidden; width: 100%; display: flex; flex-direction: column; border-radius: 4px; }
+
+  /* NAV */
+  .nav { display: flex; border-bottom: 1px solid #e8e0d5; background: #faf8f5; flex-shrink: 0; }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 0; font-size: 11px; color: #8a7455; cursor: pointer; border-bottom: 2px solid transparent; }
+  .nav-item.active { color: #b5472a; border-bottom-color: #b5472a; }
+  .nav-icon { font-size: 15px; }
+
+  /* LEFT STRIP */
+  .with-strip { display: flex; flex: 1; min-height: 580px; }
+  .strip { width: 350px; flex-shrink: 0; background: #b5472a; }
+  .strip-sage { background: #4a7a72; }
+  .main-col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  /* SHARED TOKENS */
+  .eyebrow { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a7455; font-weight: 500; margin-bottom: 4px; }
+  .screen-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 600; color: #1c1410; line-height: 1.2; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+  .pill-sphere { background: rgba(181,71,42,0.1); border: 1px solid rgba(181,71,42,0.25); color: #b5472a; }
+  .pill-sage  { background: rgba(74,122,114,0.1); border: 1px solid rgba(74,122,114,0.25); color: #4a7a72; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+  .btn-primary { border: none; padding: 11px 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+  .btn-ghost   { background: none; border: 1px solid #d4c9bb; padding: 11px 18px; font-size: 12px; color: #5c4e40; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+  .btn-dark    { background: #1c1410; color: #faf8f5; border: none; padding: 11px 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+  .input-base  { border: 1px solid #d4c9bb; padding: 9px 14px; font-size: 13px; color: #1c1410; font-family: 'Inter', sans-serif; background: white; border-radius: 6px; outline: none; }
+  .card        { background: white; border: 1px solid #e8e0d5; border-radius: 8px; box-shadow: 0 2px 10px rgba(28,20,16,0.06); }
+
+
+  /* ═══════════════════════════════════════════
+     DIRECTION A — Card Containment
+  ═══════════════════════════════════════════ */
+
+  .a-body { padding: 32px 36px; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+
+  /* Goal card */
+  .a-goal-card { background: white; border: 1px solid #e8e0d5; border-radius: 10px; box-shadow: 0 2px 12px rgba(28,20,16,0.07); overflow: hidden; }
+  .a-goal-card-header { background: #b5472a; color: white; padding: 9px 16px 9px 14px; display: flex; justify-content: space-between; align-items: center; }
+  .a-goal-card-header-label { font-size: 9px; letter-spacing: 0.14em; font-weight: 600; opacity: 0.85; }
+  .a-goal-card-body { padding: 16px 18px; }
+  .a-goal-row { display: flex; align-items: center; gap: 11px; padding-bottom: 13px; margin-bottom: 13px; border-bottom: 1px solid #f0e8df; }
+  .a-checkbox { width: 18px; height: 18px; border: 1.5px solid #c8b8a8; border-radius: 4px; flex-shrink: 0; }
+  .a-goal-text { font-size: 15px; color: #1c1410; font-weight: 500; }
+  .a-empty { font-size: 13px; color: #8a7455; margin-bottom: 12px; font-style: italic; }
+  .a-input-row { display: flex; gap: 6px; margin-bottom: 12px; }
+  .a-select { border: 1px solid #d4c9bb; padding: 8px 10px; font-size: 11px; color: #5c4e40; background: white; font-family: 'Inter', sans-serif; border-radius: 6px; }
+  .a-input { flex: 1; border: 1px solid #d4c9bb; padding: 8px 12px; font-size: 12px; color: #1c1410; font-family: 'Inter', sans-serif; border-radius: 6px; }
+  .a-add-btn { background: #b5472a; color: white; border: none; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+  .a-talk-row { display: flex; gap: 8px; }
+  .a-talk-btn { flex: 1; background: #b5472a; color: white; border: none; padding: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+  .a-change-btn { background: none; border: 1px solid #d4c9bb; padding: 10px 14px; font-size: 12px; color: #5c4e40; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+
+  /* Add goal card */
+  .a-add-card { background: white; border: 1.5px dashed #c8b8a8; border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+  .a-add-icon { color: #b5472a; font-size: 20px; line-height: 1; }
+  .a-add-title { font-size: 13px; color: #5c4e40; font-weight: 500; }
+  .a-add-sub { font-size: 11px; color: #8a7455; }
+
+  /* Footer */
+  .a-footer { display: flex; gap: 10px; margin-top: auto; padding-top: 4px; }
+  .a-report-btn { flex: 1; background: #1c1410; color: #faf8f5; border: none; padding: 13px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+  .a-chart-btn { background: none; border: 1px solid #c8b8a8; padding: 13px 18px; font-size: 12px; color: #5c4e40; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+
+  /* Plan A */
+  .plan-a-top { padding: 28px 36px 20px; border-bottom: 1px solid #e8e0d5; }
+  .plan-a-main { display: flex; flex: 1; }
+  .plan-a-sidebar { width: 52px; border-right: 1px solid #e8e0d5; padding: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0; }
+  .plan-ring-active { width: 30px; height: 30px; border-radius: 50%; border: 2.5px solid #b5472a; display: flex; align-items: center; justify-content: center; }
+  .plan-ring-dot { width: 8px; height: 8px; border-radius: 50%; background: #b5472a; }
+  .plan-ring-inactive { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #e8e0d5; display: flex; align-items: center; justify-content: center; }
+  .plan-ring-dot-i { width: 8px; height: 8px; border-radius: 50%; background: #4a7a72; opacity: 0.35; }
+  .plan-a-content { flex: 1; display: flex; flex-direction: column; }
+  .plan-a-goal-bar { background: #b5472a; color: white; padding: 10px 18px; display: flex; flex-direction: column; gap: 1px; }
+  .plan-a-goal-sphere { font-size: 9px; letter-spacing: 0.12em; opacity: 0.75; font-weight: 600; }
+  .plan-a-goal-name { font-size: 14px; font-weight: 600; }
+  .plan-a-tabs { display: flex; border-bottom: 1px solid #e8e0d5; }
+  .plan-a-tab { flex: 1; padding: 11px 8px; text-align: center; cursor: pointer; border-bottom: 2px solid transparent; }
+  .plan-a-tab.active { border-bottom-color: #b5472a; }
+  .plan-a-tab-name { font-size: 10px; letter-spacing: 0.1em; font-weight: 600; color: #1c1410; }
+  .plan-a-tab-sub { font-size: 9px; color: #8a7455; letter-spacing: 0.05em; margin-top: 2px; }
+  .plan-a-tab.inactive .plan-a-tab-name { color: #8a7455; font-weight: 400; }
+  .plan-a-empty { padding: 44px 20px; text-align: center; }
+  .plan-a-empty-text { font-size: 13px; color: #8a7455; font-style: italic; margin-bottom: 14px; }
+  .plan-show-all { background: none; border: 1px solid #d4c9bb; padding: 7px 18px; font-size: 12px; color: #b5472a; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 999px; font-weight: 500; }
+
+  /* Progress A */
+  .prog-a-top { padding: 28px 36px 20px; border-bottom: 1px solid #e8e0d5; }
+  .prog-a-rings { display: flex; gap: 24px; padding: 24px 36px; border-bottom: 1px solid #e8e0d5; }
+  .prog-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .prog-ring-svg { position: relative; width: 68px; height: 68px; }
+  .prog-ring-circle { width: 68px; height: 68px; border-radius: 50%; border: 3px solid #b5472a; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #b5472a; }
+  .prog-ring-circle.dim { border-color: #e8e0d5; color: #c8b8a8; }
+  .prog-ring-label { font-size: 9px; letter-spacing: 0.09em; color: #8a7455; text-align: center; text-transform: uppercase; }
+  .prog-ring-label.sel { color: #b5472a; font-weight: 600; }
+  .prog-a-detail { padding: 22px 36px; }
+  .prog-a-goal-card { background: white; border: 1px solid #e8e0d5; border-radius: 10px; box-shadow: 0 2px 10px rgba(28,20,16,0.06); overflow: hidden; }
+  .prog-a-card-header { background: #b5472a; color: white; padding: 9px 16px; font-size: 9px; letter-spacing: 0.12em; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .prog-a-card-body { padding: 16px 18px; }
+  .prog-goal-check-row { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
+  .prog-goal-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #b5472a; flex-shrink: 0; }
+  .prog-goal-name { font-size: 15px; color: #1c1410; font-weight: 500; font-family: 'Playfair Display', serif; }
+  .prog-no-steps { font-size: 13px; color: #8a7455; font-style: italic; margin-bottom: 16px; }
+  .prog-stuck-btn { width: 100%; background: #b5472a; color: white; border: none; padding: 11px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+
+
+  /* ═══════════════════════════════════════════
+     DIRECTION B — Structured Warmth
+     Dark header, left-border accent, pills everywhere
+  ═══════════════════════════════════════════ */
+
+  /* Home B */
+  .b-header { padding: 28px 36px 22px; border-bottom: 2px solid #1c1410; }
+  .b-body { padding: 28px 36px; flex: 1; display: flex; flex-direction: column; gap: 0; }
+  .b-goal-block { border-left: 3px solid #b5472a; padding: 0 0 0 18px; margin-bottom: 24px; }
+  .b-sphere-pill { margin-bottom: 10px; }
+  .b-goal-row { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
+  .b-checkbox { width: 18px; height: 18px; border: 1.5px solid #b5472a; border-radius: 4px; flex-shrink: 0; }
+  .b-goal-text { font-size: 16px; color: #1c1410; font-weight: 500; font-family: 'Playfair Display', serif; }
+  .b-actions-eyebrow { font-size: 10px; letter-spacing: 0.12em; color: #8a7455; font-weight: 500; text-transform: uppercase; margin-bottom: 8px; }
+  .b-empty { font-size: 13px; color: #8a7455; font-style: italic; margin-bottom: 12px; }
+  .b-input-group { display: flex; border: 1px solid #d4c9bb; border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
+  .b-select { border: none; border-right: 1px solid #d4c9bb; padding: 9px 10px; font-size: 11px; color: #5c4e40; background: #faf8f5; font-family: 'Inter', sans-serif; }
+  .b-input { flex: 1; border: none; padding: 9px 12px; font-size: 12px; color: #1c1410; font-family: 'Inter', sans-serif; background: white; }
+  .b-add-btn { border: none; border-left: 1px solid #d4c9bb; padding: 9px 14px; font-size: 12px; color: #b5472a; font-weight: 600; cursor: pointer; background: white; font-family: 'Inter', sans-serif; }
+  .b-cta-row { display: flex; align-items: center; gap: 12px; }
+  .b-talk-btn { flex: 1; background: #b5472a; color: white; border: none; padding: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+  .b-change-link { font-size: 11px; color: #8a7455; text-decoration: underline; cursor: pointer; white-space: nowrap; }
+  .b-divider { height: 1px; background: #e8e0d5; margin: 20px 0; }
+  .b-add-row { display: flex; align-items: center; gap: 10px; color: #b5472a; cursor: pointer; margin-bottom: 24px; }
+  .b-add-icon { font-size: 18px; font-weight: 300; }
+  .b-add-text { font-size: 13px; font-weight: 500; }
+  .b-add-sub { font-size: 11px; color: #8a7455; font-weight: 400; }
+  .b-footer { display: flex; gap: 10px; margin-top: auto; }
+  .b-report-btn { flex: 1; background: #1c1410; color: #faf8f5; border: none; padding: 13px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+  .b-chart-btn { background: none; border: 1px solid #c8b8a8; padding: 13px 18px; font-size: 12px; color: #5c4e40; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+
+  /* Plan B */
+  .plan-b-header { background: #1c1410; padding: 22px 36px; flex-shrink: 0; }
+  .plan-b-eyebrow { font-size: 9px; letter-spacing: 0.16em; color: rgba(250,248,245,0.45); margin-bottom: 4px; }
+  .plan-b-title { font-family: 'Playfair Display', serif; font-size: 24px; color: #faf8f5; font-weight: 600; }
+  .plan-b-main { display: flex; flex: 1; }
+  .plan-b-sidebar { width: 52px; background: rgba(28,20,16,0.03); border-right: 1px solid #e8e0d5; padding: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0; }
+  .plan-b-content { flex: 1; display: flex; flex-direction: column; }
+  .plan-b-goal-bar { background: #b5472a; color: white; padding: 10px 18px; display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
+  .plan-b-goal-sphere { font-size: 9px; letter-spacing: 0.12em; opacity: 0.75; font-weight: 600; }
+  .plan-b-goal-name { font-size: 14px; font-weight: 600; }
+  .plan-b-tabs { display: flex; flex-shrink: 0; }
+  .plan-b-tab { flex: 1; padding: 13px 8px; text-align: center; border-bottom: 1px solid #e8e0d5; border-right: 1px solid #e8e0d5; cursor: pointer; }
+  .plan-b-tab:last-child { border-right: none; }
+  .plan-b-tab.active { background: white; border-bottom: 2px solid #b5472a; }
+  .plan-b-tab-name { font-size: 10px; letter-spacing: 0.1em; font-weight: 600; color: #1c1410; }
+  .plan-b-tab-sub { font-size: 9px; color: #8a7455; letter-spacing: 0.05em; margin-top: 2px; }
+  .plan-b-tab.inactive .plan-b-tab-name { color: #8a7455; font-weight: 400; }
+  .plan-b-empty { padding: 44px 20px; text-align: center; flex: 1; }
+  .plan-b-empty-text { font-size: 13px; color: #8a7455; font-style: italic; margin-bottom: 14px; }
+
+  /* Progress B */
+  .prog-b-header { background: #1c1410; padding: 22px 36px; flex-shrink: 0; }
+  .prog-b-eyebrow { font-size: 9px; letter-spacing: 0.16em; color: rgba(250,248,245,0.45); margin-bottom: 4px; }
+  .prog-b-title { font-family: 'Playfair Display', serif; font-size: 24px; color: #faf8f5; font-weight: 600; }
+  .prog-b-rings { display: flex; gap: 24px; padding: 24px 36px; border-bottom: 1px solid #e8e0d5; }
+  .prog-b-detail { padding: 24px 36px; }
+  .prog-b-goal-block { border-left: 3px solid #b5472a; padding-left: 18px; }
+  .prog-b-sphere-pill { margin-bottom: 10px; }
+  .prog-b-goal-row { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
+  .prog-b-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #b5472a; flex-shrink: 0; }
+  .prog-b-goal-name { font-size: 15px; color: #1c1410; font-weight: 500; font-family: 'Playfair Display', serif; }
+  .prog-b-no-steps { font-size: 13px; color: #8a7455; font-style: italic; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div style="max-width:1200px; margin:0 auto;">
+
+  <div style="margin-bottom:32px;">
+    <div style="font-family:'Playfair Display',serif; font-size:32px; color:#1c1410; margin-bottom:8px;">Lyminal — Design Directions v2</div>
+    <div style="font-size:13px; color:#6e5c4a; line-height:1.6;">Updated with consistent rounded corners, pill tags, sphere-color CTAs, and Playfair for goal titles — matching the language of the early onboarding screens.</div>
+  </div>
+
+
+  <!-- ═══ HOME ═══ -->
+  <div class="page-title">Home tab</div>
+  <div class="page-desc">Both directions now use a terracotta CTA, rounded cards, and pill sphere tags. A uses a contained card per goal. B uses a left-border accent with an editorial layout.</div>
+  <div class="drafts-row">
+
+    <!-- HOME A -->
+    <div class="draft-col">
+      <div class="draft-label">A — Card containment</div>
+      <div class="app-shell">
+        <div class="nav">
+          <div class="nav-item active"><span class="nav-icon">⌂</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+          <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
+          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+        </div>
+        <div class="with-strip">
+          <div class="strip"></div>
+          <div class="main-col">
+            <div class="a-body">
+              <div>
+                <div class="eyebrow">Your active goals</div>
+                <div class="screen-title" style="margin-bottom:20px;">Here's what you're working on</div>
+              </div>
+
+              <div class="a-goal-card">
+                <div class="a-goal-card-header">
+                  <span class="a-goal-card-header-label">EDUCATION</span>
+                  <span style="opacity:0.5; font-size:13px; cursor:pointer;">✕</span>
+                </div>
+                <div class="a-goal-card-body">
+                  <div class="a-goal-row">
+                    <div class="a-checkbox"></div>
+                    <div class="a-goal-text">Learn to write better</div>
+                  </div>
+                  <div class="a-empty">No action items yet. Add your own or talk to Lyme.</div>
+                  <div class="a-input-row">
+                    <select class="a-select"><option>Find</option><option>Forward</option><option>Schedule</option></select>
+                    <input class="a-input" placeholder="Add an action item…" />
+                    <button class="a-add-btn">Add</button>
+                  </div>
+                  <div class="a-talk-row">
+                    <button class="a-talk-btn">TALK TO LYME</button>
+                    <button class="a-change-btn">⇄ Change</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="a-add-card">
+                <div class="a-add-icon">+</div>
+                <div>
+                  <div class="a-add-title">Add another goal</div>
+                  <div class="a-add-sub">Track a goal from a different sphere</div>
+                </div>
+              </div>
+
+              <div class="a-footer">
+                <button class="a-report-btn">↓ DOWNLOAD FULL REPORT</button>
+                <button class="a-chart-btn">View chart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="direction-divider"></div>
+    <!-- HOME B -->
+    <div class="draft-col">
+      <div class="draft-label">B — Structured warmth</div>
+      <div class="app-shell">
+        <div class="nav">
+          <div class="nav-item active"><span class="nav-icon">⌂</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+          <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
+          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+        </div>
+        <div class="with-strip">
+          <div class="strip"></div>
+          <div class="main-col">
+            <div class="b-header">
+              <div class="eyebrow">Your active goals</div>
+              <div class="screen-title">Here's what you're working on</div>
+            </div>
+            <div class="b-body">
+
+              <div class="b-goal-block">
+                <div class="b-sphere-pill">
+                  <span class="pill pill-sphere"><span class="dot"></span>Education</span>
+                </div>
+                <div class="b-goal-row">
+                  <div class="b-checkbox"></div>
+                  <div class="b-goal-text">Learn to write better</div>
+                </div>
+                <div class="b-actions-eyebrow">Action items</div>
+                <div class="b-empty">No action items yet. Add your own or talk to Lyme.</div>
+                <div class="b-input-group">
+                  <select class="b-select"><option>Find</option><option>Forward</option><option>Schedule</option></select>
+                  <input class="b-input" placeholder="Add an action item…" />
+                  <button class="b-add-btn">Add</button>
+                </div>
+                <div class="b-cta-row">
+                  <button class="b-talk-btn">TALK TO LYME</button>
+                  <span class="b-change-link">⇄ Change goal</span>
+                </div>
+              </div>
+
+              <div class="b-divider"></div>
+
+              <div class="b-add-row">
+                <div class="b-add-icon">+</div>
+                <div>
+                  <span class="b-add-text">Add another goal </span>
+                  <span class="b-add-sub">— from a different sphere</span>
+                </div>
+              </div>
+
+              <div class="b-footer">
+                <button class="b-report-btn">↓ DOWNLOAD FULL REPORT</button>
+                <button class="b-chart-btn">View chart</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ PLAN ═══ -->
+  <div class="page-sep"></div>
+  <div class="page-title">Plan tab</div>
+  <div class="page-desc">Both use pill-shaped "Show all items" and rounded tab treatment. A keeps the flat cream header with a border. B anchors with a dark header that matches the onboarding "focus" screen's weight.</div>
+  <div class="drafts-row">
+
+    <!-- PLAN A -->
+    <div class="draft-col">
+      <div class="draft-label">A — Card containment</div>
+      <div class="app-shell">
+        <div class="nav">
+          <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+          <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+          <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
+          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+        </div>
+        <div class="with-strip">
+          <div class="strip"></div>
+          <div class="main-col">
+            <div class="plan-a-top">
+              <div class="eyebrow">Plan</div>
+              <div class="screen-title">Get things done</div>
+            </div>
+            <div class="plan-a-main">
+              <div class="plan-a-sidebar">
+                <div class="plan-ring-active"><div class="plan-ring-dot"></div></div>
+                <div class="plan-ring-inactive"><div class="plan-ring-dot-i"></div></div>
+              </div>
+              <div class="plan-a-content">
+                <div class="plan-a-goal-bar">
+                  <div class="plan-a-goal-sphere">EDUCATION</div>
+                  <div class="plan-a-goal-name">Learn to write better</div>
+                </div>
+                <div class="plan-a-tabs">
+                  <div class="plan-a-tab active">
+                    <div class="plan-a-tab-name">FORWARD</div>
+                    <div class="plan-a-tab-sub">SEND/DELEGATE</div>
+                  </div>
+                  <div class="plan-a-tab inactive">
+                    <div class="plan-a-tab-name">SCHEDULE</div>
+                    <div class="plan-a-tab-sub">REMIND/CAL</div>
+                  </div>
+                  <div class="plan-a-tab inactive">
+                    <div class="plan-a-tab-name">FIND</div>
+                    <div class="plan-a-tab-sub">LYME SEARCH</div>
+                  </div>
+                </div>
+                <div class="plan-a-empty">
+                  <div class="plan-a-empty-text">No items for this goal yet.</div>
+                  <button class="plan-show-all">Show all items</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="direction-divider"></div>
+    <!-- PLAN B -->
+    <div class="draft-col">
+      <div class="draft-label">B — Structured warmth</div>
+      <div class="app-shell">
+        <div class="nav">
+          <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+          <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+          <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
+          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+        </div>
+        <div class="with-strip">
+          <div class="strip"></div>
+          <div class="main-col">
+            <div class="plan-b-header">
+              <div class="plan-b-eyebrow">PLAN</div>
+              <div class="plan-b-title">Get things done</div>
+            </div>
+            <div class="plan-b-main">
+              <div class="plan-b-sidebar">
+                <div class="plan-ring-active"><div class="plan-ring-dot"></div></div>
+                <div class="plan-ring-inactive"><div class="plan-ring-dot-i"></div></div>
+              </div>
+              <div class="plan-b-content">
+                <div class="plan-b-goal-bar">
+                  <span class="plan-b-goal-sphere">EDUCATION</span>
+                  <span class="plan-b-goal-name">Learn to write better</span>
+                </div>
+                <div class="plan-b-tabs">
+                  <div class="plan-b-tab active">
+                    <div class="plan-b-tab-name">FORWARD</div>
+                    <div class="plan-b-tab-sub">SEND/DELEGATE</div>
+                  </div>
+                  <div class="plan-b-tab inactive">
+                    <div class="plan-b-tab-name">SCHEDULE</div>
+                    <div class="plan-b-tab-sub">REMIND/CAL</div>
+                  </div>
+                  <div class="plan-b-tab inactive">
+                    <div class="plan-b-tab-name">FIND</div>
+                    <div class="plan-b-tab-sub">LYME SEARCH</div>
+                  </div>
+                </div>
+                <div class="plan-b-empty">
+                  <div class="plan-b-empty-text">No items for this goal yet.</div>
+                  <button class="plan-show-all">Show all items</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ PROGRESS ═══ -->
+  <div class="page-sep"></div>
+  <div class="page-title">Progress tab</div>
+  <div class="page-desc">The strip tracks the selected sphere color (sage shown here). A wraps the goal detail in a card. B uses the left-border accent with a pill sphere tag — matching the connection flow's visual language.</div>
+  <div class="drafts-row">
+
+    <!-- PROGRESS A -->
+    <div class="draft-col">
+      <div class="draft-label">A — Card containment</div>
+      <div class="app-shell">
+        <div class="nav">
+          <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+          <div class="nav-item active"><span class="nav-icon">◬</span>Progress</div>
+          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
+          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+        </div>
+        <div class="with-strip">
+          <div class="strip strip-sage"></div>
+          <div class="main-col">
+            <div class="prog-a-top">
+              <div class="eyebrow">Progress</div>
+              <div class="screen-title">How far you've come</div>
+            </div>
+            <div class="prog-a-rings">
+              <div class="prog-ring-wrap">
+                <div class="prog-ring-circle">0%</div>
+                <div class="prog-ring-label sel">EDUCATION</div>
+              </div>
+              <div class="prog-ring-wrap">
+                <div class="prog-ring-circle dim">—</div>
+                <div class="prog-ring-label">MENTAL HEALTH</div>
+              </div>
+              <div class="prog-ring-wrap">
+                <div class="prog-ring-circle dim">—</div>
+                <div class="prog-ring-label">PRACTICAL SKILLS</div>
+              </div>
+            </div>
+            <div class="prog-a-detail">
+              <div class="prog-a-goal-card">
+                <div class="prog-a-card-header">● EDUCATION</div>
+                <div class="prog-a-card-body">
+                  <div class="prog-goal-check-row">
+                    <div class="prog-goal-check"></div>
+                    <div class="prog-goal-name">Learn to write better</div>
+                  </div>
+                  <div class="prog-no-steps">No steps added yet — talk to Lyme to build your plan.</div>
+                  <button class="prog-stuck-btn">FEELING STUCK? TALK TO LYME →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="direction-divider"></div>
+    <!-- PROGRESS B -->
+    <div class="draft-col">
+      <div class="draft-label">B — Structured warmth</div>
+      <div class="app-shell">
+        <div class="nav">
+          <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+          <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+          <div class="nav-item active"><span class="nav-icon">◬</span>Progress</div>
+          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
+          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+        </div>
+        <div class="with-strip">
+          <div class="strip strip-sage"></div>
+          <div class="main-col">
+            <div class="prog-b-header">
+              <div class="prog-b-eyebrow">PROGRESS</div>
+              <div class="prog-b-title">How far you've come</div>
+            </div>
+            <div class="prog-b-rings">
+              <div class="prog-ring-wrap">
+                <div class="prog-ring-circle">0%</div>
+                <div class="prog-ring-label sel">EDUCATION</div>
+              </div>
+              <div class="prog-ring-wrap">
+                <div class="prog-ring-circle dim">—</div>
+                <div class="prog-ring-label">MENTAL HEALTH</div>
+              </div>
+              <div class="prog-ring-wrap">
+                <div class="prog-ring-circle dim">—</div>
+                <div class="prog-ring-label">PRACTICAL SKILLS</div>
+              </div>
+            </div>
+            <div class="prog-b-detail">
+              <div class="prog-b-goal-block">
+                <div class="prog-b-sphere-pill">
+                  <span class="pill pill-sphere"><span class="dot"></span>Education</span>
+                </div>
+                <div class="prog-b-goal-row">
+                  <div class="prog-b-check"></div>
+                  <div class="prog-b-goal-name">Learn to write better</div>
+                </div>
+                <div class="prog-b-no-steps">No steps added yet — talk to Lyme to build your plan.</div>
+                <button class="prog-stuck-btn">FEELING STUCK? TALK TO LYME →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="font-size:12px; color:#8a7455; padding-bottom:48px;">
+    Both directions keep the left strip full height and sphere-color. The strip on Progress tracks the selected sphere (sage shown). On Home and Plan it stays terracotta.
+  </div>
+
+</div>
+</body>
+</html>

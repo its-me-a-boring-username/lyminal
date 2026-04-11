@@ -224,7 +224,7 @@ function GoalChart() {
 
   const BoundDevReset = () => <DevReset session={session} />;
 
-  if (step === "welcome") return <WelcomeScreen setStep={setStep} DevReset={BoundDevReset} />;
+  if (step === "welcome") return <WelcomeScreen setStep={setStep} DevReset={BoundDevReset} setAuthPrompt={setAuthPrompt} />;
 
   // ── INTRO SCREENS ──
   if (["intro-spheres","intro-goals","intro-connections","intro-results","intro-active"].includes(step)) {

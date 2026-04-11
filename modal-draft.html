@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Intro Modal — Draft</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #e8e0d5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  /* ── Backdrop ── */
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(28,20,16,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 10;
+  }
+
+  /* ── Modal card ── */
+  .modal {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 460px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 64px rgba(28,20,16,0.28);
+  }
+
+  /* ── Header ── */
+  .modal-header {
+    padding: 22px 28px 18px;
+    border-bottom: 1px solid #e8e0d5;
+    background: rgba(181,71,42,0.13);
+  }
+  .modal-header-eyebrow {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #b5472a;
+    font-weight: 500;
+    margin-bottom: 3px;
+  }
+  .modal-header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1c1410;
+  }
+
+  /* ── Body ── */
+  .modal-body {
+    padding: 22px 28px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  /* ── Footer ── */
+  .modal-footer {
+    padding: 14px 28px;
+    border-top: 1px solid #e8e0d5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+  }
+  .dots { display: flex; gap: 6px; flex: 1; align-items: center; }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #d4c9bb; cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .dot.active { background: #b5472a; transform: scale(1.2); }
+  .btn-back {
+    font-size: 12px; color: #8a7455; background: none;
+    border: 1px solid #d4c9bb; padding: 8px 16px;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    border-radius: 6px; transition: border-color 0.15s;
+  }
+  .btn-back:hover { border-color: #b0a090; }
+  .btn-next {
+    font-size: 12px; font-weight: 600; color: white;
+    background: #b5472a; border: none;
+    padding: 9px 20px; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.05em; border-radius: 6px;
+    transition: opacity 0.15s;
+  }
+  .btn-next:hover { opacity: 0.88; }
+
+  /* ── Step content shared ── */
+  .caption {
+    margin-top: 14px;
+    background: rgba(181,71,42,0.07);
+    border-left: 3px solid #b5472a;
+    border-radius: 0 6px 6px 0;
+    padding: 10px 14px;
+  }
+  .caption-text {
+    font-size: 13px;
+    color: #2e2218;
+    line-height: 1.55;
+    font-weight: 400;
+  }
+
+  /* ── Step 0 — type overview ── */
+  .type-cards { display: flex; flex-direction: column; gap: 10px; }
+  .type-card {
+    border: 1px solid #e8e0d5;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .type-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .pill-forward  { background: rgba(139,84,60,0.12);  color: #8b543c; border: 1px solid rgba(139,84,60,0.25); }
+  .pill-schedule { background: rgba(74,122,114,0.12); color: #4a7a72; border: 1px solid rgba(74,122,114,0.25); }
+  .pill-find     { background: rgba(90,70,130,0.10);  color: #5a4682; border: 1px solid rgba(90,70,130,0.22); }
+  .type-card-title { font-size: 13px; font-weight: 600; color: #1c1410; margin-bottom: 2px; }
+  .type-card-desc  { font-size: 12px; color: #6e5c4a; line-height: 1.45; }
+
+  /* ── Demo item list (steps 1–3) ── */
+  .demo-panel {
+    border: 1px solid #e8e0d5;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .demo-type-tabs { display: flex; border-bottom: 1px solid #e8e0d5; }
+  .demo-tab {
+    flex: 1; padding: 9px 6px; text-align: center;
+    font-size: 10px; letter-spacing: 0.08em; font-weight: 600;
+    color: #8a7455; cursor: default; border-bottom: 2px solid transparent;
+    transition: color 0.2s;
+  }
+  .demo-tab.active-fwd { color: #8b543c; border-bottom-color: #8b543c; }
+  .demo-tab.active-sch { color: #4a7a72; border-bottom-color: #4a7a72; }
+  .demo-tab.active-fnd { color: #5a4682; border-bottom-color: #5a4682; }
+
+  .demo-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; border-bottom: 1px solid #f0ebe3;
+    background: white; transition: background 0.35s;
+  }
+  .demo-item:last-of-type { border-bottom: none; }
+  .demo-item.checked-fwd { background: rgba(139,84,60,0.07); }
+  .demo-item input[type=checkbox] { margin-top: 2px; flex-shrink: 0; accent-color: #8b543c; cursor: default; }
+  .demo-item-text { font-size: 12px; color: #1c1410; line-height: 1.4; }
+
+  .demo-bulk-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 14px; background: #faf8f5;
+    border-top: 1px solid #e8e0d5;
+  }
+  .demo-count { font-size: 10px; color: #8a7455; flex: 1; }
+  .demo-action-btn {
+    font-size: 10px; font-weight: 600; color: white;
+    padding: 5px 13px; border-radius: 999px;
+    border: none; font-family: 'Inter', sans-serif;
+    transition: background 0.3s, transform 0.25s;
+    cursor: default;
+  }
+  .demo-action-btn.dim    { background: #c4b8a8; }
+  .demo-action-btn.active { background: #8b543c; }
+  .demo-action-btn.pulse  { transform: scale(1.07); }
+
+  /* ── Step 3 forward modal preview ── */
+  .forward-preview {
+    margin-top: 10px;
+    border: 1px solid #e8e0d5;
+    border-radius: 8px;
+    background: white;
+    padding: 14px 16px;
+    animation: fadeIn 0.3s ease-out;
+  }
+  .forward-preview-eyebrow {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #8a7455; margin-bottom: 3px;
+  }
+  .forward-preview-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; color: #1c1410; margin-bottom: 10px;
+  }
+  .forward-preview-input {
+    border: 1px solid #d4c9bb; border-radius: 6px;
+    padding: 7px 10px; font-size: 11px; color: #8a7455;
+    margin-bottom: 8px; width: 100%;
+    font-family: 'Inter', sans-serif;
+  }
+  .forward-preview-btns { display: flex; gap: 6px; }
+  .fp-cancel {
+    flex: 1; padding: 7px; font-size: 11px; color: #5c4e40;
+    border: 1px solid #d4c9bb; background: none; text-align: center;
+    border-radius: 6px; cursor: default; font-family: 'Inter', sans-serif;
+  }
+  .fp-send {
+    flex: 2; padding: 7px; font-size: 11px; font-weight: 600;
+    color: white; background: #b5472a; border: none;
+    text-align: center; border-radius: 6px; cursor: default;
+    font-family: 'Inter', sans-serif;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes stepIn { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+  .step-enter { animation: stepIn 0.22s ease-out; }
+
+  /* ── Background app (blurred) ── */
+  .app-bg {
+    position: fixed; inset: 0; z-index: 0;
+    display: flex;
+  }
+  .app-strip { width: 350px; background: #b5472a; flex-shrink: 0; }
+  .app-main { flex: 1; background: #faf8f5; }
+</style>
+</head>
+<body>
+
+<!-- Blurred app background -->
+<div class="app-bg">
+  <div class="app-strip"></div>
+  <div class="app-main"></div>
+</div>
+
+<!-- Modal -->
+<div class="backdrop">
+  <div class="modal">
+
+    <div class="modal-header">
+      <div class="modal-header-eyebrow">Welcome to</div>
+      <div class="modal-header-title">The Plan</div>
+    </div>
+
+    <div class="modal-body" id="modal-body">
+      <!-- injected by JS -->
+    </div>
+
+    <div class="modal-footer">
+      <div class="dots" id="dots"></div>
+      <button class="btn-back" id="btn-back" onclick="go(-1)">← Back</button>
+      <button class="btn-next" id="btn-next" onclick="go(1)">NEXT →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const TOTAL = 4;
+  let step = 0;
+  let stepTimers = [];
+
+  const DEMO_ITEMS = [
+    { id:1, text: "Email coach recommendation to Sarah", type: "forward" },
+    { id:2, text: "Share writing exercise list with study group", type: "forward" },
+    { id:3, text: "Block 30 min on Tuesday for daily writing", type: "schedule" },
+  ];
+
+  function clearTimers() {
+    stepTimers.forEach(t => clearTimeout(t));
+    stepTimers = [];
+  }
+
+  function after(ms, fn) {
+    const t = setTimeout(fn, ms);
+    stepTimers.push(t);
+    return t;
+  }
+
+  // ── Step 0 ──────────────────────────────────────────────
+  function renderStep0() {
+    return `
+      <div class="type-cards step-enter">
+        <div class="type-card">
+          <span class="type-pill pill-forward">FORWARD</span>
+          <div>
+            <div class="type-card-title">Send or delegate</div>
+            <div class="type-card-desc">Communicate, share, or hand off to someone else — an email, a message, a task for your EA.</div>
+          </div>
+        </div>
+        <div class="type-card">
+          <span class="type-pill pill-schedule">SCHEDULE</span>
+          <div>
+            <div class="type-card-title">Put it on the calendar</div>
+            <div class="type-card-desc">Anything time-based or location-based — a block, a reminder, an appointment, a place to go.</div>
+          </div>
+        </div>
+        <div class="type-card">
+          <span class="type-pill pill-find">FIND</span>
+          <div>
+            <div class="type-card-title">Research or acquire</div>
+            <div class="type-card-desc">Look something up, source options, or buy something — Lyme can search the web for you.</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="caption-text">Lyme labels each action item automatically. You can correct any label using the dropdown on each item.</div>
+      </div>
+    `;
+  }
+
+  // ── Step 1 ──────────────────────────────────────────────
+  function renderStep1() {
+    return `
+      <div class="step-enter">
+        <div class="demo-panel" id="demo1">
+          <div class="demo-type-tabs">
+            <div class="demo-tab active-fwd">FORWARD</div>
+            <div class="demo-tab">SCHEDULE</div>
+            <div class="demo-tab">FIND</div>
+          </div>
+          ${DEMO_ITEMS.filter(i => i.type === "forward").map(item => `
+            <div class="demo-item" id="d1-${item.id}">
+              <input type="checkbox" readonly />
+              <span class="demo-item-text">${item.text}</span>
+            </div>
+          `).join('')}
+          <div class="demo-bulk-bar">
+            <span class="demo-count">0 selected</span>
+            <span class="demo-action-btn dim">Forward selected →</span>
+          </div>
+        </div>
+        <div class="caption">
+          <div class="caption-text">Tap a type to filter your items. Forward and Schedule unlock bulk selection.</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ── Step 2 ──────────────────────────────────────────────
+  function renderStep2() {
+    const fwdItems = DEMO_ITEMS.filter(i => i.type === "forward");
+    return `
+      <div class="step-enter">
+        <div class="demo-panel">
+          <div class="demo-type-tabs">
+            <div class="demo-tab active-fwd">FORWARD</div>
+            <div class="demo-tab">SCHEDULE</div>
+            <div class="demo-tab">FIND</div>
+          </div>
+          ${fwdItems.map((item, i) => `
+            <div class="demo-item" id="d2-${item.id}">
+              <input type="checkbox" id="cb2-${item.id}" readonly />
+              <span class="demo-item-text">${item.text}</span>
+            </div>
+          `).join('')}
+          <div class="demo-bulk-bar">
+            <span class="demo-count" id="d2-count">0 selected</span>
+            <span class="demo-action-btn dim" id="d2-btn">Forward selected →</span>
+          </div>
+        </div>
+        <div class="caption">
+          <div class="caption-text">Select one or more items to handle together in a single action.</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function animateStep2() {
+    const fwdItems = DEMO_ITEMS.filter(i => i.type === "forward");
+    fwdItems.forEach((item, i) => {
+      after(600 + i * 600, () => {
+        const row = document.getElementById('d2-' + item.id);
+        const cb  = document.getElementById('cb2-' + item.id);
+        const count = document.getElementById('d2-count');
+        const btn   = document.getElementById('d2-btn');
+        if (!row) return;
+        row.classList.add('checked-fwd');
+        if (cb) cb.checked = true;
+        if (count) count.textContent = (i + 1) + ' selected';
+        if (btn) { btn.classList.remove('dim'); btn.classList.add('active'); }
+      });
+    });
+  }
+
+  // ── Step 3 ──────────────────────────────────────────────
+  function renderStep3() {
+    const fwdItems = DEMO_ITEMS.filter(i => i.type === "forward");
+    return `
+      <div class="step-enter">
+        <div class="demo-panel">
+          <div class="demo-type-tabs">
+            <div class="demo-tab active-fwd">FORWARD</div>
+            <div class="demo-tab">SCHEDULE</div>
+            <div class="demo-tab">FIND</div>
+          </div>
+          ${fwdItems.map(item => `
+            <div class="demo-item checked-fwd">
+              <input type="checkbox" readonly checked />
+              <span class="demo-item-text">${item.text}</span>
+            </div>
+          `).join('')}
+          <div class="demo-bulk-bar">
+            <span class="demo-count">2 selected</span>
+            <span class="demo-action-btn active" id="d3-btn">Forward selected →</span>
+          </div>
+        </div>
+        <div id="d3-preview"></div>
+        <div class="caption">
+          <div class="caption-text">Hit the action button and a focused modal walks you through the rest.</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function animateStep3() {
+    const btn = document.getElementById('d3-btn');
+    after(500, () => {
+      if (btn) btn.classList.add('pulse');
+    });
+    after(900, () => {
+      if (btn) btn.classList.remove('pulse');
+    });
+    after(1100, () => {
+      const preview = document.getElementById('d3-preview');
+      if (!preview) return;
+      preview.innerHTML = `
+        <div class="forward-preview">
+          <div class="forward-preview-eyebrow">Forward 2 items</div>
+          <div class="forward-preview-title">Who should handle these?</div>
+          <input class="forward-preview-input" placeholder="Recipient email or name" readonly />
+          <div class="forward-preview-btns">
+            <div class="fp-cancel">Cancel</div>
+            <div class="fp-send">Send →</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // ── Render ───────────────────────────────────────────────
+  const steps = [renderStep0, renderStep1, renderStep2, renderStep3];
+
+  function render() {
+    clearTimers();
+
+    const body = document.getElementById('modal-body');
+    body.innerHTML = steps[step]();
+
+    // dots
+    const dotsEl = document.getElementById('dots');
+    dotsEl.innerHTML = Array.from({length: TOTAL}).map((_, i) =>
+      `<div class="dot ${i === step ? 'active' : ''}" onclick="jumpTo(${i})"></div>`
+    ).join('');
+
+    // back button
+    const back = document.getElementById('btn-back');
+    back.style.visibility = step > 0 ? 'visible' : 'hidden';
+
+    // next button
+    const next = document.getElementById('btn-next');
+    next.textContent = step === TOTAL - 1 ? 'GOT IT →' : 'NEXT →';
+
+    // animations
+    if (step === 2) after(300, animateStep2);
+    if (step === 3) after(300, animateStep3);
+  }
+
+  function go(dir) {
+    const next = step + dir;
+    if (next < 0 || next > TOTAL - 1) return;
+    step = next;
+    render();
+  }
+
+  function jumpTo(i) {
+    step = i;
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>
