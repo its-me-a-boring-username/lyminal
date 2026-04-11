@@ -229,6 +229,204 @@ Search the web if needed and give one clear, useful response. Include specific n
   );
 }
 
+// ── Intro walkthrough modal ──────────────────────────────────────────────────
+const DEMO_ITEMS = [
+  { id: "d1", text: "Email James about getting the group together", type: "forward" },
+  { id: "d2", text: "Text Sarah about coffee this weekend",         type: "forward" },
+  { id: "d3", text: "Block Sunday afternoon for a call with mum",  type: "schedule" },
+];
+
+function MiniTypeButtons({ active }) {
+  return (
+    <div style={{ display: "flex", borderBottom: "1px solid #e8e0d5" }}>
+      {ACTION_TYPES.map(t => (
+        <div key={t} style={{
+          flex: 1, padding: "8px 4px", fontSize: "9px", fontWeight: 600,
+          letterSpacing: "0.05em", textTransform: "uppercase", textAlign: "center",
+          fontFamily: "'Inter', sans-serif",
+          borderBottom: `2px solid ${active === t ? TC[t] : "transparent"}`,
+          borderRight: "1px solid #f0ebe3",
+          background: active === t ? TBG[t] : "white",
+          color: active === t ? TC[t] : "#8a7455",
+          outline: active === t ? "none" : `1px solid ${TBORDER[t]}`,
+          outlineOffset: "-1px",
+        }}>
+          {t}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Caption({ text }) {
+  return (
+    <div style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginTop: "12px" }}>
+      <div style={{ width: "3px", flexShrink: 0, background: "#b5472a", borderRadius: "2px", alignSelf: "stretch", minHeight: "36px" }} />
+      <p style={{ fontSize: "13px", fontWeight: 500, color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{text}</p>
+    </div>
+  );
+}
+
+function IntroStep0() {
+  return (
+    <div>
+      <p style={{ fontSize: "13px", color: "#5c4e40", margin: "0 0 16px", lineHeight: 1.6, fontFamily: "'Inter', sans-serif" }}>
+        This is where you actually get things done. Use the three action types to handle your items:
+      </p>
+      {[
+        { type: "forward",  label: "Forward",  desc: "Delegate or communicate — send items to an EA, teammate, or anyone who should handle them." },
+        { type: "schedule", label: "Schedule", desc: "Block time or set reminders — for anything that needs a calendar event or a nudge." },
+        { type: "find",     label: "Find",     desc: "Ask Lyme to research, source or buy — powered by web search." },
+      ].map(({ type, label, desc }) => (
+        <div key={type} style={{ display: "flex", gap: "12px", marginBottom: "14px", alignItems: "flex-start" }}>
+          <span style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.05em", padding: "3px 8px", background: TBG[type], color: TC[type], fontFamily: "'Inter', sans-serif", flexShrink: 0, marginTop: "2px" }}>
+            {label.toUpperCase()}
+          </span>
+          <p style={{ fontSize: "12px", color: "#5c4e40", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{desc}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function IntroStep1() {
+  const [active, setActive] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setActive(true), 600); return () => clearTimeout(t); }, []);
+  const fwdItems = DEMO_ITEMS.filter(i => i.type === "forward");
+  return (
+    <div>
+      <div style={{ border: "1px solid #e8e0d5", overflow: "hidden" }}>
+        <MiniTypeButtons active={active ? "forward" : null} />
+        <div>
+          {(active ? fwdItems : DEMO_ITEMS).map(item => (
+            <div key={item.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: "9px 12px", borderBottom: "1px solid #f0ebe3", background: "white", transition: "all 0.3s" }}>
+              {active && <input type="checkbox" readOnly style={{ marginTop: "2px", flexShrink: 0, accentColor: TC.forward }} />}
+              <span style={{ fontSize: "12px", color: "#1c1410", lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>{item.text}</span>
+            </div>
+          ))}
+        </div>
+        {active && (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: "#faf8f5", borderTop: "1px solid #e8e0d5" }}>
+            <span style={{ fontSize: "10px", color: "#8a7455", flex: 1, fontFamily: "'Inter', sans-serif" }}>0 selected</span>
+            <span style={{ fontSize: "10px", fontWeight: 600, color: "white", background: "#c4b8a8", padding: "5px 12px", fontFamily: "'Inter', sans-serif" }}>Forward selected →</span>
+          </div>
+        )}
+      </div>
+      <Caption text="Tap a type to filter your items and reveal bulk actions." />
+    </div>
+  );
+}
+
+function IntroStep2() {
+  const [count, setCount] = useState(0);
+  const fwdItems = DEMO_ITEMS.filter(i => i.type === "forward");
+  useEffect(() => {
+    const t1 = setTimeout(() => setCount(1), 700);
+    const t2 = setTimeout(() => setCount(2), 1400);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+  return (
+    <div>
+      <div style={{ border: "1px solid #e8e0d5", overflow: "hidden" }}>
+        <MiniTypeButtons active="forward" />
+        {fwdItems.map((item, i) => {
+          const checked = i < count;
+          return (
+            <div key={item.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: "9px 12px", borderBottom: "1px solid #f0ebe3", background: checked ? TBG.forward : "white", transition: "background 0.3s" }}>
+              <input type="checkbox" readOnly checked={checked} style={{ marginTop: "2px", flexShrink: 0, accentColor: TC.forward }} />
+              <span style={{ fontSize: "12px", color: "#1c1410", lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>{item.text}</span>
+            </div>
+          );
+        })}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: "#faf8f5", borderTop: "1px solid #e8e0d5" }}>
+          <span style={{ fontSize: "10px", color: "#8a7455", flex: 1, fontFamily: "'Inter', sans-serif" }}>{count} selected</span>
+          <span style={{ fontSize: "10px", fontWeight: 600, color: "white", background: count > 0 ? TC.forward : "#c4b8a8", padding: "5px 12px", fontFamily: "'Inter', sans-serif", transition: "background 0.3s" }}>Forward selected →</span>
+        </div>
+      </div>
+      <Caption text="Select one or more items to handle together in a single action." />
+    </div>
+  );
+}
+
+function IntroStep3() {
+  const [pulse, setPulse] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const fwdItems = DEMO_ITEMS.filter(i => i.type === "forward");
+  useEffect(() => {
+    const t1 = setTimeout(() => setPulse(true),   500);
+    const t2 = setTimeout(() => setPulse(false),  1100);
+    const t3 = setTimeout(() => setShowPreview(true), 1400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, []);
+  return (
+    <div>
+      <div style={{ border: "1px solid #e8e0d5", overflow: "hidden" }}>
+        <MiniTypeButtons active="forward" />
+        {fwdItems.map(item => (
+          <div key={item.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: "9px 12px", borderBottom: "1px solid #f0ebe3", background: TBG.forward }}>
+            <input type="checkbox" readOnly checked style={{ marginTop: "2px", flexShrink: 0, accentColor: TC.forward }} />
+            <span style={{ fontSize: "12px", color: "#1c1410", lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>{item.text}</span>
+          </div>
+        ))}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: "#faf8f5", borderTop: "1px solid #e8e0d5" }}>
+          <span style={{ fontSize: "10px", color: "#8a7455", flex: 1, fontFamily: "'Inter', sans-serif" }}>2 selected</span>
+          <span style={{
+            fontSize: "10px", fontWeight: 600, color: "white", background: TC.forward,
+            padding: "5px 12px", fontFamily: "'Inter', sans-serif",
+            transform: pulse ? "scale(1.05)" : "scale(1)", transition: "transform 0.3s",
+            display: "inline-block",
+          }}>Forward selected →</span>
+        </div>
+      </div>
+      {showPreview && (
+        <div style={{ border: "1px solid #e8e0d5", marginTop: "8px", background: "white", padding: "12px 14px", animation: "fadeIn 0.3s ease-out" }}>
+          <p style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.08em", color: "#8a7455", margin: "0 0 2px", fontFamily: "'Inter', sans-serif" }}>Forward 2 items</p>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "13px", color: "#1c1410", margin: "0 0 8px" }}>Who should handle these?</p>
+          <div style={{ border: "1px solid #d4c9bb", padding: "6px 10px", fontSize: "11px", color: "#8a7455", marginBottom: "6px", fontFamily: "'Inter', sans-serif" }}>Recipient email or phone</div>
+          <div style={{ display: "flex", gap: "6px" }}>
+            <div style={{ flex: 1, padding: "6px", fontSize: "11px", color: "#5c4e40", border: "1px solid #d4c9bb", textAlign: "center", fontFamily: "'Inter', sans-serif" }}>Cancel</div>
+            <div style={{ flex: 2, padding: "6px", fontSize: "11px", fontWeight: 600, color: "white", background: "#b5472a", textAlign: "center", fontFamily: "'Inter', sans-serif" }}>Send →</div>
+          </div>
+        </div>
+      )}
+      <Caption text="Hit the action button and a focused modal walks you through the rest." />
+    </div>
+  );
+}
+
+const INTRO_STEPS = [IntroStep0, IntroStep1, IntroStep2, IntroStep3];
+const INTRO_TOTAL = INTRO_STEPS.length;
+
+function IntroModal({ step, onNext, onBack, onDot }) {
+  const StepComponent = INTRO_STEPS[step];
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+      <div style={{ background: "white", maxWidth: "400px", width: "100%", maxHeight: "90vh", overflowY: "auto" }}>
+        <div style={{ padding: "20px 22px 14px", borderBottom: "1px solid #e8e0d5" }}>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 3px", fontFamily: "'Inter', sans-serif" }}>Welcome to</p>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", fontWeight: 600, color: "#1c1410", margin: 0 }}>The Plan tab</p>
+        </div>
+        <div style={{ padding: "18px 22px" }} key={step}>
+          <StepComponent />
+        </div>
+        <div style={{ padding: "12px 22px", borderTop: "1px solid #e8e0d5", display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ display: "flex", gap: "6px", flex: 1 }}>
+            {Array.from({ length: INTRO_TOTAL }).map((_, i) => (
+              <div key={i} onClick={() => onDot(i)} style={{ width: "8px", height: "8px", borderRadius: "50%", background: i === step ? "#b5472a" : "#d4c9bb", cursor: "pointer", transition: "background 0.2s" }} />
+            ))}
+          </div>
+          {step > 0 && (
+            <button onClick={onBack} style={{ fontSize: "12px", color: "#8a7455", background: "none", border: "1px solid #d4c9bb", padding: "8px 16px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>← Back</button>
+          )}
+          <button onClick={onNext} style={{ fontSize: "12px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
+            {step === INTRO_TOTAL - 1 ? "GOT IT →" : "NEXT →"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main component ───────────────────────────────────────────────────────────
 export function PlanScreen({
   activeGoals, setActiveGoals,
@@ -245,7 +443,7 @@ export function PlanScreen({
   const [bulkSel,     setBulkSel]     = useState(new Set());
   const [modal,       setModal]       = useState(null);
   const [findItem,    setFindItem]    = useState(null);
-  const [showIntro,   setShowIntro]   = useState(() => !localStorage.getItem("lyminal_plan_intro_seen"));
+  const [introStep, setIntroStep] = useState(() => localStorage.getItem("lyminal_plan_intro_seen") ? null : 0);
 
   useEffect(() => {
     if (selIndex > activeGoals.length - 1) setSelIndex(Math.max(0, activeGoals.length - 1));
@@ -337,46 +535,17 @@ export function PlanScreen({
       {modal === "forward"  && <ForwardModal  items={bulkItems} color={hc} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
       {modal === "schedule" && <ScheduleModal items={bulkItems} color={hc} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
 
-      {/* First-visit intro modal */}
-      {showIntro && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-          <div style={{ background: "white", maxWidth: "400px", width: "100%" }}>
-            <div style={{ padding: "22px 24px 16px", borderBottom: "1px solid #e8e0d5" }}>
-              <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Welcome to</p>
-              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", fontWeight: 600, color: "#1c1410", margin: 0 }}>The Plan tab</p>
-            </div>
-            <div style={{ padding: "18px 24px" }}>
-              <p style={{ fontSize: "13px", color: "#5c4e40", margin: "0 0 16px", lineHeight: 1.6, fontFamily: "'Inter', sans-serif" }}>
-                This is where you actually get things done. Use the three action types to handle your items:
-              </p>
-              {[
-                { type: "forward", label: "Forward", desc: "Delegate or communicate — send items to your EA, teammate, or anyone else who should handle them." },
-                { type: "schedule", label: "Schedule", desc: "Block time or set reminders — for anything that needs a calendar event or a nudge." },
-                { type: "find",    label: "Find", desc: "Ask Lyme to research, source or help you buy — powered by web search." },
-              ].map(({ type, label, desc }) => (
-                <div key={type} style={{ display: "flex", gap: "12px", marginBottom: "14px" }}>
-                  <div style={{ width: "52px", flexShrink: 0, paddingTop: "2px" }}>
-                    <span style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.05em", padding: "3px 7px", background: TBG[type], color: TC[type], fontFamily: "'Inter', sans-serif" }}>
-                      {label.toUpperCase()}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "12px", color: "#5c4e40", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{desc}</p>
-                </div>
-              ))}
-              <p style={{ fontSize: "11px", color: "#8a7455", margin: "4px 0 0", fontStyle: "italic", fontFamily: "'Inter', sans-serif" }}>
-                Select a type to filter your items and handle them one by one or in bulk.
-              </p>
-            </div>
-            <div style={{ padding: "14px 24px", borderTop: "1px solid #e8e0d5" }}>
-              <button
-                onClick={() => { setShowIntro(false); localStorage.setItem("lyminal_plan_intro_seen", "1"); }}
-                style={{ width: "100%", padding: "10px", fontSize: "12px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}
-              >
-                GOT IT →
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* First-visit intro walkthrough */}
+      {introStep !== null && (
+        <IntroModal
+          step={introStep}
+          onNext={() => {
+            if (introStep < 3) { setIntroStep(introStep + 1); }
+            else { setIntroStep(null); localStorage.setItem("lyminal_plan_intro_seen", "1"); }
+          }}
+          onBack={() => introStep > 0 && setIntroStep(introStep - 1)}
+          onDot={(i) => setIntroStep(i)}
+        />
       )}
 
       {!isMobile && <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
