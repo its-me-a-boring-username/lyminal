@@ -4,8 +4,7 @@ import { SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE, SPHERE_COLOR_MAP } from "
 import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
-@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeSlideLeft { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }`;
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
 
 const Pill = ({ b, onRemove }) => (
   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all"
@@ -71,7 +70,7 @@ export function FlowScreens({
 
   // ── SPHERES ──
   if (step === "spheres") return (
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeSlideUp 0.4s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
       <style>{FONTS}</style>
       <DevReset />
       <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#b5472a" }} />
@@ -142,7 +141,7 @@ export function FlowScreens({
     const isLast = goalStep === spheres.length - 1;
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeSlideUp 0.4s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: currentSphere?.color || "#b5472a" }} />
@@ -162,7 +161,7 @@ export function FlowScreens({
             </div>
           </div>
           {currentSphere && (
-            <div key={`goal-${goalStep}`} style={{ animation: "fadeSlideLeft 0.35s ease-out" }}>
+            <div key={`goal-${goalStep}`} style={{ animation: "fadeIn 0.25s ease-out" }}>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-4 h-4 rounded-full" style={{ background: currentSphere.color }} />
                 <h2 style={{ color: currentSphere.color, fontFamily: "'Playfair Display', serif", fontSize: "2rem", fontWeight: 600 }}>{currentSphere.name}</h2>
@@ -238,7 +237,7 @@ export function FlowScreens({
     const isLast = connStep === spheres.length - 1;
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeSlideUp 0.4s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: fromSphere?.color || "#4a7a72" }} />
@@ -258,7 +257,7 @@ export function FlowScreens({
             </div>
           </div>
           {fromSphere && (
-            <div key={`conn-${connStep}`} style={{ animation: "fadeSlideLeft 0.35s ease-out" }}>
+            <div key={`conn-${connStep}`} style={{ animation: "fadeIn 0.25s ease-out" }}>
               <div className="flex items-center gap-3 mb-1">
                 <div className="w-4 h-4 rounded-full" style={{ background: fromSphere.color }} />
                 <h2 style={{ color: fromSphere.color, fontFamily: "'Playfair Display', serif", fontSize: "2rem", fontWeight: 600 }}>{fromSphere.name}</h2>

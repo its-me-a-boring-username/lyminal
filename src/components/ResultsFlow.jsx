@@ -2,8 +2,7 @@ import React from "react";
 import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
-@keyframes fadeScaleIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
-@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }`;
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
 
 export function ResultsFlow({
   step,
@@ -25,7 +24,7 @@ export function ResultsFlow({
 
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16"
-        style={{ background: "#4a7a72", fontFamily: "'Inter', sans-serif", animation: "fadeScaleIn 0.5s ease-out" }}>
+        style={{ background: "#4a7a72", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="max-w-lg w-full mx-auto">
@@ -86,10 +85,10 @@ export function ResultsFlow({
     const roundLabels = ["first", "second", "third"];
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeSlideUp 0.4s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
-        <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#b5472a" }} />
+        <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: focusSphere?.color || "#b5472a" }} />
         <div className="px-6 py-12 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
           <p className="text-xs uppercase tracking-widest mb-2" style={{ color: "#6e5c4a" }}>Focus {roundLabels[focusRound]} sphere</p>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", fontWeight: 600, color: "#1c1410" }} className="mb-1">
@@ -160,7 +159,7 @@ export function ResultsFlow({
     const focusSphere = spheres.find(b => b.id === selectedFocusSphereId) || ranked[0];
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeSlideUp 0.4s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: focusSphere?.color || "#b5472a" }} />

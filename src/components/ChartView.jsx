@@ -342,7 +342,7 @@ export function ChartView({
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.4s ease-out" }}>
+    <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.3s ease-out" }}>
       <style>{FONTS}</style>
 
       {/* Header */}
