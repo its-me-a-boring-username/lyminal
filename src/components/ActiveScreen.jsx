@@ -30,6 +30,7 @@ export function ActiveScreen({
   setAuthPrompt,
   setChatContext, setChatMessages, setChatLoading,
   isMobile,
+  selectedTheme,
 }) {
   const allActive = focusRound >= 1 ? activeGoals : activeGoals.slice(0, 1);
   const [celebrating, setCelebrating] = React.useState(null);
@@ -37,6 +38,7 @@ export function ActiveScreen({
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
 
+  const isDefault = selectedTheme === "warm_earth" || !selectedTheme;
   const priorityColor = allActive[0]?.sphereColor || "#b5472a";
 
   const handleTalkToLyme = async (ag) => {
@@ -163,17 +165,17 @@ Do NOT introduce yourself or explain what you do — that has already been handl
       )}
 
       {/* Design strip */}
-      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
+      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: isDefault ? priorityColor : "var(--ly-accent)" }} />
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         {/* Page header with sphere tint */}
-        <div style={{ background: "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: "1px solid rgba(var(--ly-accent-rgb), 0.12)", padding: "28px 24px 24px", marginBottom: "0" }}
+        <div style={{ background: isDefault ? hexToRgba(priorityColor, 0.07) : "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: isDefault ? `1px solid ${hexToRgba(priorityColor, 0.12)}` : "1px solid rgba(var(--ly-accent-rgb), 0.12)", padding: "28px 24px 24px", marginBottom: "0" }}
           className="lg:px-16">
           {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-          <p className="text-xs uppercase tracking-widest mb-1" style={{ color: "var(--ly-accent)", opacity: 0.8 }}>Your Active Goals</p>
+          <p className="text-xs uppercase tracking-widest mb-1" style={{ color: isDefault ? priorityColor : "var(--ly-accent)", opacity: 0.8 }}>Your Active Goals</p>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", marginBottom: "6px" }}>Here's what you're working on</h2>
           <p className="text-sm" style={{ color: "#5c4e40", fontWeight: 300 }}>
             Select a goal to talk through your plan with Lyme, or add action items yourself.
@@ -184,10 +186,10 @@ Do NOT introduce yourself or explain what you do — that has already been handl
 
           <div className="space-y-4 mb-8">
             {allActive.map((ag) => (
-              <div key={ag.sphereId} style={{ borderRadius: "8px", border: `1px solid ${hexToRgba(ag.sphereColor, 0.2)}`, background: "white", overflow: "hidden" }}>
+              <div key={ag.sphereId} style={{ borderRadius: "8px", border: isDefault ? `1px solid ${hexToRgba(ag.sphereColor, 0.2)}` : "1px solid rgba(var(--ly-accent-rgb), 0.2)", background: "white", overflow: "hidden" }}>
 
-                {/* Card header — solid sphere color */}
-                <div style={{ background: ag.sphereColor, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                {/* Card header */}
+                <div style={{ background: isDefault ? ag.sphereColor : "var(--ly-accent)", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, minWidth: 0 }}>
                     <button
                       onClick={() => setCompletedGoals(prev => {
@@ -197,7 +199,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                       })}
                       style={{ width: "18px", height: "18px", borderRadius: "4px", flexShrink: 0, border: `2px solid ${completedGoals.has(ag.goalId) ? "white" : "rgba(255,255,255,0.5)"}`, background: completedGoals.has(ag.goalId) ? "white" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, transition: "all 0.2s" }}
                     >
-                      {completedGoals.has(ag.goalId) && <span style={{ color: ag.sphereColor, fontSize: "10px", fontWeight: "bold" }}>✓</span>}
+                      {completedGoals.has(ag.goalId) && <span style={{ color: isDefault ? ag.sphereColor : "var(--ly-accent)", fontSize: "10px", fontWeight: "bold" }}>✓</span>}
                     </button>
                     <div style={{ minWidth: 0 }}>
                       <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.7)", fontWeight: 600, fontFamily: "'Inter', sans-serif", display: "block", marginBottom: "2px" }}>{ag.sphereName}</span>
@@ -229,7 +231,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                         }, 1500);
                       }}
                       className="text-xs font-semibold hover:opacity-80 transition-opacity"
-                      style={{ color: ag.sphereColor, background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      style={{ color: isDefault ? ag.sphereColor : "var(--ly-accent)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                     >
                       Pick a new goal →
                     </button>
@@ -255,7 +257,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                               className="flex-shrink-0 mt-0.5"
                             >
                               <div className="w-4 h-4 flex items-center justify-center transition-all"
-                                style={{ borderRadius: "3px", border: `2px solid ${ag.sphereColor}`, background: checked ? ag.sphereColor : "white" }}>
+                                style={{ borderRadius: "3px", border: isDefault ? `2px solid ${ag.sphereColor}` : "2px solid var(--ly-accent)", background: checked ? (isDefault ? ag.sphereColor : "var(--ly-accent)") : "white" }}>
                                 {checked && <span className="text-white" style={{ fontSize: "9px", fontWeight: "bold" }}>✓</span>}
                               </div>
                             </button>
@@ -263,7 +265,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                               <input
                                 autoFocus
                                 className="flex-1 text-xs px-2 py-0.5 outline-none"
-                                style={{ border: `1px solid ${ag.sphereColor}`, borderRadius: "4px", color: "#4a3828" }}
+                                style={{ border: isDefault ? `1px solid ${ag.sphereColor}` : "1px solid rgba(var(--ly-accent-rgb), 0.4)", borderRadius: "4px", color: "#4a3828" }}
                                 value={editingAction.text}
                                 onChange={e => setEditingAction(prev => ({ ...prev, text: e.target.value }))}
                                 onKeyDown={e => {
@@ -323,7 +325,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                       className="text-xs font-semibold transition-all"
                       style={{
                         borderRadius: "6px", padding: "6px 14px",
-                        background: newActionItem.trim() ? ag.sphereColor : "transparent",
+                        background: newActionItem.trim() ? (isDefault ? ag.sphereColor : "var(--ly-accent)") : "transparent",
                         color: newActionItem.trim() ? "white" : "#8a7455",
                         border: newActionItem.trim() ? "none" : "1px solid #d4c9bb",
                       }}
@@ -338,7 +340,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                   <button
                     onClick={() => handleTalkToLyme(ag)}
                     className="flex-1 py-2 text-xs font-semibold hover:opacity-90 transition-opacity"
-                    style={{ background: ag.sphereColor, color: "white", letterSpacing: "0.04em", borderRadius: "6px" }}
+                    style={{ background: isDefault ? ag.sphereColor : "var(--ly-accent)", color: "white", letterSpacing: "0.04em", borderRadius: "6px" }}
                   >
                     Talk to Lyme
                   </button>

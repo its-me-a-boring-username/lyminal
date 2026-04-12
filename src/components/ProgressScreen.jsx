@@ -54,13 +54,14 @@ function MiniPie({ done, total, color }) {
   );
 }
 
-function RingSlot({ sphere, pct, isActive, dist, onClick }) {
+function RingSlot({ sphere, pct, isActive, dist, onClick, isDefault }) {
   const size = isActive ? 116 : dist === 1 ? 88 : 66;
   const cx = size / 2, cy = size / 2;
   const r = size / 2 - 7;
   const sw = isActive ? 8 : 5;
   const opacity = isActive ? 1 : dist === 1 ? 0.55 : 0.28;
-  const labelColor = isActive ? sphere.color : "#8a7455";
+  const ringColor = isDefault ? sphere.color : "var(--ly-accent)";
+  const labelColor = isActive ? ringColor : "#8a7455";
   const labelWeight = isActive ? 600 : 400;
   const hasPct = pct !== null && pct !== undefined;
   const pctLabel = !hasPct ? "—" : pct >= 100 ? "done" : `${pct}%`;
@@ -77,13 +78,13 @@ function RingSlot({ sphere, pct, isActive, dist, onClick }) {
     >
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="#e8e0d5" strokeWidth={sw} />
-        {hasPct && <ArcCircle cx={cx} cy={cy} r={r} pct={pct} color={sphere.color} sw={sw} />}
+        {hasPct && <ArcCircle cx={cx} cy={cy} r={r} pct={pct} color={ringColor} sw={sw} />}
         <text
           x={cx} y={cy + pctSize * 0.4}
           textAnchor="middle"
           fontFamily="Playfair Display, serif"
           fontSize={pctSize} fontWeight="600"
-          fill={isActive ? (hasPct ? sphere.color : "#8a7455") : "#5c4e40"}
+          fill={isActive ? (hasPct ? ringColor : "#8a7455") : "#5c4e40"}
         >
           {pctLabel}
         </text>
@@ -107,9 +108,11 @@ function DetailPanel({
   isPaid, setAuthPrompt,
   setStep, setSelectedFocusSphereId, setSelectedGoalId,
   setChatContext, setChatMessages, setChatLoading,
+  isDefault,
 }) {
   if (!sphere) return null;
 
+  const goalColor = isDefault ? (activeGoal?.sphereColor || "#4a7a72") : "var(--ly-accent)";
   const atMax = activeGoals.length >= 5;
   const canAddGoal = !atMax && (isPaid || activeGoals.length === 0);
 
@@ -132,7 +135,7 @@ function DetailPanel({
             onClick={() => setStep("goal-picker")}
             style={{
               fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em",
-              color: "#b5472a", background: "none", border: "1px solid #e8e0d5",
+              color: "var(--ly-accent)", background: "none", border: "1px solid #e8e0d5",
               padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif",
               borderRadius: "6px",
             }}
@@ -151,7 +154,7 @@ function DetailPanel({
                 <p className="text-sm font-medium" style={{ color: "#6e5c4a" }}>Track a goal for this sphere</p>
                 <p className="text-xs" style={{ color: "#8a7455" }}>Upgrade to track multiple goals at once</p>
               </div>
-              <span className="text-xs font-semibold" style={{ color: "#b5472a" }}>Upgrade →</span>
+              <span className="text-xs font-semibold" style={{ color: "var(--ly-accent)" }}>Upgrade →</span>
             </div>
           </button>
         )}
@@ -222,8 +225,8 @@ Do NOT introduce yourself. Just ask your question directly.`,
 
   return (
     <div style={{ background: "white", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden" }}>
-      {/* Card header — solid sphere color */}
-      <div style={{ background: activeGoal.sphereColor, padding: "12px 18px", display: "flex", alignItems: "center", gap: "10px" }}>
+      {/* Card header */}
+      <div style={{ background: goalColor, padding: "12px 18px", display: "flex", alignItems: "center", gap: "10px" }}>
         <button
           onClick={toggleGoalComplete}
           style={{
@@ -236,7 +239,7 @@ Do NOT introduce yourself. Just ask your question directly.`,
         >
           {isComplete && (
             <svg width="10" height="10" viewBox="0 0 10 10">
-              <path d="M2 5L4 7L8 3" stroke={activeGoal.sphereColor} strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <path d="M2 5L4 7L8 3" stroke={goalColor} strokeWidth="1.8" fill="none" strokeLinecap="round" />
             </svg>
           )}
         </button>
@@ -297,8 +300,8 @@ Do NOT introduce yourself. Just ask your question directly.`,
                 <div style={{
                   width: "16px", height: "16px", borderRadius: "50%",
                   flexShrink: 0, marginTop: "1px",
-                  border: `1.5px solid ${checked ? activeGoal.sphereColor : "#d4c9bb"}`,
-                  background: checked ? activeGoal.sphereColor : "white",
+                  border: `1.5px solid ${checked ? goalColor : "#d4c9bb"}`,
+                  background: checked ? goalColor : "white",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   position: "relative", zIndex: 1, transition: "all 0.15s",
                 }}>
@@ -328,7 +331,7 @@ Do NOT introduce yourself. Just ask your question directly.`,
           onClick={handleStuckLyme}
           style={{
             width: "100%", padding: "11px", fontSize: "11px", fontWeight: 600,
-            letterSpacing: "0.05em", background: activeGoal.sphereColor, color: "white",
+            letterSpacing: "0.05em", background: goalColor, color: "white",
             border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif",
             borderRadius: "6px",
           }}
@@ -376,7 +379,9 @@ export function ProgressScreen({
   setChatContext,
   setChatMessages,
   setChatLoading,
+  selectedTheme,
 }) {
+  const isDefault = selectedTheme === "warm_earth" || !selectedTheme;
   const firstActive = Math.max(0, spheres.findIndex(s => activeGoals.some(ag => ag.sphereId === s.id)));
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
@@ -442,7 +447,7 @@ export function ProgressScreen({
               </p>
               <button
                 onClick={() => setStep("active")}
-                style={{ background: "#b5472a", color: "white", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", borderRadius: "6px" }}
+                style={{ background: "var(--ly-accent)", color: "white", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", borderRadius: "6px" }}
               >
                 GO TO MY GOALS →
               </button>
@@ -459,7 +464,7 @@ export function ProgressScreen({
       <style>{FONTS}</style>
 
       {/* Left strip */}
-      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
+      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: isDefault ? headerColor : "var(--ly-accent)" }} />
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
@@ -469,11 +474,11 @@ export function ProgressScreen({
 
           {/* Colored header band — replaces the left strip on mobile, adds color on desktop */}
           <div className="lg:px-16" style={{
-            background: "rgba(var(--ly-accent-rgb), 0.07)",
-            borderBottom: "1px solid rgba(var(--ly-accent-rgb), 0.12)",
+            background: isDefault ? hexToRgba(headerColor, 0.07) : "rgba(var(--ly-accent-rgb), 0.07)",
+            borderBottom: isDefault ? `1px solid ${hexToRgba(headerColor, 0.12)}` : "1px solid rgba(var(--ly-accent-rgb), 0.12)",
             padding: "28px 24px 24px",
           }}>
-            <p className="text-xs uppercase tracking-widest" style={{ color: "var(--ly-accent)", opacity: 0.8, margin: "0 0 4px" }}>
+            <p className="text-xs uppercase tracking-widest" style={{ color: isDefault ? headerColor : "var(--ly-accent)", opacity: 0.8, margin: "0 0 4px" }}>
               Your Progress
             </p>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>
@@ -499,6 +504,7 @@ export function ProgressScreen({
                   isActive={i === selected}
                   dist={Math.abs(i - selected)}
                   onClick={() => setSelected(i)}
+                  isDefault={isDefault}
                 />
               ))}
             </div>
@@ -528,6 +534,7 @@ export function ProgressScreen({
               setChatContext={setChatContext}
               setChatMessages={setChatMessages}
               setChatLoading={setChatLoading}
+              isDefault={isDefault}
             />
           </div>
         </div>

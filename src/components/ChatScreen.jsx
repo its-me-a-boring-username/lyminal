@@ -74,7 +74,10 @@ export function ChatScreen({
   spheres, connections,
   messagesEndRef,
   DevReset,
+  selectedTheme,
 }) {
+  const isDefault = selectedTheme === "warm_earth" || !selectedTheme;
+  const chatColor = (isDefault && chatContext?.sphereColor) ? chatContext.sphereColor : "var(--ly-accent)";
   const pendingItems = chatMessages
     .filter(m => m.role === "assistant" && m.actionItems)
     .slice(-1)[0]?.actionItems || null;
@@ -166,13 +169,13 @@ Do not ask follow-up questions after proposing action items unless the user want
       {isMobile && <Nav step="chat" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
 
       {/* Header */}
-      <div className="px-6 py-4 flex items-center gap-4" style={{ background: hexToRgba(chatContext?.sphereColor, 0.07), borderBottom: `1px solid ${hexToRgba(chatContext?.sphereColor, 0.12)}` }}>
+      <div className="px-6 py-4 flex items-center gap-4" style={{ background: isDefault ? hexToRgba(chatContext?.sphereColor, 0.07) : "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: isDefault ? `1px solid ${hexToRgba(chatContext?.sphereColor, 0.12)}` : "1px solid rgba(var(--ly-accent-rgb), 0.12)" }}>
         <div className="flex items-center gap-2 flex-1">
           <span style={{
             fontSize: "10px", fontWeight: 500, letterSpacing: "0.06em", textTransform: "uppercase",
-            color: chatContext?.sphereColor, fontFamily: "'Inter', sans-serif",
-            background: hexToRgba(chatContext?.sphereColor, 0.10),
-            border: `1px solid ${hexToRgba(chatContext?.sphereColor, 0.22)}`,
+            color: chatColor, fontFamily: "'Inter', sans-serif",
+            background: isDefault ? hexToRgba(chatContext?.sphereColor, 0.10) : "rgba(var(--ly-accent-rgb), 0.10)",
+            border: isDefault ? `1px solid ${hexToRgba(chatContext?.sphereColor, 0.22)}` : "1px solid rgba(var(--ly-accent-rgb), 0.22)",
             borderRadius: "999px", padding: "3px 10px", flexShrink: 0,
           }}>
             {chatContext?.sphereName}
@@ -191,7 +194,7 @@ Do not ask follow-up questions after proposing action items unless the user want
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start", gap: "8px", maxWidth: "340px" }}>
               <div className="px-4 py-3 text-sm leading-relaxed" style={{
-                background: m.role === "user" ? (chatContext?.sphereColor || "#b5472a") : "white",
+                background: m.role === "user" ? chatColor : "white",
                 color: m.role === "user" ? "white" : "#1c1410",
                 border: m.role === "assistant" ? "1px solid #e8e0d5" : "none",
                 borderRadius: m.role === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px"
@@ -204,13 +207,13 @@ Do not ask follow-up questions after proposing action items unless the user want
                   <div className="space-y-2 mb-4">
                     {m.actionItems.map(a => (
                       <div key={a.id} className="flex items-start gap-2 text-sm" style={{ color: "#1c1410" }}>
-                        <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: chatContext?.sphereColor }} />
+                        <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: chatColor }} />
                         {a.text}
                       </div>
                     ))}
                   </div>
                   <button onClick={saveAndFinish} className="w-full py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity"
-                    style={{ background: chatContext?.sphereColor || "#b5472a", color: "white", borderRadius: "6px" }}>
+                    style={{ background: chatColor, color: "white", borderRadius: "6px" }}>
                     Save & finish →
                   </button>
                   <p className="text-xs text-center mt-2" style={{ color: "#8a7455" }}>Not quite right? Keep chatting to refine.</p>
@@ -242,7 +245,7 @@ Do not ask follow-up questions after proposing action items unless the user want
           />
           <button onClick={sendMessage} disabled={!chatInput.trim() || chatLoading}
             className="px-5 py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-30 transition-opacity"
-            style={{ background: chatContext?.sphereColor || "#b5472a", color: "white", borderRadius: "6px" }}>
+            style={{ background: chatColor, color: "white", borderRadius: "6px" }}>
             Send
           </button>
         </div>

@@ -17,7 +17,9 @@ export function GoalPicker({
   setAuthPrompt,
   isMobile,
   isPaid,
+  selectedTheme,
 }) {
+  const isDefault = selectedTheme === "warm_earth" || !selectedTheme;
   const MAX_GOALS_FREE = 1;
   const MAX_GOALS_PAID = 5;
   const atFreeLimit = !isPaid && activeGoals.length >= MAX_GOALS_FREE;
@@ -150,7 +152,7 @@ export function GoalPicker({
                 return (
                   <div key={sphere.id} style={{ border: "1px solid #e8e0d5", background: "white" }}>
                     {/* Sphere header */}
-                    <div style={{ background: sphere.color, padding: "10px 18px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div style={{ background: isDefault ? sphere.color : "var(--ly-accent)", padding: "10px 18px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <span style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "white", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>
                         {sphere.name}
                       </span>
@@ -186,7 +188,7 @@ export function GoalPicker({
                             <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1rem", color: "#1c1410", margin: 0, lineHeight: 1.4 }}>
                               {goal.text}
                             </p>
-                            <span style={{ fontSize: "14px", color: sphere.color, flexShrink: 0 }}>→</span>
+                            <span style={{ fontSize: "14px", color: isDefault ? sphere.color : "var(--ly-accent)", flexShrink: 0 }}>→</span>
                           </button>
                         ))}
                       </div>

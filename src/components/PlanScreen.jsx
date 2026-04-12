@@ -282,7 +282,7 @@ function NewForwardModal({ items, color, onClose, onCommit }) {
               </div>
               <div style={{ display: "flex", gap: "8px", marginBottom: "10px" }}>
                 {["email", "sms"].map((mode) => (
-                  <button key={mode} onClick={() => setChannel(mode)} style={{ flex: 1, padding: "8px", fontSize: "12px", border: `1px solid ${channel === mode ? "#b5472a" : "#d4c9bb"}`, background: channel === mode ? "#b5472a" : "white", color: channel === mode ? "white" : "#6e5c4a", cursor: "pointer" }}>{mode === "email" ? "Email" : "Text"}</button>
+                  <button key={mode} onClick={() => setChannel(mode)} style={{ flex: 1, padding: "8px", fontSize: "12px", border: `1px solid ${channel === mode ? "var(--ly-accent)" : "#d4c9bb"}`, background: channel === mode ? "var(--ly-accent)" : "white", color: channel === mode ? "white" : "#6e5c4a", cursor: "pointer" }}>{mode === "email" ? "Email" : "Text"}</button>
                 ))}
               </div>
               <div style={{ display: "grid", gap: "10px" }}>
@@ -648,7 +648,7 @@ function IntroModal({ step, onNext, onBack, onDot }) {
         <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ display: "flex", gap: "6px", flex: 1 }}>
             {Array.from({ length: INTRO_TOTAL }).map((_, i) => (
-              <div key={i} onClick={() => onDot(i)} style={{ width: "8px", height: "8px", borderRadius: "50%", background: i === step ? "#b5472a" : "#d4c9bb", cursor: "pointer", transition: "background 0.2s" }} />
+              <div key={i} onClick={() => onDot(i)} style={{ width: "8px", height: "8px", borderRadius: "50%", background: i === step ? "var(--ly-accent)" : "#d4c9bb", cursor: "pointer", transition: "background 0.2s" }} />
             ))}
           </div>
           {step > 0 && (
@@ -673,7 +673,9 @@ export function PlanScreen({
   isMobile, isPaid, isPro,
   setStep, setAuthPrompt,
   setChatContext, setChatMessages, setChatLoading,
+  selectedTheme,
 }) {
+  const isDefault = selectedTheme === "warm_earth" || !selectedTheme;
   const initialIndex = Math.max(0, activeGoals.findIndex(g => !completedGoals.has(g.goalId)));
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
@@ -716,7 +718,7 @@ export function PlanScreen({
   }, [activeGoals.length]);
 
   const goal          = activeGoals[selIndex] || null;
-  const hc            = goal?.sphereColor || "#b5472a";
+  const hc            = (isDefault && goal?.sphereColor) ? goal.sphereColor : "var(--ly-accent)";
   const allItems      = goal ? normalizeActionItems(goal.actionItems || []) : [];
   const filteredItems = activeType ? allItems.filter(i => i.type === activeType) : allItems;
   const showBulk      = activeType === "forward" || activeType === "schedule";
@@ -846,7 +848,7 @@ export function PlanScreen({
         {/* Ring sidebar */}
         <div style={{ width: "60px", flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "16px", gap: "4px", borderRight: "1px solid #e8e0d5", background: "#faf8f5" }}>
           {activeGoals.map((ag, i) => (
-            <RingButton key={ag.goalId} color={ag.sphereColor} isActive={i === selIndex}
+            <RingButton key={ag.goalId} color={isDefault ? ag.sphereColor : "var(--ly-accent)"} isActive={i === selIndex}
               onClick={() => { setSelIndex(i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }}
             />
           ))}
@@ -857,7 +859,7 @@ export function PlanScreen({
 
           {/* Free preview banner */}
           {!isPaid && (
-            <button onClick={() => setAuthPrompt("upgrade")} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", marginBottom: "10px", padding: "9px 14px", background: "rgba(181,71,42,0.06)", border: "1px solid rgba(181,71,42,0.18)", borderRadius: "8px", width: "100%", cursor: "pointer", textAlign: "left" }}>
+            <button onClick={() => setAuthPrompt("upgrade")} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", marginBottom: "10px", padding: "9px 14px", background: "rgba(var(--ly-accent-rgb), 0.06)", border: "1px solid rgba(var(--ly-accent-rgb), 0.18)", borderRadius: "8px", width: "100%", cursor: "pointer", textAlign: "left" }}>
               <p style={{ fontSize: "11px", color: "#5c4e40", margin: 0, lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>
                 <span style={{ fontWeight: 600, color: "var(--ly-accent)" }}>Preview mode.</span> Upgrade to use Forward, Schedule, and Find.
               </p>

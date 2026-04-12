@@ -134,12 +134,7 @@ function GoalChart() {
     trackUserEvent(session, "session_started", { tier }, { onceScope: "session" });
   }, [session, tier]);
 
-  useEffect(() => {
-    if (step !== "plan") return;
-    if (capabilities.canUsePlan) return;
-    setStep("active");
-    setAuthPrompt(session ? "upgrade" : "save_plan");
-  }, [step, capabilities.canUsePlan, session]);
+  // Free users can view Plan tab in preview mode
 
   // Auto-dismiss auth overlay when session is established
   useEffect(() => {
@@ -413,6 +408,7 @@ function GoalChart() {
           setChatMessages={setChatMessages}
           setChatLoading={setChatLoading}
           isMobile={isMobile}
+          selectedTheme={selectedTheme}
         />
       </>
     );
@@ -443,6 +439,7 @@ function GoalChart() {
           setChatContext={setChatContext}
           setChatMessages={setChatMessages}
           setChatLoading={setChatLoading}
+          selectedTheme={selectedTheme}
         />
       </>
     );
@@ -466,6 +463,7 @@ function GoalChart() {
           setAuthPrompt={setAuthPrompt}
           isMobile={isMobile}
           isPaid={isPaid}
+          selectedTheme={selectedTheme}
         />
       </>
     );
@@ -490,6 +488,7 @@ function GoalChart() {
           setChatContext={setChatContext}
           setChatMessages={setChatMessages}
           setChatLoading={setChatLoading}
+          selectedTheme={selectedTheme}
         />
       </>
     );
@@ -520,6 +519,7 @@ function GoalChart() {
           connections={connections}
           messagesEndRef={messagesEndRef}
           DevReset={BoundDevReset}
+          selectedTheme={selectedTheme}
         />
       </>
     );
