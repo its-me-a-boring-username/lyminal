@@ -5,7 +5,9 @@
 :root {
   --ly-bg: #faf8f5;
   --ly-ink: #1c1410;
-  --ly-accent: #b5472a;
+  --ly-accent: #8a2010;
+  --ly-accent-rgb: 138,32,16;
+  --ly-accent2: #1e3c20;
 }
 
 html, body, #root {

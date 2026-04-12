@@ -30,6 +30,22 @@ export default async function handler(req, res) {
           stripe_subscription_id: subscriptionId,
           updated_at: new Date().toISOString(),
         }, { onConflict: "id" });
+
+        try {
+          await admin.from("user_events").insert({
+            user_id: userId,
+            event_name: "upgrade_completed",
+            occurred_at: new Date().toISOString(),
+            platform: "web",
+            metadata: {
+              stripe_customer_id: customerId,
+              stripe_subscription_id: subscriptionId,
+              event_type: event.type,
+            },
+          });
+        } catch (eventError) {
+          console.warn("[billing/webhook] Failed to track upgrade_completed:", eventError?.message || eventError);
+        }
       }
     }
 

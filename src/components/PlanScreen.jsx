@@ -85,7 +85,7 @@ function ForwardModal({ items, color, onClose }) {
             </div>
             <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", gap: "10px" }}>
               <button onClick={onClose} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
-              <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send →</button>
+              <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "var(--ly-accent)", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send →</button>
             </div>
           </>
         )}
@@ -220,15 +220,15 @@ Search the web if needed and give one clear, useful response. Include specific n
           style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "white", outline: "none", opacity: loading ? 0.6 : 1 }}
         />
         <button onClick={ask} disabled={loading || !input.trim()}
-          style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "#b5472a", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>
+          style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "var(--ly-accent)", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>
           Ask →
         </button>
       </div>
       {response && (
         <div style={{ padding: "14px 18px", background: "white", borderTop: "1px solid #f0ebe3" }}>
-          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "#b5472a", margin: "0 0 8px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ly-accent)", margin: "0 0 8px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
           <p style={{ fontSize: "13px", color: "#1c1410", margin: "0 0 12px", lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: "'Inter', sans-serif" }}>{response}</p>
-          <button onClick={onClose} style={{ fontSize: "11px", fontWeight: 600, color: "#b5472a", background: "none", border: "1px solid #b5472a", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+          <button onClick={onClose} style={{ fontSize: "11px", fontWeight: 600, color: "var(--ly-accent)", background: "none", border: "1px solid var(--ly-accent)", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
             Done →
           </button>
         </div>
@@ -295,7 +295,7 @@ function NewForwardModal({ items, color, onClose, onCommit }) {
             </div>
             <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", gap: "10px" }}>
               <button onClick={onClose} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
-              <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send</button>
+              <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "var(--ly-accent)", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send</button>
             </div>
           </>
         )}
@@ -447,13 +447,13 @@ function NewFindPanel({ item, goal, onClose, onSaveFact }) {
           placeholder={loading ? "Lyme is searching..." : "Ask Lyme to find something..."}
           style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "white", outline: "none", opacity: loading ? 0.6 : 1 }}
         />
-        <button onClick={ask} disabled={loading || !input.trim()} style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "#b5472a", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>Ask</button>
+        <button onClick={ask} disabled={loading || !input.trim()} style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "var(--ly-accent)", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>Ask</button>
       </div>
       {response && (
         <div style={{ padding: "14px 18px", background: "white", borderTop: "1px solid #f0ebe3" }}>
-          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "#b5472a", margin: "0 0 8px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ly-accent)", margin: "0 0 8px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
           <p style={{ fontSize: "13px", color: "#1c1410", margin: "0 0 12px", lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: "'Inter', sans-serif" }}>{response}</p>
-          <button onClick={onClose} style={{ fontSize: "11px", fontWeight: 600, color: "#b5472a", background: "none", border: "1px solid #b5472a", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
+          <button onClick={onClose} style={{ fontSize: "11px", fontWeight: 600, color: "var(--ly-accent)", background: "none", border: "1px solid var(--ly-accent)", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
         </div>
       )}
     </div>
@@ -621,7 +621,7 @@ function IntroStep3() {
           <div style={{ border: "1px solid #d4c9bb", padding: "6px 10px", fontSize: "11px", color: "#8a7455", marginBottom: "6px", fontFamily: "'Inter', sans-serif" }}>Recipient email or phone</div>
           <div style={{ display: "flex", gap: "6px" }}>
             <div style={{ flex: 1, padding: "6px", fontSize: "11px", color: "#5c4e40", border: "1px solid #d4c9bb", textAlign: "center", fontFamily: "'Inter', sans-serif" }}>Cancel</div>
-            <div style={{ flex: 2, padding: "6px", fontSize: "11px", fontWeight: 600, color: "white", background: "#b5472a", textAlign: "center", fontFamily: "'Inter', sans-serif" }}>Send →</div>
+            <div style={{ flex: 2, padding: "6px", fontSize: "11px", fontWeight: 600, color: "white", background: "var(--ly-accent)", textAlign: "center", fontFamily: "'Inter', sans-serif" }}>Send →</div>
           </div>
         </div>
       )}
@@ -654,7 +654,7 @@ function IntroModal({ step, onNext, onBack, onDot }) {
           {step > 0 && (
             <button onClick={onBack} style={{ fontSize: "12px", color: "#8a7455", background: "none", border: "1px solid #d4c9bb", padding: "8px 16px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>← Back</button>
           )}
-          <button onClick={onNext} style={{ fontSize: "12px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
+          <button onClick={onNext} style={{ fontSize: "12px", fontWeight: 600, color: "white", background: "var(--ly-accent)", border: "none", padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
             {step === INTRO_TOTAL - 1 ? "GOT IT →" : "NEXT →"}
           </button>
         </div>
@@ -787,14 +787,14 @@ export function PlanScreen({
     return (
       <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
         <style>{FONTS}</style>
-        <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
+        <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
           <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
           <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16" style={{ textAlign: "center", paddingTop: "60px" }}>
             <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>No active goals yet</p>
             <p style={{ fontSize: "13px", color: "#8a7455", fontWeight: 300, margin: "0 0 20px", lineHeight: 1.5 }}>Add a goal first to start planning.</p>
-            <button onClick={() => setStep("goal-picker")} style={{ background: "#b5472a", color: "white", fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+            <button onClick={() => setStep("goal-picker")} style={{ background: "var(--ly-accent)", color: "white", fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", padding: "10px 24px", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
               ADD A GOAL →
             </button>
           </div>
@@ -824,7 +824,7 @@ export function PlanScreen({
       <style>{FONTS}</style>
 
       {/* Left design strip — full height, desktop only */}
-      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: hc, transition: "background 0.3s ease" }} />
+      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
 
       {/* Right column — nav + header + body */}
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
@@ -833,8 +833,8 @@ export function PlanScreen({
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         {/* Plan header */}
-        <div className="lg:px-16" style={{ background: hexToRgba(hc, 0.07), borderBottom: `1px solid ${hexToRgba(hc, 0.12)}`, padding: "28px 24px 24px", transition: "background 0.3s ease, border-color 0.3s ease" }}>
-          <p className="text-xs uppercase tracking-widest" style={{ color: hc, opacity: 0.8, margin: "0 0 4px" }}>Your Plan</p>
+        <div className="lg:px-16" style={{ background: "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: "1px solid rgba(var(--ly-accent-rgb), 0.12)", padding: "28px 24px 24px" }}>
+          <p className="text-xs uppercase tracking-widest" style={{ color: "var(--ly-accent)", opacity: 0.8, margin: "0 0 4px" }}>Your Plan</p>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Progress, one step at a time.</h2>
           <p style={{ fontSize: "0.8rem", color: "#5c4e40", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Forward tasks, schedule reminders, send messages, or search for resources.</p>
         </div>
@@ -859,9 +859,9 @@ export function PlanScreen({
           {!isPaid && (
             <button onClick={() => setAuthPrompt("upgrade")} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", marginBottom: "10px", padding: "9px 14px", background: "rgba(181,71,42,0.06)", border: "1px solid rgba(181,71,42,0.18)", borderRadius: "8px", width: "100%", cursor: "pointer", textAlign: "left" }}>
               <p style={{ fontSize: "11px", color: "#5c4e40", margin: 0, lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>
-                <span style={{ fontWeight: 600, color: "#b5472a" }}>Preview mode.</span> Upgrade to use Forward, Schedule, and Find.
+                <span style={{ fontWeight: 600, color: "var(--ly-accent)" }}>Preview mode.</span> Upgrade to use Forward, Schedule, and Find.
               </p>
-              <span style={{ fontSize: "11px", fontWeight: 600, color: "#b5472a", flexShrink: 0, fontFamily: "'Inter', sans-serif" }}>Upgrade →</span>
+              <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--ly-accent)", flexShrink: 0, fontFamily: "'Inter', sans-serif" }}>Upgrade →</span>
             </button>
           )}
 
@@ -931,7 +931,7 @@ export function PlanScreen({
                   <>
                     <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 14px", fontStyle: "italic" }}>No {activeType === "none" ? "unassigned" : activeType} items for this goal.</p>
                     <button onClick={() => { setActiveType(null); setBulkSel(new Set()); }}
-                      style={{ fontSize: "11px", color: "#b5472a", background: "none", border: "1px solid #e8e0d5", padding: "7px 16px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+                      style={{ fontSize: "11px", color: "var(--ly-accent)", background: "none", border: "1px solid #e8e0d5", padding: "7px 16px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
                       Show all items
                     </button>
                   </>

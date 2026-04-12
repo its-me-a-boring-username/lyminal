@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useEffect } from "react";
+﻿import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useChatState } from "./hooks/useChatState.js";
 import { supabase } from "./supabaseClient.js";
 import { MagicLinkAuth } from "./components/MagicLinkAuth.jsx";
@@ -20,6 +20,7 @@ import { loadChart, makeLocalState, readLocalState, writeLocalState } from "./ut
 import { getCapabilities } from "./utils/entitlements.js";
 import { applyTheme, loadThemeFromStorage, persistThemeToStorage } from "./utils/theme.js";
 import { loadUserProfile, saveThemePreference } from "./utils/profile.js";
+import { trackUserEvent } from "./utils/events.js";
 
 class ErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null }; }
@@ -63,6 +64,8 @@ function GoalChart() {
   const [selectedTheme, setSelectedTheme] = useState(storedTheme.selectedTheme);
   const [appearance, setAppearance] = useState(storedTheme.appearance);
   const [hasSeenPlanPrompt, setHasSeenPlanPrompt] = useState(false);
+  const previousGoalCountRef = useRef(null);
+  const previousActionItemCountRef = useRef(null);
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handler);
@@ -108,6 +111,9 @@ function GoalChart() {
       if (event === 'INITIAL_SESSION') return;
       setSession(session);
       hydrateSessionData(session);
+      if (event === "SIGNED_IN" && session?.user?.id) {
+        trackUserEvent(session, "signup_completed", {}, { onceScope: "local" });
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -122,6 +128,11 @@ function GoalChart() {
       });
     }
   }, [appearance, selectedTheme, session]);
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    trackUserEvent(session, "session_started", { tier }, { onceScope: "session" });
+  }, [session, tier]);
 
   useEffect(() => {
     if (step !== "plan") return;
@@ -198,6 +209,38 @@ function GoalChart() {
       }));
     }
   }, [spheres, connections, activeGoals, step, completedGoals, checkedItems]);
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    const goalCount = activeGoals.length;
+    if (previousGoalCountRef.current === null) {
+      previousGoalCountRef.current = goalCount;
+      return;
+    }
+    if (previousGoalCountRef.current === 0 && goalCount > 0) {
+      trackUserEvent(session, "first_goal_created", { goalCount }, { onceScope: "local" });
+    }
+    previousGoalCountRef.current = goalCount;
+  }, [activeGoals, session]);
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    const actionItemCount = activeGoals.reduce((sum, goal) => sum + (goal.actionItems?.length || 0), 0);
+    if (previousActionItemCountRef.current === null) {
+      previousActionItemCountRef.current = actionItemCount;
+      return;
+    }
+    if (previousActionItemCountRef.current === 0 && actionItemCount > 0) {
+      trackUserEvent(session, "first_action_item_created", { actionItemCount }, { onceScope: "local" });
+    }
+    previousActionItemCountRef.current = actionItemCount;
+  }, [activeGoals, session]);
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    if (step !== "plan") return;
+    trackUserEvent(session, "plan_opened", { tier });
+  }, [step, session, tier]);
 
   // --- Computed ---
   const counts = useMemo(() => {

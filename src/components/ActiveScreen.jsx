@@ -163,17 +163,17 @@ Do NOT introduce yourself or explain what you do — that has already been handl
       )}
 
       {/* Design strip */}
-      <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: priorityColor }} />
+      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         {/* Page header with sphere tint */}
-        <div style={{ background: hexToRgba(priorityColor, 0.07), borderBottom: `1px solid ${hexToRgba(priorityColor, 0.12)}`, padding: "28px 24px 24px", marginBottom: "0" }}
+        <div style={{ background: "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: "1px solid rgba(var(--ly-accent-rgb), 0.12)", padding: "28px 24px 24px", marginBottom: "0" }}
           className="lg:px-16">
           {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-          <p className="text-xs uppercase tracking-widest mb-1" style={{ color: priorityColor, opacity: 0.8 }}>Your Active Goals</p>
+          <p className="text-xs uppercase tracking-widest mb-1" style={{ color: "var(--ly-accent)", opacity: 0.8 }}>Your Active Goals</p>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", marginBottom: "6px" }}>Here's what you're working on</h2>
           <p className="text-sm" style={{ color: "#5c4e40", fontWeight: 300 }}>
             Select a goal to talk through your plan with Lyme, or add action items yourself.
@@ -366,12 +366,12 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                 style={{ borderRadius: "8px", border: "1px solid #e8e0d5", background: "#faf8f5" }}
               >
                 <div className="px-5 py-4 flex items-center gap-3">
-                  <span style={{ fontSize: "1rem", color: "#b5472a" }}>+</span>
+                  <span style={{ fontSize: "1rem", color: "var(--ly-accent)" }}>+</span>
                   <div className="flex-1">
                     <p className="text-sm font-medium" style={{ color: "#6e5c4a" }}>Add another goal</p>
                     <p className="text-xs" style={{ color: "#8a7455" }}>Track a goal from a different sphere</p>
                   </div>
-                  <span className="text-xs font-semibold" style={{ color: "#b5472a" }}>→</span>
+                  <span className="text-xs font-semibold" style={{ color: "var(--ly-accent)" }}>→</span>
                 </div>
               </button>
             )}
@@ -394,7 +394,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
                     <p className="text-sm font-medium" style={{ color: "#6e5c4a" }}>Track a second goal</p>
                     <p className="text-xs" style={{ color: "#8a7455" }}>Upgrade to track multiple goals at once</p>
                   </div>
-                  <span className="text-xs font-semibold" style={{ color: "#b5472a" }}>Upgrade →</span>
+                  <span className="text-xs font-semibold" style={{ color: "var(--ly-accent)" }}>Upgrade →</span>
                 </div>
               </button>
             )}

@@ -1,4 +1,4 @@
-import { supabase } from "../supabaseClient.js";
+﻿import { supabase } from "../supabaseClient.js";
 import { normalizeActionItems } from "./actionItems.js";
 
 const LOCAL_KEY = "goalchart_state";

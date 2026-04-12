@@ -1,10 +1,10 @@
 import React from "react";
 
-const OCHRE = "#b5472a";
-const OCHRE_TINT = "#b5472a14";
+const OCHRE = "var(--ly-accent)";
+const OCHRE_TINT = "rgba(var(--ly-accent-rgb), 0.08)";
 const INACTIVE = "#8a7a68";
 const BORDER = "#e8e0d5";
-const BG = "#faf8f5";
+const BG = "var(--ly-bg)";
 
 const Icons = {
   home: (

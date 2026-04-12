@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient.js";
 import { clearChart } from "../utils/supabase.js";
 import { postJson } from "../utils/api.js";
@@ -30,7 +30,7 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
     setVisible(true);
   }, []);
 
-  const sectionLabel = { fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#b5472a", fontWeight: 600, margin: "0 0 12px", fontFamily: "'Inter',sans-serif" };
+  const sectionLabel = { fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--ly-accent)", fontWeight: 600, margin: "0 0 12px", fontFamily: "'Inter',sans-serif" };
   const card = { background: "white", border: "1px solid #e8e0d5", marginBottom: "32px", borderRadius: "8px", overflow: "hidden" };
   const row = (last) => ({ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 22px", borderBottom: last ? "none" : "1px solid #f0e8df" });
   const btn = (variant) => ({
@@ -40,10 +40,10 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
     cursor: "pointer",
     border: "none",
     borderRadius: "6px",
-    ...(variant === "primary" ? { background: "#b5472a", color: "white", fontWeight: 600, padding: "6px 16px" } : {}),
+    ...(variant === "primary" ? { background: "var(--ly-accent)", color: "white", fontWeight: 600, padding: "6px 16px" } : {}),
     ...(variant === "danger" ? { background: "none", color: "#9b2a2a", border: "1px solid #e8aaaa" } : {}),
     ...(variant === "default" ? { background: "none", color: "#5c4e40", border: "1px solid #e8e0d5" } : {}),
-    ...(variant === "ochre" ? { background: "none", color: "#b5472a", border: "1px solid #e8e0d5" } : {}),
+    ...(variant === "ochre" ? { background: "none", color: "var(--ly-accent)", border: "1px solid #e8e0d5" } : {}),
   });
 
   const handleEmailChange = async () => {
@@ -97,13 +97,13 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
   return (
     <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter',sans-serif" }}>
       <style>{FONTS}</style>
-      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#b5472a" }} />
+      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         {!isMobile && <NavBar />}
         {isMobile && <NavBar />}
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
-        <div className="lg:px-16" style={{ background: "rgba(181,71,42,0.07)", borderBottom: "1px solid rgba(181,71,42,0.12)", padding: "28px 24px 24px" }}>
-          <p className="text-xs uppercase tracking-widest" style={{ color: "#b5472a", opacity: 0.8, margin: "0 0 6px" }}>Your Account</p>
+        <div className="lg:px-16" style={{ background: "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: "1px solid rgba(var(--ly-accent-rgb), 0.12)", padding: "28px 24px 24px" }}>
+          <p className="text-xs uppercase tracking-widest" style={{ color: "var(--ly-accent)", opacity: 0.8, margin: "0 0 6px" }}>Your Account</p>
           <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Settings</h2>
           <p style={{ fontSize: "0.8rem", color: "#5c4e40", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter',sans-serif" }}>Manage your profile, billing, and how the app looks and feels.</p>
         </div>
@@ -250,7 +250,7 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
                       {/* Mini preview */}
                       <div style={{ padding: "8px 10px", background: t.swatches[4] }}>
                         <div style={{ background: t.c1, color: "white", fontSize: "8px", fontWeight: 700, letterSpacing: "0.07em", padding: "3px 7px", borderRadius: "3px", marginBottom: "5px", display: "inline-block" }}>
-                          GET STARTED →
+                          GET STARTED â†’
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "4px" }}>
                           <span style={{ fontSize: "8px", padding: "2px 6px", borderRadius: "999px", background: t.c1 + "20", color: t.c1, fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>Work</span>

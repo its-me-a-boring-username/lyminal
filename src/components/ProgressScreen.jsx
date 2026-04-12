@@ -430,7 +430,7 @@ export function ProgressScreen({
     return (
       <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
         <style>{FONTS}</style>
-        <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#4a7a72" }} />
+        <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
           <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
           <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
@@ -458,11 +458,8 @@ export function ProgressScreen({
     <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
       <style>{FONTS}</style>
 
-      {/* Left strip — transitions with sphere color */}
-      <div
-        className="hidden lg:block flex-shrink-0"
-        style={{ width: "350px", background: headerColor, transition: "background 0.4s ease" }}
-      />
+      {/* Left strip */}
+      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
         <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
@@ -472,12 +469,11 @@ export function ProgressScreen({
 
           {/* Colored header band — replaces the left strip on mobile, adds color on desktop */}
           <div className="lg:px-16" style={{
-            background: hexToRgba(headerColor, 0.07),
-            borderBottom: `1px solid ${hexToRgba(headerColor, 0.12)}`,
+            background: "rgba(var(--ly-accent-rgb), 0.07)",
+            borderBottom: "1px solid rgba(var(--ly-accent-rgb), 0.12)",
             padding: "28px 24px 24px",
-            transition: "background 0.35s ease, border-color 0.35s ease",
           }}>
-            <p className="text-xs uppercase tracking-widest" style={{ color: headerColor, opacity: 0.8, margin: "0 0 4px" }}>
+            <p className="text-xs uppercase tracking-widest" style={{ color: "var(--ly-accent)", opacity: 0.8, margin: "0 0 4px" }}>
               Your Progress
             </p>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>
