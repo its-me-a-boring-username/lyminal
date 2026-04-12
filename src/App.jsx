@@ -20,7 +20,7 @@ import { loadChart, makeLocalState, readLocalState, writeLocalState } from "./ut
 import { getCapabilities } from "./utils/entitlements.js";
 import { applyTheme, loadThemeFromStorage, persistThemeToStorage } from "./utils/theme.js";
 import { loadUserProfile, saveThemePreference } from "./utils/profile.js";
-import { trackUserEvent } from "./utils/events.js";
+import { trackUserEvent, mapStepToScreenName } from "./utils/events.js";
 
 class ErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null }; }
@@ -163,6 +163,7 @@ function GoalChart() {
       isMobile={isMobile}
       isPaid={isPaid}
       activeGoals={activeGoals}
+      session={session}
     />
   ) : null;
 
@@ -237,6 +238,23 @@ function GoalChart() {
     trackUserEvent(session, "plan_opened", { tier });
   }, [step, session, tier]);
 
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    const screenName = mapStepToScreenName(step);
+    if (!screenName) return;
+    trackUserEvent(session, "screen_viewed", {
+      screen_name: screenName,
+      source: "app_navigation",
+      tier,
+    });
+  }, [step, session, tier]);
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    if (step !== "chart" && step !== "chart-view") return;
+    trackUserEvent(session, "chart_viewed", { source: step });
+  }, [step, session]);
+
   // --- Computed ---
   const counts = useMemo(() => {
     const r = {};
@@ -276,7 +294,7 @@ function GoalChart() {
 
   const BoundDevReset = () => <DevReset session={session} />;
 
-  if (step === "welcome") return <WelcomeScreen setStep={setStep} DevReset={BoundDevReset} setAuthPrompt={setAuthPrompt} />;
+  if (step === "welcome") return <WelcomeScreen setStep={setStep} DevReset={BoundDevReset} setAuthPrompt={setAuthPrompt} isMobile={isMobile} />;
 
   // ── INTRO SCREENS ──
   if (["intro-spheres","intro-goals","intro-connections","intro-results","intro-active"].includes(step)) {
@@ -531,3 +549,4 @@ function GoalChart() {
 export default function GoalChartWrapper() {
   return <ErrorBoundary><GoalChart /></ErrorBoundary>;
 }
+

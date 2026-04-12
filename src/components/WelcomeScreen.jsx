@@ -12,7 +12,7 @@ const PILLS = [
   { label: "Fun",       bg: "rgba(181,146,42,0.10)",  color: "#6e5810", border: "rgba(181,146,42,0.22)" },
 ];
 
-export function WelcomeScreen({ setStep, DevReset, setAuthPrompt }) {
+export function WelcomeScreen({ setStep, DevReset, setAuthPrompt, isMobile }) {
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
   return (
@@ -54,8 +54,8 @@ export function WelcomeScreen({ setStep, DevReset, setAuthPrompt }) {
           zIndex: 1,
           background: "rgba(250,248,245,0.93)",
           boxShadow: "0 4px 40px rgba(28,20,16,0.10)",
-          padding: "52px 88px 60px",
-          width: "min(960px, calc(100vw - 48px))",
+          padding: isMobile ? "40px 28px 48px" : "52px 88px 60px",
+          width: isMobile ? "calc(100vw - 32px)" : "min(960px, calc(100vw - 48px))",
           textAlign: "center",
         }}>
 
@@ -73,8 +73,8 @@ export function WelcomeScreen({ setStep, DevReset, setAuthPrompt }) {
 
           <h1 style={{
             fontFamily: "'Playfair Display', serif",
-            fontSize: "2.75rem", fontWeight: 700,
-            color: "#1c1410", lineHeight: 1.0,
+            fontSize: isMobile ? "2.1rem" : "2.75rem", fontWeight: 700,
+            color: "#1c1410", lineHeight: 1.1,
             marginBottom: "24px", letterSpacing: "-0.02em",
           }}>
             Find Your <em style={{ color: "#b5472a", fontStyle: "italic" }}>Focus</em>

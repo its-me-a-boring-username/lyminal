@@ -2,18 +2,20 @@
 import { supabase } from "../supabaseClient.js";
 import { clearChart } from "../utils/supabase.js";
 import { postJson } from "../utils/api.js";
+import { trackUserEvent } from "../utils/events.js";
 import { FONTS } from "../constants.js";
 
 const THEMES_LIST = [
-  { key: "warm_earth",       label: "Warm earth",        desc: "Richer ochre-red, darker sage.",      c1: "#8a2010", c2: "#1e3c20", swatches: ["#8a2010","#1e3c20","#f0e8e0","#c8a882","#faf8f5"] },
-  { key: "terracotta_sage",  label: "Terracotta & sage",  desc: "Deep burnt clay, forest sage.",       c1: "#7a3020", c2: "#2a4828", swatches: ["#7a3020","#2a4828","#f0e8d8","#a0b088","#faf7f5"] },
-  { key: "plum_teal",        label: "Plum & teal",        desc: "Deep plum, dark teal. Rich and moody.", c1: "#4a1050", c2: "#0a3840", swatches: ["#4a1050","#0a3840","#ddd0e8","#6890a0","#f8f5f8"] },
-  { key: "blush_eucalyptus", label: "Blush & eucalyptus", desc: "Deep rose, dark eucalyptus.",         c1: "#701828", c2: "#1a3828", swatches: ["#701828","#1a3828","#ead8d0","#8aa098","#faf5f5"] },
-  { key: "forest",           label: "Forest",             desc: "Deep pine to mint.",                  c1: "#143820", c2: "#60c870", swatches: ["#143820","#2a6838","#60c870","#b0d8b8","#f4f8f5"] },
-  { key: "violet",           label: "Violet",             desc: "Deep violet to lavender.",             c1: "#380870", c2: "#9060d0", swatches: ["#380870","#6030b0","#9060d0","#c8b8e8","#f6f4fa"] },
-  { key: "rose",             label: "Rose",               desc: "Deep crimson to blush.",               c1: "#680818", c2: "#c86070", swatches: ["#680818","#a83050","#c86070","#e8a8b0","#faf4f5"] },
-  { key: "ocean",            label: "Ocean",              desc: "Deep navy to sky.",                    c1: "#081838", c2: "#4090c8", swatches: ["#081838","#1048a0","#4090c8","#90c4e0","#f4f8fc"] },
-  { key: "ink",              label: "Ink",                desc: "Pure contrast.",                       c1: "#0a0a0a", c2: "#606060", swatches: ["#0a0a0a","#303030","#686868","#b0b0b0","#f5f5f5"] },
+  // display c1/c2 are circle preview colors; --ly-accent values in theme.js are the deepened UI colors
+  { key: "warm_earth",       label: "Warm earth",       multi: true,  c1: "#b5472a", c2: "#4a7a72" },
+  { key: "terracotta_sage",  label: "Terracotta",       multi: true,  c1: "#b5614a", c2: "#6a9870" },
+  { key: "plum_teal",        label: "Plum & teal",      multi: true,  c1: "#9050a0", c2: "#207878" },
+  { key: "blush_eucalyptus", label: "Blush",            multi: true,  c1: "#b84060", c2: "#4a8870" },
+  { key: "forest",           label: "Forest",           multi: false, c1: "#256035" },
+  { key: "violet",           label: "Violet",           multi: false, c1: "#5010a0" },
+  { key: "rose",             label: "Rose",             multi: false, c1: "#a0102a" },
+  { key: "ocean",            label: "Ocean",            multi: false, c1: "#0848a0" },
+  { key: "ink",              label: "Ink",              multi: false, c1: "#0a0a0a" },
 ];
 
 export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTheme, setSelectedTheme, appearance, setAppearance, isMobile, NavBar, AuthOverlay }) {
@@ -86,7 +88,10 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
     setBillingBusy(true);
     try {
       const data = await postJson("/api/billing/create-portal-session", {}, session);
-      if (data?.url) window.location.href = data.url;
+      if (data?.url) {
+        trackUserEvent(session, "billing_portal_opened", { source: "account_screen" });
+        window.location.href = data.url;
+      }
     } catch (error) {
       alert(error?.message || "Could not open billing portal.");
     } finally {
@@ -227,44 +232,29 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
             </div>
 
             <div style={{ padding: "14px 18px" }}>
-              <p style={{ fontSize: "0.68rem", color: "#8a7455", margin: "0 0 14px", fontFamily: "'Inter',sans-serif" }}>Theme</p>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "10px" }}>
-                {THEMES_LIST.map((t) => {
-                  const active = selectedTheme === t.key;
-                  return (
-                    <button key={t.key} onClick={() => setSelectedTheme(t.key)} style={{
-                      background: "white",
-                      border: active ? `2px solid ${t.c1}` : "1.5px solid #e8e0d5",
-                      borderRadius: "10px",
-                      overflow: "hidden",
-                      cursor: "pointer",
-                      padding: 0,
-                      textAlign: "left",
-                      transition: "border-color 0.15s",
-                      outline: "none",
-                    }}>
-                      {/* Color swatch strip */}
-                      <div style={{ display: "flex", height: "36px" }}>
-                        {t.swatches.map((c, i) => <div key={i} style={{ flex: 1, background: c }} />)}
-                      </div>
-                      {/* Mini preview */}
-                      <div style={{ padding: "8px 10px", background: t.swatches[4] }}>
-                        <div style={{ background: t.c1, color: "white", fontSize: "8px", fontWeight: 700, letterSpacing: "0.07em", padding: "3px 7px", borderRadius: "3px", marginBottom: "5px", display: "inline-block" }}>
-                          GET STARTED â†’
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "4px" }}>
-                          <span style={{ fontSize: "8px", padding: "2px 6px", borderRadius: "999px", background: t.c1 + "20", color: t.c1, fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>Work</span>
-                        </div>
-                        <div style={{ height: "2px", background: t.c2, borderRadius: "1px", width: "36px" }} />
-                      </div>
-                      {/* Label */}
-                      <div style={{ padding: "7px 10px 8px" }}>
-                        <p style={{ fontSize: "10px", fontWeight: 600, color: "#1c1410", margin: "0 0 2px", fontFamily: "'Inter',sans-serif" }}>{t.label}</p>
-                        <p style={{ fontSize: "9px", color: "#8a7455", margin: 0, lineHeight: 1.3, fontFamily: "'Inter',sans-serif" }}>{t.desc}</p>
-                      </div>
-                    </button>
-                  );
-                })}
+              <p style={{ fontSize: "0.68rem", color: "#8a7455", margin: "0 0 14px", fontFamily: "’Inter’,sans-serif" }}>Theme</p>
+              {/* Multi-tone themes — 5 columns */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: "10px", marginBottom: "10px" }}>
+                {THEMES_LIST.slice(0, 5).map(t => (
+                  <button key={t.key} onClick={() => setSelectedTheme(t.key)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                    <div style={{ width: "40px", height: "40px", borderRadius: "50%", border: selectedTheme === t.key ? `3px solid ${t.c1}` : "2px solid #e8e0d5", overflow: "hidden", display: "flex", flexShrink: 0 }}>
+                      {t.multi
+                        ? (<><div style={{ flex: 1, background: t.c1 }} /><div style={{ flex: 1, background: t.c2 }} /></>)
+                        : <div style={{ flex: 1, background: t.c1 }} />
+                      }
+                    </div>
+                    <span style={{ fontSize: "9px", color: selectedTheme === t.key ? t.c1 : "#8a7455", fontWeight: selectedTheme === t.key ? 600 : 400, textAlign: "center", lineHeight: 1.3, fontFamily: "’Inter’,sans-serif" }}>{t.label}</span>
+                  </button>
+                ))}
+              </div>
+              {/* Single-tone themes — 4 columns */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "10px", justifyItems: "center" }}>
+                {THEMES_LIST.slice(5).map(t => (
+                  <button key={t.key} onClick={() => setSelectedTheme(t.key)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                    <div style={{ width: "40px", height: "40px", borderRadius: "50%", border: selectedTheme === t.key ? `3px solid ${t.c1}` : "2px solid #e8e0d5", background: t.c1, flexShrink: 0 }} />
+                    <span style={{ fontSize: "9px", color: selectedTheme === t.key ? t.c1 : "#8a7455", fontWeight: selectedTheme === t.key ? 600 : 400, textAlign: "center", lineHeight: 1.3, fontFamily: "’Inter’,sans-serif" }}>{t.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
           </div>

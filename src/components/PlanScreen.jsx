@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 import { ACTION_TYPES, normalizeActionItems, buildForwardBody } from "../utils/actionItems.js";
+import { trackUserEvent } from "../utils/events.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -267,7 +268,7 @@ function NewForwardModal({ items, color, onClose, onCommit }) {
           <div style={{ padding: "32px 28px", textAlign: "center" }}>
             <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Forward initiated</p>
             <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 20px", fontFamily: "'Inter', sans-serif" }}>Your {channel === "sms" ? "text" : "email"} app should have opened.</p>
-            <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
+            <button onClick={() => onClose?.({ completed: true })} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
           </div>
         ) : (
           <>
@@ -294,7 +295,7 @@ function NewForwardModal({ items, color, onClose, onCommit }) {
               </div>
             </div>
             <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", gap: "10px" }}>
-              <button onClick={onClose} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
+              <button onClick={() => onClose?.({ completed: false })} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
               <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "var(--ly-accent)", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send</button>
             </div>
           </>
@@ -376,7 +377,7 @@ function NewScheduleModal({ items, color, onClose, onCommit, session }) {
           <div style={{ padding: "32px 28px", textAlign: "center" }}>
             <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Reminder set</p>
             <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 20px", fontFamily: "'Inter', sans-serif" }}>{date} at {time} - {repeat}</p>
-            <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
+            <button onClick={() => onClose?.({ completed: true })} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
           </div>
         ) : (
           <>
@@ -394,7 +395,7 @@ function NewScheduleModal({ items, color, onClose, onCommit, session }) {
             </div>
             <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "grid", gap: "10px" }}>
               <div style={{ display: "flex", gap: "10px" }}>
-                <button onClick={onClose} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
+                <button onClick={() => onClose?.({ completed: false })} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
                 <button onClick={saveSchedule} disabled={!date} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: date ? color : "#c4b8a8", border: "none", cursor: date ? "pointer" : "default", fontFamily: "'Inter', sans-serif" }}>Set reminder</button>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
@@ -453,7 +454,7 @@ function NewFindPanel({ item, goal, onClose, onSaveFact }) {
         <div style={{ padding: "14px 18px", background: "white", borderTop: "1px solid #f0ebe3" }}>
           <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ly-accent)", margin: "0 0 8px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
           <p style={{ fontSize: "13px", color: "#1c1410", margin: "0 0 12px", lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: "'Inter', sans-serif" }}>{response}</p>
-          <button onClick={onClose} style={{ fontSize: "11px", fontWeight: 600, color: "var(--ly-accent)", background: "none", border: "1px solid var(--ly-accent)", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
+          <button onClick={() => onClose?.({ completed: true })} style={{ fontSize: "11px", fontWeight: 600, color: "var(--ly-accent)", background: "none", border: "1px solid var(--ly-accent)", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
         </div>
       )}
     </div>
@@ -684,6 +685,7 @@ export function PlanScreen({
   const [bulkSel,     setBulkSel]     = useState(new Set());
   const [modal,       setModal]       = useState(null);
   const [findItem,    setFindItem]    = useState(null);
+  const [findAttempt, setFindAttempt] = useState(null);
   const [introStep, setIntroStep] = useState(() => localStorage.getItem("lyminal_plan_intro_seen") ? null : 0);
 
   const handleTalkToLyme = async (ag) => {
@@ -751,6 +753,14 @@ export function PlanScreen({
   };
 
   const applyForward = (payload) => {
+    const actionItemIds = bulkItems.map((i) => i.id);
+    trackUserEvent(session, "forward_completed", {
+      screen_name: "plan",
+      goal_id: goal?.goalId || null,
+      action_item_ids: actionItemIds,
+      action_count: actionItemIds.length,
+      channel: payload?.channel || "email",
+    });
     const selectedIds = new Set(bulkItems.map((i) => i.id));
     updateGoalItems((items) => items.map((item) => {
       if (!selectedIds.has(item.id)) return item;
@@ -763,6 +773,15 @@ export function PlanScreen({
   };
 
   const applySchedule = (payload) => {
+    const actionItemIds = bulkItems.map((i) => i.id);
+    trackUserEvent(session, "schedule_completed", {
+      screen_name: "plan",
+      goal_id: goal?.goalId || null,
+      action_item_ids: actionItemIds,
+      action_count: actionItemIds.length,
+      scheduled_for: payload?.scheduledFor || null,
+      repeat: payload?.repeat || "once",
+    });
     const selectedIds = new Set(bulkItems.map((i) => i.id));
     updateGoalItems((items) => items.map((item) => {
       if (!selectedIds.has(item.id)) return item;
@@ -771,11 +790,90 @@ export function PlanScreen({
   };
 
   const saveFindFact = (itemId, fact) => {
+    trackUserEvent(session, "find_completed", {
+      screen_name: "plan",
+      goal_id: goal?.goalId || null,
+      action_item_id: itemId,
+    });
+    trackUserEvent(session, "find_fact_saved", {
+      screen_name: "plan",
+      goal_id: goal?.goalId || null,
+      action_item_id: itemId,
+    });
+    setFindAttempt((prev) => (prev && prev.itemId === itemId ? { ...prev, completed: true } : prev));
     updateGoalItems((items) => items.map((item) => {
       if (item.id !== itemId) return item;
       const facts = Array.isArray(item.findFacts) ? item.findFacts : [];
       return { ...item, findFacts: [fact, ...facts].slice(0, 20) };
     }));
+  };
+
+  const openBulkModal = (type) => {
+    if (!type || bulkSel.size === 0) return;
+    const actionItemIds = bulkItems.map((i) => i.id);
+    if (type === "forward") {
+      trackUserEvent(session, "forward_started", {
+        screen_name: "plan",
+        goal_id: goal?.goalId || null,
+        action_item_ids: actionItemIds,
+        action_count: actionItemIds.length,
+      });
+    }
+    if (type === "schedule") {
+      trackUserEvent(session, "schedule_started", {
+        screen_name: "plan",
+        goal_id: goal?.goalId || null,
+        action_item_ids: actionItemIds,
+        action_count: actionItemIds.length,
+      });
+    }
+    setModal(type);
+  };
+
+  const closeForwardModal = (result = {}) => {
+    if (!result.completed) {
+      trackUserEvent(session, "forward_canceled", {
+        screen_name: "plan",
+        goal_id: goal?.goalId || null,
+        action_count: bulkItems.length,
+      });
+    }
+    setModal(null);
+    setBulkSel(new Set());
+  };
+
+  const closeScheduleModal = (result = {}) => {
+    if (!result.completed) {
+      trackUserEvent(session, "schedule_canceled", {
+        screen_name: "plan",
+        goal_id: goal?.goalId || null,
+        action_count: bulkItems.length,
+      });
+    }
+    setModal(null);
+    setBulkSel(new Set());
+  };
+
+  const openFindPanel = (item) => {
+    trackUserEvent(session, "find_started", {
+      screen_name: "plan",
+      goal_id: goal?.goalId || null,
+      action_item_id: item.id,
+    });
+    setFindAttempt({ itemId: item.id, completed: false });
+    setFindItem(item);
+  };
+
+  const closeFindPanel = (result = {}) => {
+    if (!result.completed && findAttempt && !findAttempt.completed) {
+      trackUserEvent(session, "find_canceled", {
+        screen_name: "plan",
+        goal_id: goal?.goalId || null,
+        action_item_id: findAttempt.itemId,
+      });
+    }
+    setFindItem(null);
+    setFindAttempt(null);
   };
 
   const retagItem = (itemId, newType) => {
@@ -791,7 +889,7 @@ export function PlanScreen({
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-          <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
+          <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />
           <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16" style={{ textAlign: "center", paddingTop: "60px" }}>
             <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>No active goals yet</p>
@@ -808,8 +906,8 @@ export function PlanScreen({
 
   return (
     <>
-      {modal === "forward"  && <NewForwardModal  items={bulkItems} color={hc} onCommit={applyForward} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
-      {modal === "schedule" && <NewScheduleModal items={bulkItems} color={hc} session={session} onCommit={applySchedule} onClose={() => { setModal(null); setBulkSel(new Set()); }} />}
+      {modal === "forward"  && <NewForwardModal  items={bulkItems} color={hc} onCommit={applyForward} onClose={closeForwardModal} />}
+      {modal === "schedule" && <NewScheduleModal items={bulkItems} color={hc} session={session} onCommit={applySchedule} onClose={closeScheduleModal} />}
       {introStep !== null && (
         <IntroModal
           step={introStep}
@@ -831,7 +929,7 @@ export function PlanScreen({
       {/* Right column — nav + header + body */}
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
 
-        <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />
+        <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         {/* Plan header */}
@@ -855,7 +953,7 @@ export function PlanScreen({
         </div>
 
         {/* Content */}
-        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", padding: "16px 20px 16px 16px" }}>
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", padding: isMobile ? "12px 12px 12px 12px" : "16px 20px 16px 16px" }}>
 
           {/* Free preview banner */}
           {!isPaid && (
@@ -868,7 +966,7 @@ export function PlanScreen({
           )}
 
           {/* Type pills — floating above the card */}
-          <div style={{ display: "flex", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "10px", overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: "2px", flexShrink: 0 }}>
             {ACTION_TYPES.map(t => {
               const isAct  = activeType === t;
               const locked = (!isPaid && t !== "none") || (t === "find" && !isPro);
@@ -878,7 +976,7 @@ export function PlanScreen({
                   setActiveType(activeType === t ? null : t);
                   setBulkSel(new Set()); setFindItem(null);
                 }} style={{
-                  padding: "7px 16px", cursor: "pointer",
+                  padding: "7px 14px", cursor: "pointer", flexShrink: 0,
                   fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600,
                   letterSpacing: "0.06em", textTransform: "uppercase",
                   borderRadius: "999px",
@@ -893,7 +991,7 @@ export function PlanScreen({
             })}
             {activeType && (
               <button onClick={() => { setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} style={{
-                padding: "7px 14px", cursor: "pointer",
+                padding: "7px 14px", cursor: "pointer", flexShrink: 0,
                 fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 500,
                 borderRadius: "999px", border: "1.5px solid #e8e0d5",
                 background: "none", color: "#8a7455", transition: "all 0.15s",
@@ -947,7 +1045,7 @@ export function PlanScreen({
 
               return (
                 <div key={item.id}>
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", padding: "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
                     {showBulk && (
                       <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
                         style={{ marginTop: "2px", flexShrink: 0, accentColor: hc }} />
@@ -986,7 +1084,7 @@ export function PlanScreen({
                     </div>
                     {isFind && activeType === "find" && (
                       isPro ? (
-                        <button onClick={() => setFindItem(findOpen ? null : item)}
+                        <button onClick={() => (findOpen ? closeFindPanel({ completed: false }) : openFindPanel(item))}
                           style={{ fontSize: "10px", fontWeight: 600, color: TC.find, background: "none", border: `1px solid ${TBORDER.find}`, padding: "3px 9px", cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
                           {findOpen ? "Close" : "Ask Lyme"}
                         </button>
@@ -1003,7 +1101,7 @@ export function PlanScreen({
                       {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t}</option>)}
                     </select>
                   </div>
-                  {findOpen && <NewFindPanel item={item} goal={goal} onSaveFact={(fact) => saveFindFact(item.id, fact)} onClose={() => setFindItem(null)} />}
+                  {findOpen && <NewFindPanel item={item} goal={goal} onSaveFact={(fact) => saveFindFact(item.id, fact)} onClose={closeFindPanel} />}
                 </div>
               );
             })}
@@ -1017,7 +1115,7 @@ export function PlanScreen({
                 {bulkSel.size === filteredItems.length ? "Clear" : "Select all"}
               </button>
               <span style={{ fontSize: "11px", color: "#8a7455", flex: 1 }}>{bulkSel.size} selected</span>
-              <button onClick={() => bulkSel.size > 0 && setModal(activeType)} disabled={bulkSel.size === 0}
+              <button onClick={() => openBulkModal(activeType)} disabled={bulkSel.size === 0}
                 style={{ fontSize: "11px", fontWeight: 600, color: "white", background: bulkSel.size > 0 ? hc : "#c4b8a8", border: "none", padding: "7px 16px", cursor: bulkSel.size > 0 ? "pointer" : "default", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
                 {activeType === "forward" ? "Forward selected →" : "Schedule selected →"}
               </button>
