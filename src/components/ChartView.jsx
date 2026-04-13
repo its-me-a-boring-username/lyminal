@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { clearChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
-@keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
+@keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeScaleIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes spotlightPulse { 0% { opacity: 0.3; } 60% { opacity: 0.15; } 100% { opacity: 0; } }`;
 
 function hexToRgba(hex, alpha) {
   if (!hex || hex.length < 7) return `rgba(181,71,42,${alpha})`;
@@ -63,8 +66,9 @@ const ChartSVG = ({
   spheres, connections, counts, ranked, positions,
   dragOffsets, setDragOffsets, dragging, setDragging, didDrag, setDidDrag,
   selectedId, setSelectedId, isMobile, pdfLoading, setPdfLoading,
-  generateChartReport,
+  generateChartReport, revealPhase, setRevealPhase,
 }) => {
+  const top = ranked[0];
   // Compute drag-adjusted positions
   const chartPos = {};
   Object.entries(positions).forEach(([id, p]) => {
@@ -155,9 +159,15 @@ const ChartSVG = ({
               onTouchStart={(e) => onDragStart(e, b.id)}
               style={{ cursor: dragging === b.id ? "grabbing" : "grab" }}
             >
+              {isTop && revealPhase === "spotlight" && (
+                <circle cx={pos.x} cy={pos.y} r={isMobile ? 100 : 84} fill={b.color}
+                  style={{ animation: "spotlightPulse 4s ease-out forwards" }}
+                />
+              )}
               {isTop && (
-                <circle cx={pos.x} cy={pos.y} r={isMobile ? 72 : 58} fill="none" stroke={b.color} strokeWidth="2.5" strokeOpacity="0.25" strokeDasharray="4 3"
-                  style={{ transformOrigin: `${pos.x}px ${pos.y}px`, animation: "spinRing 20s linear infinite" }}
+                <circle cx={pos.x} cy={pos.y} r={isMobile ? 72 : 58} fill="none" stroke={b.color} strokeWidth="2.5"
+                  strokeOpacity={revealPhase === "spotlight" ? 0.6 : 0.25} strokeDasharray="4 3"
+                  style={{ transformOrigin: `${pos.x}px ${pos.y}px`, animation: revealPhase === "spotlight" ? "spinRing 6s linear infinite" : "spinRing 20s linear infinite" }}
                 />
               )}
               <circle
@@ -200,6 +210,13 @@ const ChartSVG = ({
           );
         })}
       </svg>
+      {revealPhase === "spotlight" && top && (
+        <div onClick={() => setRevealPhase(null)} style={{ textAlign: "center", marginTop: "6px", padding: "8px 20px 4px", cursor: "pointer", animation: "fadeIn 0.6s ease-out" }}>
+          <span style={{ fontSize: "12px", color: top.color, fontFamily: "'Inter',sans-serif", fontWeight: 500 }}>
+            ★ {top.name} has the most influence — start here
+          </span>
+        </div>
+      )}
       <button
         onClick={async () => {
           setPdfLoading("chart");
@@ -344,9 +361,65 @@ export function ChartView({
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
 
+  const top = ranked[0];
+  // "modal" → "spotlight" → null; only fires on first-time chart view (mode === "chart")
+  const [revealPhase, setRevealPhase] = useState(mode === "chart" ? "modal" : null);
+  useEffect(() => {
+    if (revealPhase !== "modal") return;
+    const t = setTimeout(() => setRevealPhase("spotlight"), 2500);
+    return () => clearTimeout(t);
+  }, [revealPhase]);
+  useEffect(() => {
+    if (revealPhase !== "spotlight") return;
+    const t = setTimeout(() => setRevealPhase(null), 4000);
+    return () => clearTimeout(t);
+  }, [revealPhase]);
+
   return (
     <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
       <style>{FONTS}</style>
+
+      {/* Reveal modal — shown on first chart view */}
+      {revealPhase === "modal" && top && (
+        <div onClick={() => setRevealPhase("spotlight")} style={{
+          position: "fixed", inset: 0, zIndex: 50,
+          background: "rgba(20,14,10,0.72)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "24px", cursor: "pointer",
+          animation: "fadeIn 0.4s ease-out",
+        }}>
+          <div style={{
+            background: "white", maxWidth: "400px", width: "100%",
+            padding: "40px 36px", textAlign: "center",
+            borderTop: `5px solid ${top.color}`,
+            animation: "fadeScaleIn 0.4s ease-out",
+          }} onClick={e => e.stopPropagation()}>
+            <p style={{ fontSize: "10px", letterSpacing: "0.16em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 16px", fontFamily: "'Inter',sans-serif" }}>
+              Your Lines of Influence
+            </p>
+            <p style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.05rem", color: "#4a3828", fontWeight: 300, margin: "0 0 8px", lineHeight: 1.6 }}>
+              Based on how your spheres connect, your greatest leverage is in
+            </p>
+            <p style={{ fontFamily: "'Playfair Display',serif", fontSize: "2rem", fontWeight: 700, color: top.color, margin: "0 0 10px", lineHeight: 1.1 }}>
+              {top.name}
+            </p>
+            <p style={{ fontSize: "11px", color: "#8a7455", margin: "0 0 32px", fontFamily: "'Inter',sans-serif" }}>
+              {top.out} outgoing · {top.in} incoming · score {top.score > 0 ? "+" : ""}{top.score}
+            </p>
+            <button onClick={() => setRevealPhase("spotlight")} style={{
+              background: top.color, color: "white", border: "none",
+              padding: "12px 32px", fontSize: "11px", fontWeight: 600,
+              letterSpacing: "0.08em", textTransform: "uppercase",
+              cursor: "pointer", fontFamily: "'Inter',sans-serif",
+            }}>
+              See My Chart →
+            </button>
+            <p style={{ fontSize: "10px", color: "#c4b8a8", margin: "14px 0 0", fontFamily: "'Inter',sans-serif" }}>
+              tap anywhere to continue
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <div style={{ background: hexToRgba(ranked[0]?.color, 0.07), borderBottom: `1px solid ${hexToRgba(ranked[0]?.color, 0.12)}`, padding: "28px 24px 24px", fontFamily: "'Inter', sans-serif" }}>
@@ -380,6 +453,7 @@ export function ChartView({
           didDrag={didDrag} setDidDrag={setDidDrag}
           selectedId={selectedId} setSelectedId={setSelectedId}
           isMobile={isMobile} pdfLoading={pdfLoading} setPdfLoading={setPdfLoading}
+          revealPhase={revealPhase} setRevealPhase={setRevealPhase}
           generateChartReport={generateChartReport}
         />
         <SidePanel

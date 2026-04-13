@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { saveChart } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeScaleIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }`;
 
-export function IntroScreens({ screen, setStep, spheres, setGoalStep, setFocusRound, setOverrideSphere, setSelectedFocusSphereId, setSelectedGoalId, DevReset }) {
+export function IntroScreens({ screen, setStep, spheres, connections, session, setGoalStep, setFocusRound, setOverrideSphere, setSelectedFocusSphereId, setSelectedGoalId, DevReset }) {
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
   const base = {
@@ -142,7 +143,7 @@ export function IntroScreens({ screen, setStep, spheres, setGoalStep, setFocusRo
         <p className="text-sm leading-relaxed mb-8" style={{ color: "#8a7455", fontWeight: 300, fontStyle: "italic" }}>
           This is where things start to get exciting.
         </p>
-        {primaryBtn(() => setStep("results"), "SEE MY RESULTS →", "#4a7a72")}
+        {primaryBtn(() => { saveChart(session, { spheres, connections }); setStep("chart"); }, "SEE MY CHART →", "#4a7a72")}
         {backBtn(() => { setGoalStep(spheres.length - 1); setStep("connections"); }, "← Back to connections")}
       </div>
     </div>

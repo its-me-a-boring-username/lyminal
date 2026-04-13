@@ -303,6 +303,8 @@ function GoalChart() {
         screen={step}
         setStep={setStep}
         spheres={spheres}
+        connections={connections}
+        session={session}
         setGoalStep={setGoalStep}
         setFocusRound={setFocusRound}
         setOverrideSphere={setOverrideSphere}
@@ -331,8 +333,8 @@ function GoalChart() {
     );
   }
 
-  // ── RESULTS FLOW (results / focus / action) ──
-  if (["results","focus","action"].includes(step)) {
+  // ── RESULTS FLOW (focus / action) ──
+  if (["focus","action"].includes(step)) {
     return (
       <ResultsFlow
         step={step}

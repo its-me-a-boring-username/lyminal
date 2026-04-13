@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { saveChart } from "../utils/supabase.js";
+import { trackUserEvent } from "../utils/events.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -19,66 +20,6 @@ export function ResultsFlow({
 }) {
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
-
-  // ── RESULTS ──
-  if (step === "results") {
-    const top = ranked[0];
-    const others = ranked.slice(1, 4);
-
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16"
-        style={{ background: "#4a7a72", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
-        <style>{FONTS}</style>
-        <DevReset />
-        <div className="max-w-lg w-full mx-auto">
-          <p className="text-xs uppercase tracking-widest mb-6 text-center" style={{ color: "rgba(255,255,255,0.6)", letterSpacing: "0.15em" }}>
-            Your Lines of Influence
-          </p>
-          <div className="mb-6" style={{ background: "white", border: "1px solid #e8e0d5", boxShadow: "0 4px 24px rgba(0,0,0,0.07)" }}>
-            <div className="px-8 py-12 text-center" style={{ borderBottom: "1px solid #e8e0d5" }}>
-              <p className="mb-4 leading-relaxed" style={{ color: "#4a3828", fontWeight: 300, fontSize: "1.05rem" }}>
-                Based on how your spheres influence each other, your greatest leverage is in{" "}
-                <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, fontSize: "1.25rem", color: top?.color || "#b5472a" }}>
-                  {top?.name}
-                </span>
-              </p>
-              <p className="text-xs" style={{ color: "#b5472a" }}>
-                {top?.out} outgoing · {top?.in} incoming · score {top?.score > 0 ? "+" : ""}{top?.score}
-              </p>
-            </div>
-            {others.length > 0 && (
-              <div className="px-8 py-8">
-                <p className="text-xs uppercase tracking-widest mb-4" style={{ color: "#6e5c4a", letterSpacing: "0.12em" }}>
-                  Also worth your attention
-                </p>
-                <div className="space-y-3">
-                  {others.map(s => (
-                    <div key={s.id} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: s.color }} />
-                        <span style={{ color: "#1c1410", fontWeight: 500, fontFamily: "'Playfair Display', serif", fontSize: "1.05rem" }}>{s.name}</span>
-                      </div>
-                      <span className="text-xs" style={{ color: "#6e5c4a" }}>score {s.score > 0 ? "+" : ""}{s.score}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          <button onClick={() => { setStep("chart"); saveChart(session, { spheres, connections }); }}
-            className="w-full py-4 text-sm font-semibold tracking-widest hover:opacity-90 transition-opacity"
-            style={{ background: "#2c1f14", color: "white", letterSpacing: "0.08em" }}>
-            VIEW MY FULL CHART →
-          </button>
-          <button onClick={() => setStep("connections")}
-            className="w-full text-center mt-4 text-xs hover:opacity-75 transition-opacity"
-            style={{ color: "rgba(255,255,255,0.5)", background: "transparent" }}>
-            ← Back to connections
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   // ── FOCUS ──
   if (step === "focus") {
@@ -146,7 +87,14 @@ export function ResultsFlow({
               {focusRound === 0 ? "← Back" : "Skip"}
             </button>
             <button
-              onClick={() => { setSelectedGoalId(null); setStep("action"); }}
+              onClick={() => {
+                trackUserEvent(session, "focus_selected", {
+                  sphere_id: focusSphere?.id,
+                  sphere_name: focusSphere?.name,
+                });
+                setSelectedGoalId(null);
+                setStep("action");
+              }}
               className="flex-1 py-3 text-sm font-semibold hover:opacity-90 transition-opacity"
               style={{ background: "#b5472a", color: "white" }}>
               Focus on {focusSphere?.name} →
