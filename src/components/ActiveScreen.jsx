@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 import { ACTION_TYPES } from "../utils/actionItems.js";
+import { trackUserEvent } from "../utils/events.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -83,7 +84,10 @@ Do NOT introduce yourself or explain what you do — that has already been handl
     if (!session) { setAuthPrompt("upgrade"); return; }
     if (!isPaid) { setAuthPrompt("upgrade"); return; }
     setPdfLoading("full");
-    try { await generateFullReport(spheres, connections, counts, ranked, activeGoals, checkedItems, completedGoals); }
+    try {
+      await generateFullReport(spheres, connections, counts, ranked, activeGoals, checkedItems, completedGoals);
+      trackUserEvent(session, "report_downloaded", { report_type: "full" });
+    }
     catch (e) { console.error(e); alert("Report generation failed. Please try again."); }
     setPdfLoading(null);
   };
@@ -96,6 +100,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
     );
     setActiveGoals(updated);
     saveChart(session, { spheres, connections, activeGoals: updated, checkedItems, completedGoals });
+    trackUserEvent(session, "action_item_created", { goal_id: goalId, action_item_id: item.id, type: itemType });
   };
 
   const removeActionItem = (goalId, itemId) => {
@@ -168,13 +173,13 @@ Do NOT introduce yourself or explain what you do — that has already been handl
       <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: isDefault ? priorityColor : "var(--ly-accent)" }} />
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-        {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+        {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />}
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         {/* Page header with sphere tint */}
         <div style={{ background: isDefault ? hexToRgba(priorityColor, 0.07) : "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: isDefault ? `1px solid ${hexToRgba(priorityColor, 0.12)}` : "1px solid rgba(var(--ly-accent-rgb), 0.12)", padding: "28px 24px 24px", marginBottom: "0" }}
           className="lg:px-16">
-          {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+          {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />}
           <p className="text-xs uppercase tracking-widest mb-1" style={{ color: isDefault ? priorityColor : "var(--ly-accent)", opacity: 0.8 }}>Your Active Goals</p>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", marginBottom: "6px" }}>Here's what you're working on</h2>
           <p className="text-sm" style={{ color: "#5c4e40", fontWeight: 300 }}>

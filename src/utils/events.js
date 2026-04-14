@@ -11,7 +11,7 @@ function getSessionId() {
     }
     return id;
   } catch {
-    return null;
+    return `fallback_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
   }
 }
 
@@ -43,6 +43,7 @@ export async function trackUserEvent(session, eventName, metadata = {}, options 
     const payload = {
       user_id: userId,
       event_name: eventName,
+      occurred_at: new Date().toISOString(),
       platform: "web",
       session_id: getSessionId(),
       metadata,
@@ -52,5 +53,27 @@ export async function trackUserEvent(session, eventName, metadata = {}, options 
     if (error) throw error;
   } catch (error) {
     console.warn(`[Analytics] Failed to track ${eventName}:`, error?.message || error);
+  }
+}
+
+export function mapStepToScreenName(step) {
+  switch (step) {
+    case "active":
+      return "home";
+    case "plan":
+      return "plan";
+    case "progress":
+      return "progress";
+    case "account":
+      return "account";
+    case "chart":
+    case "chart-view":
+      return "chart";
+    case "chat":
+      return "chat";
+    case "goal-picker":
+      return "goal_picker";
+    default:
+      return null;
   }
 }

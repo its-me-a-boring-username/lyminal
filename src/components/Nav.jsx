@@ -1,4 +1,5 @@
 import React from "react";
+import { trackUserEvent, mapStepToScreenName } from "../utils/events.js";
 
 const OCHRE = "var(--ly-accent)";
 const OCHRE_TINT = "rgba(var(--ly-accent-rgb), 0.08)";
@@ -52,11 +53,25 @@ const TABS = [
   { id: "account",    label: "Account",  icon: "account" },
 ];
 
-export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [] }) {
+const TAB_TO_SCREEN = {
+  active: "home",
+  plan: "plan",
+  progress: "progress",
+  "chart-view": "chart",
+  account: "account",
+};
+
+export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [], session = null }) {
   const navSteps = ["active", "plan", "progress", "chart-view", "account", "chat"];
   if (!navSteps.includes(step)) return null;
 
-  const handleTab = (tab) => setStep(tab.id);
+  const handleTab = (tab) => {
+    trackUserEvent(session, "tab_clicked", {
+      tab_name: TAB_TO_SCREEN[tab.id] || tab.id,
+      from_screen: mapStepToScreenName(step),
+    });
+    setStep(tab.id);
+  };
 
   const isActive = (tab) => {
     if (tab.id === "active" && (step === "active" || step === "chat")) return true;

@@ -37,6 +37,7 @@ export default async function handler(req, res) {
             event_name: "upgrade_completed",
             occurred_at: new Date().toISOString(),
             platform: "web",
+            session_id: "server_webhook",
             metadata: {
               stripe_customer_id: customerId,
               stripe_subscription_id: subscriptionId,

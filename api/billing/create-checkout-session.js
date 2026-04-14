@@ -17,6 +17,7 @@ export default async function handler(req, res) {
         event_name: "upgrade_started",
         occurred_at: new Date().toISOString(),
         platform: "web",
+        session_id: "server_checkout",
         metadata: { source: "billing_checkout" },
       });
     } catch (eventError) {

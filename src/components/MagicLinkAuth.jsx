@@ -1,6 +1,7 @@
 ﻿import { useState } from "react";
 import { supabase } from "../supabaseClient.js";
 import { postJson } from "../utils/api.js";
+import { trackUserEvent } from "../utils/events.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');`;
 
@@ -43,6 +44,7 @@ export function MagicLinkAuth({ context, isLoggedIn = false, session = null, onS
       options: { emailRedirectTo: window.location.origin },
     });
     if (error) {
+      trackUserEvent(session, "magic_link_failed", { code: error?.code || null });
       setError(error.message);
       setLoading(false);
     } else {
@@ -50,6 +52,11 @@ export function MagicLinkAuth({ context, isLoggedIn = false, session = null, onS
       setLoading(false);
       if (onSuccess) onSuccess();
     }
+  };
+
+  const handleUpgradeCancel = () => {
+    trackUserEvent(session, "upgrade_canceled", { source: "upgrade_modal" });
+    onSkip?.();
   };
 
   const handleUpgrade = async () => {
@@ -65,6 +72,10 @@ export function MagicLinkAuth({ context, isLoggedIn = false, session = null, onS
       if (!data?.url) throw new Error("Checkout URL missing.");
       window.location.href = data.url;
     } catch (err) {
+      trackUserEvent(session, "checkout_failed", {
+        code: err?.code || null,
+        message: err?.message || "checkout_failed",
+      });
       setError(err?.message || "Could not start checkout.");
       setUpgradeLoading(false);
     }
@@ -86,7 +97,7 @@ export function MagicLinkAuth({ context, isLoggedIn = false, session = null, onS
 
       {showUpgrade ? (
         <div style={{ ...S.modal, position: "relative" }}>
-          <button onClick={onSkip} style={{ position: "absolute", top: "1rem", right: "1rem", background: "none", border: "none", fontSize: "1.25rem", cursor: "pointer", color: "#8a7455", lineHeight: 1, padding: "0.25rem" }}>x</button>
+          <button onClick={handleUpgradeCancel} style={{ position: "absolute", top: "1rem", right: "1rem", background: "none", border: "none", fontSize: "1.25rem", cursor: "pointer", color: "#8a7455", lineHeight: 1, padding: "0.25rem" }}>x</button>
           <p style={S.eyebrow}>Lyminal Premium</p>
           <h2 style={S.heading}>Unlock the full experience</h2>
           <p style={S.body}>Upgrade to track multiple goals, download your full AI-generated report, and access planning tools that connect your goals to your calendar.</p>
@@ -102,7 +113,7 @@ export function MagicLinkAuth({ context, isLoggedIn = false, session = null, onS
           <button onClick={handleUpgrade} disabled={upgradeLoading} style={{ ...S.btn, opacity: upgradeLoading ? 0.75 : 1, cursor: upgradeLoading ? "default" : "pointer" }}>
             {upgradeLoading ? "Opening checkout..." : "Upgrade to Premium ->"}
           </button>
-          {onSkip && <button onClick={onSkip} style={S.skip}>Maybe later</button>}
+          {onSkip && <button onClick={handleUpgradeCancel} style={S.skip}>Maybe later</button>}
         </div>
       ) : (
         <div style={{ ...S.modal, position: "relative" }}>

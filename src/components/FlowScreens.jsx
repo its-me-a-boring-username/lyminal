@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { SphereConnCard } from "./SphereConnCard.jsx";
 import { SUGGESTED_SPHERES, GOAL_SUGGESTIONS, PALETTE, SPHERE_COLOR_MAP } from "../constants.js";
 import { saveChart } from "../utils/supabase.js";
+import { trackUserEvent } from "../utils/events.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -32,7 +33,9 @@ export function FlowScreens({
   const addSphere = (name) => {
     const n = name.trim();
     if (!n || spheres.some(b => b.name.toLowerCase() === n.toLowerCase())) return;
-    setSpheres(prev => [...prev, { id: `b${Date.now()}`, name: n, color: SPHERE_COLOR_MAP[n] || PALETTE[prev.length % PALETTE.length], goals: [] }]);
+    const sphereId = `b${Date.now()}`;
+    setSpheres(prev => [...prev, { id: sphereId, name: n, color: SPHERE_COLOR_MAP[n] || PALETTE[prev.length % PALETTE.length], goals: [] }]);
+    trackUserEvent(session, "sphere_created", { sphere_name: n, sphere_id: sphereId });
     setNewSphere("");
   };
 
@@ -49,9 +52,11 @@ export function FlowScreens({
   const addGoal = (sphereId, text) => {
     const t = text.trim();
     if (!t) return;
+    const goalId = `g${Date.now()}`;
     setSpheres(p => p.map(b =>
-      b.id === sphereId ? { ...b, goals: [...b.goals, { id: `g${Date.now()}`, text: t }] } : b
+      b.id === sphereId ? { ...b, goals: [...b.goals, { id: goalId, text: t }] } : b
     ));
+    trackUserEvent(session, "goal_created", { sphere_id: sphereId, goal_id: goalId });
     setNewGoal("");
   };
 
@@ -62,10 +67,15 @@ export function FlowScreens({
   };
 
   const toggleConn = (fromId, toId) => {
+    const existing = connections[fromId] || [];
+    const isAdding = !existing.includes(toId);
     setConnections(p => {
       const curr = p[fromId] || [];
       return { ...p, [fromId]: curr.includes(toId) ? curr.filter(t => t !== toId) : [...curr, toId] };
     });
+    if (isAdding) {
+      trackUserEvent(session, "influence_connection_created", { from_sphere_id: fromId, to_sphere_id: toId });
+    }
   };
 
   const [visible, setVisible] = useState(false);
@@ -126,7 +136,12 @@ export function FlowScreens({
             ← Back
           </button>
           <button
-            onClick={() => { setGoalStep(0); setStep("intro-goals"); saveChart(session, { spheres, connections }); }}
+            onClick={() => {
+              trackUserEvent(session, "spheres_setup_completed", { spheres_count: spheres.length });
+              setGoalStep(0);
+              setStep("intro-goals");
+              saveChart(session, { spheres, connections });
+            }}
             disabled={spheres.length < 3}
             style={{ background: "#b5472a", color: "white", fontWeight: 500 }}
             className="flex-1 hover:opacity-90 disabled:opacity-30 py-3 transition-opacity"
@@ -222,7 +237,16 @@ export function FlowScreens({
               ← Back
             </button>
             <button
-              onClick={() => isLast ? (setGoalStep(0), setStep("intro-connections")) : setGoalStep(g => g + 1)}
+              onClick={() => {
+                if (isLast) {
+                  const goalsCount = spheres.reduce((sum, s) => sum + (s.goals?.length || 0), 0);
+                  trackUserEvent(session, "goals_setup_completed", { goals_count: goalsCount });
+                  setGoalStep(0);
+                  setStep("intro-connections");
+                } else {
+                  setGoalStep(g => g + 1);
+                }
+              }}
               className="flex-1 text-white font-bold py-3 transition-colors"
               style={{ background: currentSphere?.color || "#6366f1" }}>
               {isLast ? "Map relationships →" : `Next: ${spheres[goalStep + 1]?.name} →`}
@@ -298,7 +322,17 @@ export function FlowScreens({
               ← Back
             </button>
             <button
-              onClick={() => isLast ? (setSelectedId(null), setStep("intro-results"), saveChart(session, { spheres, connections })) : setGoalStep(s => s + 1)}
+              onClick={() => {
+                if (isLast) {
+                  const connectionsCount = Object.values(connections || {}).reduce((sum, arr) => sum + (arr?.length || 0), 0);
+                  trackUserEvent(session, "connections_setup_completed", { connections_count: connectionsCount });
+                  setSelectedId(null);
+                  setStep("intro-results");
+                  saveChart(session, { spheres, connections });
+                } else {
+                  setGoalStep(s => s + 1);
+                }
+              }}
               className="flex-1 text-white font-bold py-3 transition-colors"
               style={{ background: fromSphere?.color || "#6366f1" }}>
               {isLast ? "See my chart →" : `Next: ${spheres[connStep + 1]?.name} →`}

@@ -1,3 +1,5 @@
+import { trackUserEvent } from "./events.js";
+
 export async function postJson(url, body, session) {
   const headers = { "Content-Type": "application/json" };
   if (session?.access_token) {
@@ -18,6 +20,11 @@ export async function postJson(url, body, session) {
   }
 
   if (!res.ok) {
+    trackUserEvent(session, "api_failed", {
+      endpoint: url,
+      status_code: res.status,
+      code: data?.code || null,
+    });
     throw new Error(data?.error || `Request failed (${res.status})`);
   }
 

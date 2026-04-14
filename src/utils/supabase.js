@@ -1,5 +1,6 @@
 ﻿import { supabase } from "../supabaseClient.js";
 import { normalizeActionItems } from "./actionItems.js";
+import { trackUserEvent } from "./events.js";
 
 const LOCAL_KEY = "goalchart_state";
 
@@ -116,6 +117,10 @@ export async function saveChart(session, { spheres, connections = {}, activeGoal
     }
   } catch (e) {
     console.error("[Supabase] saveChart failed:", e);
+    trackUserEvent(session, "save_chart_failed", {
+      code: e?.code || null,
+      message: e?.message || "saveChart failed",
+    });
   }
 }
 

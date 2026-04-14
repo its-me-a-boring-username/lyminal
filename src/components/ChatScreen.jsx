@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Nav } from "./Nav.jsx";
 import { saveChart } from "../utils/supabase.js";
 import { normalizeActionItems, ACTION_TYPE_DESCRIPTIONS } from "../utils/actionItems.js";
+import { trackUserEvent } from "../utils/events.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`;
@@ -155,6 +156,14 @@ Do not ask follow-up questions after proposing action items unless the user want
     );
     setActiveGoals(updatedGoals);
     saveChart(session, { spheres, connections, activeGoals: updatedGoals });
+    pendingItems.forEach((item) => {
+      trackUserEvent(session, "action_item_created", {
+        goal_id: chatContext?.goalId,
+        action_item_id: item.id,
+        type: item.type || "none",
+        source: "chat",
+      });
+    });
     if (!session && !hasSeenPlanPrompt) {
       setHasSeenPlanPrompt(true);
       setTimeout(() => setAuthPrompt("save_plan"), 9000);
@@ -166,7 +175,7 @@ Do not ask follow-up questions after proposing action items unless the user want
     <div className="flex flex-col overflow-hidden" style={{ height: "100dvh", paddingBottom: isMobile ? "60px" : 0, background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
       <style>{FONTS}</style>
       <DevReset />
-      {isMobile && <Nav step="chat" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+      {isMobile && <Nav step="chat" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />}
 
       {/* Header */}
       <div className="px-6 py-4 flex items-center gap-4" style={{ background: isDefault ? hexToRgba(chatContext?.sphereColor, 0.07) : "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: isDefault ? `1px solid ${hexToRgba(chatContext?.sphereColor, 0.12)}` : "1px solid rgba(var(--ly-accent-rgb), 0.12)" }}>
