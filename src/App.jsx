@@ -55,7 +55,8 @@ function GoalChart() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [session, setSession] = useState(null);
   const [tier, setTier] = useState("free"); // "free" | "paid_1" | "paid_2"
-  const capabilities = useMemo(() => getCapabilities(tier), [tier]);
+  const [devPaidOverride, setDevPaidOverride] = useState(() => localStorage.getItem("dev_paid_override") === "1");
+  const capabilities = useMemo(() => getCapabilities(devPaidOverride ? "paid_1" : tier), [tier, devPaidOverride]);
   const isPaid = capabilities.isPaid;
   const isPro = capabilities.isPro;
   const [authPrompt, setAuthPrompt] = useState(null); // "save_chart" | "save_plan" | "upgrade" | null
@@ -140,6 +141,14 @@ function GoalChart() {
   useEffect(() => {
     if (session && authPrompt) setAuthPrompt(null);
   }, [session, authPrompt]);
+
+  // Prompt logged-out users to save on the active screen (after goals are set up)
+  useEffect(() => {
+    if (step !== "active") return;
+    if (session || hasSeenChartPrompt || authPrompt === "save_chart") return;
+    const t = setTimeout(() => { setAuthPrompt("save_chart"); setHasSeenChartPrompt(true); }, 6000);
+    return () => clearTimeout(t);
+  }, [step]);
 
   // Auth overlay — position:fixed, renders on top of any step
   const AuthOverlay = () => authPrompt ? (
@@ -292,7 +301,7 @@ function GoalChart() {
 
   const currentSphere = spheres[goalStep];
 
-  const BoundDevReset = () => <DevReset session={session} />;
+  const BoundDevReset = () => <DevReset session={session} devPaidOverride={devPaidOverride} setDevPaidOverride={setDevPaidOverride} />;
 
   if (step === "welcome") return <WelcomeScreen setStep={setStep} DevReset={BoundDevReset} setAuthPrompt={setAuthPrompt} isMobile={isMobile} />;
 
@@ -357,9 +366,6 @@ function GoalChart() {
 
   // ── CHART ──
   if (step === "chart" || step === "chart-view") {
-    if (step === "chart" && !session && !hasSeenChartPrompt && authPrompt !== "save_chart") {
-      setTimeout(() => { setAuthPrompt("save_chart"); setHasSeenChartPrompt(true); }, 6000);
-    }
     return (
       <>
         <AuthOverlay />

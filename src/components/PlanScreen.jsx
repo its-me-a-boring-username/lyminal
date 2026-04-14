@@ -939,34 +939,33 @@ export function PlanScreen({
           <p style={{ fontSize: "0.8rem", color: "#5c4e40", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Forward tasks, schedule reminders, send messages, or search for resources.</p>
         </div>
 
-        {/* Mobile: horizontal ring carousel between header and content */}
-        {isMobile && activeGoals.length > 1 && (
-          <div style={{ display: "flex", overflowX: "auto", gap: "4px", padding: "8px 16px", borderBottom: "1px solid #e8e0d5", background: "#faf8f5", WebkitOverflowScrolling: "touch" }}>
-            {activeGoals.map((ag, i) => (
-              <RingButton key={ag.goalId} color={isDefault ? ag.sphereColor : "var(--ly-accent)"} isActive={i === selIndex}
-                onClick={() => { setSelIndex(i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }}
-              />
-            ))}
-          </div>
-        )}
+        {/* Mobile horizontal carousel — CSS-gated, always shown on small screens */}
+        <div className="flex lg:hidden" style={{ overflowX: "auto", gap: "4px", padding: "8px 16px", borderBottom: "1px solid #e8e0d5", background: "#faf8f5", WebkitOverflowScrolling: "touch" }}>
+          {activeGoals.map((ag, i) => (
+            <div key={ag.goalId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "3px", flexShrink: 0 }}>
+              <RingButton color={isDefault ? ag.sphereColor : "var(--ly-accent)"} isActive={i === selIndex}
+                onClick={() => { setSelIndex(i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} />
+              <span style={{ fontSize: "9px", color: i === selIndex ? (isDefault ? ag.sphereColor : "var(--ly-accent)") : "#8a7455", fontWeight: i === selIndex ? 600 : 400, fontFamily: "'Inter',sans-serif", maxWidth: "52px", textAlign: "center", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {ag.sphereName}
+              </span>
+            </div>
+          ))}
+        </div>
 
-        {/* Body — ring sidebar (desktop only) + content */}
+        {/* Body — desktop vertical sidebar + content */}
         <div style={{ flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
         <div className="max-w-4xl mx-auto lg:px-8" style={{ display: "flex", height: "100%" }}>
 
-        {/* Desktop: vertical ring sidebar */}
-        {!isMobile && (
-          <div style={{ width: "60px", flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "16px", gap: "4px", borderRight: "1px solid #e8e0d5", background: "#faf8f5" }}>
-            {activeGoals.map((ag, i) => (
-              <RingButton key={ag.goalId} color={isDefault ? ag.sphereColor : "var(--ly-accent)"} isActive={i === selIndex}
-                onClick={() => { setSelIndex(i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }}
-              />
-            ))}
-          </div>
-        )}
+        {/* Desktop vertical sidebar — CSS-gated */}
+        <div className="hidden lg:flex flex-col" style={{ width: "60px", flexShrink: 0, alignItems: "center", paddingTop: "16px", gap: "4px", borderRight: "1px solid #e8e0d5", background: "#faf8f5" }}>
+          {activeGoals.map((ag, i) => (
+            <RingButton key={ag.goalId} color={isDefault ? ag.sphereColor : "var(--ly-accent)"} isActive={i === selIndex}
+              onClick={() => { setSelIndex(i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} />
+          ))}
+        </div>
 
         {/* Content */}
-        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", padding: isMobile ? "12px 14px" : "16px 20px 16px 16px" }}>
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", padding: "12px 14px" }}>
 
           {/* Free preview banner */}
           {!isPaid && (

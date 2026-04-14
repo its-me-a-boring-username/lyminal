@@ -16,7 +16,7 @@ const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Di
 const SUGGESTED_SPHERES = [
   "Finances", "Work", "Family", "Health", "Mental Health",
   "Social Life", "Creativity", "Fun", "Education", "Community",
-  "Entrepreneurship", "Dating", "Practical Skills", "Self-Reliance", "Spirituality"
+  "Dating", "Practical Skills", "Self-Reliance", "Spirituality"
 ];
 
 const GOAL_SUGGESTIONS = {
@@ -24,7 +24,6 @@ const GOAL_SUGGESTIONS = {
   "Health": ["Build a consistent exercise routine", "Improve my diet", "Cut out refined sugars", "Fix my sleep schedule", "Reduce screen time"],
   "Education": ["Learn a new language", "Earn a certification", "Study a subject in depth", "Audit a college course", "Build a reading habit", "Learn to write better"],
   "Community": ["Start volunteering", "Get to know my neighbors", "Make a donation", "Join a local organization", "Attend a town hall", "Connect with my representatives"],
-  "Entrepreneurship": ["Validate my idea", "Draft a business plan", "Build an online presence", "Finish my pitch deck", "Evaluate suppliers", "Find my first customer"],
   "Mental Health": ["Find a therapist", "Complete a self-evaluation", "Build a journaling habit", "Identify my biggest stressors", "Improve work-life balance", "Set better boundaries"],
   "Family": ["Plan a family trip", "Host a regular family night", "Plan a family reunion", "Start a new tradition", "Reconnect with a relative"],
   "Creativity": ["Make time for creativity weekly", "Take a class in a new medium", "Start a creative project", "Collaborate with another creative", "Arrange a public showcase", "Publish my writing"],
@@ -68,7 +67,6 @@ const SPHERE_COLOR_MAP = {
   "Fun":              "#4e857a", // muted teal
   "Education":        "#4e6b8a", // dusty navy
   "Community":        "#5c7a5c", // forest green
-  "Entrepreneurship": "#8a7a4e", // olive gold
   "Dating":           "#8a5c5c", // muted crimson
   "Practical Skills": "#7a6b4e", // warm brown
   "Self-Reliance":    "#5c8a7a", // seafoam

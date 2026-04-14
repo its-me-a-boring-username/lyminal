@@ -363,17 +363,8 @@ export function ChartView({
 
   const top = ranked[0];
   // "modal" → "spotlight" → null; only fires on first-time chart view (mode === "chart")
+  // Tap/click to dismiss — no auto timers
   const [revealPhase, setRevealPhase] = useState(mode === "chart" ? "modal" : null);
-  useEffect(() => {
-    if (revealPhase !== "modal") return;
-    const t = setTimeout(() => setRevealPhase("spotlight"), 2500);
-    return () => clearTimeout(t);
-  }, [revealPhase]);
-  useEffect(() => {
-    if (revealPhase !== "spotlight") return;
-    const t = setTimeout(() => setRevealPhase(null), 4000);
-    return () => clearTimeout(t);
-  }, [revealPhase]);
 
   return (
     <>
@@ -427,9 +418,7 @@ export function ChartView({
       <div style={{ background: hexToRgba(ranked[0]?.color, 0.07), borderBottom: `1px solid ${hexToRgba(ranked[0]?.color, 0.12)}`, padding: "28px 24px 24px", fontFamily: "'Inter', sans-serif" }}>
         <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "flex-start" : "flex-start", justifyContent: "space-between", gap: isMobile ? "10px" : "16px" }}>
           <div>
-            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 6px" }}>My Chart</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: "0 0 4px" }}>Your Goal Chart</h2>
-            <p style={{ fontSize: "0.7rem", color: "#8a7455", margin: 0 }}>{spheres.length} spheres · {Object.values(connections).flat().length} connections</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>Your Goal Chart</h2>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0, flexWrap: "wrap", justifyContent: isMobile ? "flex-start" : "flex-end" }}>
             <button onClick={() => { setDragOffsets({}); setStep("connections"); }} style={{ fontSize: "11px", fontWeight: 500, color: "#b5472a", background: "none", border: "1px solid rgba(181,71,42,0.25)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>← Edit</button>
