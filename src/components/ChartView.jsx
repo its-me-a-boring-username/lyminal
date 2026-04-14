@@ -376,50 +376,52 @@ export function ChartView({
   }, [revealPhase]);
 
   return (
-    <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
-      <style>{FONTS}</style>
+    <>
+    <style>{FONTS}</style>
 
-      {/* Reveal modal — shown on first chart view */}
-      {revealPhase === "modal" && top && (
-        <div onClick={() => setRevealPhase("spotlight")} style={{
-          position: "fixed", inset: 0, zIndex: 50,
-          background: "rgba(20,14,10,0.72)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          padding: "24px", cursor: "pointer",
-          animation: "fadeIn 0.4s ease-out",
-        }}>
-          <div style={{
-            background: "white", maxWidth: "400px", width: "100%",
-            padding: "40px 36px", textAlign: "center",
-            borderTop: `5px solid ${top.color}`,
-            animation: "fadeScaleIn 0.4s ease-out",
-          }} onClick={e => e.stopPropagation()}>
-            <p style={{ fontSize: "10px", letterSpacing: "0.16em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 16px", fontFamily: "'Inter',sans-serif" }}>
-              Your Lines of Influence
-            </p>
-            <p style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.05rem", color: "#4a3828", fontWeight: 300, margin: "0 0 8px", lineHeight: 1.6 }}>
-              Based on how your spheres connect, your greatest leverage is in
-            </p>
-            <p style={{ fontFamily: "'Playfair Display',serif", fontSize: "2rem", fontWeight: 700, color: top.color, margin: "0 0 10px", lineHeight: 1.1 }}>
-              {top.name}
-            </p>
-            <p style={{ fontSize: "11px", color: "#8a7455", margin: "0 0 32px", fontFamily: "'Inter',sans-serif" }}>
-              {top.out} outgoing · {top.in} incoming · score {top.score > 0 ? "+" : ""}{top.score}
-            </p>
-            <button onClick={() => setRevealPhase("spotlight")} style={{
-              background: top.color, color: "white", border: "none",
-              padding: "12px 32px", fontSize: "11px", fontWeight: 600,
-              letterSpacing: "0.08em", textTransform: "uppercase",
-              cursor: "pointer", fontFamily: "'Inter',sans-serif",
-            }}>
-              See My Chart →
-            </button>
-            <p style={{ fontSize: "10px", color: "#c4b8a8", margin: "14px 0 0", fontFamily: "'Inter',sans-serif" }}>
-              tap anywhere to continue
-            </p>
-          </div>
+    {/* Reveal modal — outside opacity wrapper so it's always fully visible */}
+    {revealPhase === "modal" && top && (
+      <div onClick={() => setRevealPhase("spotlight")} style={{
+        position: "fixed", inset: 0, zIndex: 50,
+        background: "rgba(20,14,10,0.72)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "24px", cursor: "pointer",
+        animation: "fadeIn 0.4s ease-out",
+      }}>
+        <div style={{
+          background: "white", maxWidth: "400px", width: "100%",
+          padding: "40px 36px", textAlign: "center",
+          borderTop: `5px solid ${top.color}`,
+          animation: "fadeScaleIn 0.4s ease-out",
+        }} onClick={e => e.stopPropagation()}>
+          <p style={{ fontSize: "10px", letterSpacing: "0.16em", textTransform: "uppercase", color: "#8a7455", margin: "0 0 16px", fontFamily: "'Inter',sans-serif" }}>
+            Your Lines of Influence
+          </p>
+          <p style={{ fontFamily: "'Playfair Display',serif", fontSize: "1.05rem", color: "#4a3828", fontWeight: 300, margin: "0 0 8px", lineHeight: 1.6 }}>
+            Based on how your spheres connect, your greatest leverage is in
+          </p>
+          <p style={{ fontFamily: "'Playfair Display',serif", fontSize: "2rem", fontWeight: 700, color: top.color, margin: "0 0 10px", lineHeight: 1.1 }}>
+            {top.name}
+          </p>
+          <p style={{ fontSize: "11px", color: "#8a7455", margin: "0 0 32px", fontFamily: "'Inter',sans-serif" }}>
+            {top.out} outgoing · {top.in} incoming · score {top.score > 0 ? "+" : ""}{top.score}
+          </p>
+          <button onClick={() => setRevealPhase("spotlight")} style={{
+            background: top.color, color: "white", border: "none",
+            padding: "12px 32px", fontSize: "11px", fontWeight: 600,
+            letterSpacing: "0.08em", textTransform: "uppercase",
+            cursor: "pointer", fontFamily: "'Inter',sans-serif",
+          }}>
+            See My Chart →
+          </button>
+          <p style={{ fontSize: "10px", color: "#c4b8a8", margin: "14px 0 0", fontFamily: "'Inter',sans-serif" }}>
+            tap anywhere to continue
+          </p>
         </div>
-      )}
+      </div>
+    )}
+
+    <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
       {/* Header */}
       <div style={{ background: hexToRgba(ranked[0]?.color, 0.07), borderBottom: `1px solid ${hexToRgba(ranked[0]?.color, 0.12)}`, padding: "28px 24px 24px", fontFamily: "'Inter', sans-serif" }}>
@@ -462,5 +464,6 @@ export function ChartView({
         />
       </div>
     </div>
+    </>
   );
 }
