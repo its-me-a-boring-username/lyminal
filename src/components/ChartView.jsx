@@ -415,23 +415,23 @@ export function ChartView({
     <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
       {/* Header */}
-      <div style={{ background: hexToRgba(ranked[0]?.color, 0.07), borderBottom: `1px solid ${hexToRgba(ranked[0]?.color, 0.12)}`, padding: "28px 24px 24px", fontFamily: "'Inter', sans-serif" }}>
-        <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "flex-start" : "flex-start", justifyContent: "space-between", gap: isMobile ? "10px" : "16px" }}>
-          <div>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>Your Goal Chart</h2>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0, flexWrap: "wrap", justifyContent: isMobile ? "flex-start" : "flex-end" }}>
-            <button onClick={() => { setDragOffsets({}); setStep("connections"); }} style={{ fontSize: "11px", fontWeight: 500, color: "#b5472a", background: "none", border: "1px solid rgba(181,71,42,0.25)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>← Edit</button>
-            <button onClick={handleRedoChart} style={{ fontSize: "11px", fontWeight: 500, color: "#6e5c4a", background: "none", border: "1px solid #e8e0d5", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>↺ Redo</button>
-            {Object.keys(dragOffsets).length > 0 && (
-              <button onClick={() => setDragOffsets({})} style={{ fontSize: "11px", fontWeight: 500, color: "#4a7a72", background: "none", border: "1px solid rgba(74,122,114,0.3)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>↺ Reset layout</button>
-            )}
-            {mode === "chart-view" || activeGoals.length > 0 ? (
-              <button onClick={() => setStep("active")} style={{ fontSize: "11px", fontWeight: 500, color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>Exit chart</button>
-            ) : (
-              <button onClick={handleChooseFocus} style={{ fontSize: "11px", fontWeight: 600, background: ranked[0]?.color || "#b5472a", color: "white", border: "none", padding: "8px 16px", cursor: "pointer", borderRadius: "6px", letterSpacing: "0.04em" }}>Choose My Focus →</button>
-            )}
-          </div>
+      <div style={{ background: hexToRgba(ranked[0]?.color, 0.07), borderBottom: `1px solid ${hexToRgba(ranked[0]?.color, 0.12)}`, padding: "16px 24px", fontFamily: "'Inter', sans-serif" }}>
+        {/* Title row with inline CTA */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", marginBottom: "10px" }}>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.5rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>Your Goal Chart</h2>
+          {mode === "chart-view" || activeGoals.length > 0 ? (
+            <button onClick={() => setStep("active")} style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.06em", background: ranked[0]?.color || "#6e5c4a", color: "white", border: "none", padding: "8px 16px", cursor: "pointer", borderRadius: "6px", flexShrink: 0 }}>Exit chart →</button>
+          ) : (
+            <button onClick={handleChooseFocus} style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.06em", background: ranked[0]?.color || "#b5472a", color: "white", border: "none", padding: "8px 16px", cursor: "pointer", borderRadius: "6px", flexShrink: 0 }}>Choose My Focus →</button>
+          )}
+        </div>
+        {/* Secondary action buttons */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+          <button onClick={() => { setDragOffsets({}); setStep("connections"); }} style={{ fontSize: "11px", fontWeight: 500, color: "#b5472a", background: "rgba(181,71,42,0.08)", border: "1px solid rgba(181,71,42,0.4)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>← Edit</button>
+          <button onClick={handleRedoChart} style={{ fontSize: "11px", fontWeight: 500, color: "#5c4e40", background: "rgba(92,78,64,0.08)", border: "1px solid rgba(92,78,64,0.35)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>↺ Redo</button>
+          {Object.keys(dragOffsets).length > 0 && (
+            <button onClick={() => setDragOffsets({})} style={{ fontSize: "11px", fontWeight: 500, color: "#4a7a72", background: "rgba(74,122,114,0.08)", border: "1px solid rgba(74,122,114,0.4)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>↺ Reset layout</button>
+          )}
         </div>
       </div>
 

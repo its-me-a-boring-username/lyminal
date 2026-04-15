@@ -940,15 +940,10 @@ export function PlanScreen({
         </div>
 
         {/* Mobile horizontal carousel — CSS-gated, always shown on small screens */}
-        <div className="flex lg:hidden" style={{ overflowX: "auto", gap: "4px", padding: "8px 16px", borderBottom: "1px solid #e8e0d5", background: "#faf8f5", WebkitOverflowScrolling: "touch" }}>
+        <div className="flex lg:hidden" style={{ overflowX: "auto", gap: "4px", padding: "8px 16px", justifyContent: "center", borderBottom: "1px solid #e8e0d5", background: "#faf8f5", WebkitOverflowScrolling: "touch" }}>
           {activeGoals.map((ag, i) => (
-            <div key={ag.goalId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "3px", flexShrink: 0 }}>
-              <RingButton color={isDefault ? ag.sphereColor : "var(--ly-accent)"} isActive={i === selIndex}
-                onClick={() => { setSelIndex(i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} />
-              <span style={{ fontSize: "9px", color: i === selIndex ? (isDefault ? ag.sphereColor : "var(--ly-accent)") : "#8a7455", fontWeight: i === selIndex ? 600 : 400, fontFamily: "'Inter',sans-serif", maxWidth: "52px", textAlign: "center", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {ag.sphereName}
-              </span>
-            </div>
+            <RingButton key={ag.goalId} color={isDefault ? ag.sphereColor : "var(--ly-accent)"} isActive={i === selIndex}
+              onClick={() => { setSelIndex(i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} />
           ))}
         </div>
 
@@ -979,6 +974,15 @@ export function PlanScreen({
 
           {/* Type pills — floating above the card */}
           <div style={{ display: "flex", gap: "8px", marginBottom: "10px", overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: "2px", flexShrink: 0 }}>
+            <button onClick={() => { setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} style={{
+              padding: "7px 14px", cursor: "pointer", flexShrink: 0,
+              fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: activeType === null ? 600 : 500,
+              letterSpacing: "0.06em", textTransform: "uppercase", borderRadius: "999px",
+              border: `1.5px solid ${activeType === null ? "#8a7455" : "#e8e0d5"}`,
+              background: activeType === null ? "#8a7455" : "white",
+              color: activeType === null ? "white" : "#8a7455",
+              transition: "all 0.15s",
+            }}>All</button>
             {ACTION_TYPES.map(t => {
               const isAct  = activeType === t;
               const locked = (!isPaid && t !== "none") || (t === "find" && !isPro);
@@ -1001,14 +1005,6 @@ export function PlanScreen({
                 </button>
               );
             })}
-            {activeType && (
-              <button onClick={() => { setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} style={{
-                padding: "7px 14px", cursor: "pointer", flexShrink: 0,
-                fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 500,
-                borderRadius: "999px", border: "1.5px solid #e8e0d5",
-                background: "none", color: "#8a7455", transition: "all 0.15s",
-              }}>All</button>
-            )}
           </div>
 
           <div style={{ background: "white", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
@@ -1109,7 +1105,7 @@ export function PlanScreen({
                       )
                     )}
                     <select value={item.type} onChange={e => retagItem(item.id, e.target.value)}
-                      style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.04em", padding: "2px 6px", border: "none", background: TBG[item.type], color: TC[item.type], cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
+                      style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.04em", padding: "3px 8px", border: "none", borderRadius: "4px", background: TBG[item.type], color: TC[item.type], cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
                       {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t}</option>)}
                     </select>
                   </div>
