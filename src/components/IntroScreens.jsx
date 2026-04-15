@@ -9,10 +9,10 @@ export function IntroScreens({ screen, setStep, spheres, connections, session, s
   useEffect(() => { setVisible(true); }, []);
   const base = {
     className: "min-h-screen flex flex-col items-center justify-center px-6 text-center",
-    style: { background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }
+    style: { background: "var(--ly-bg)", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }
   };
 
-  const primaryBtn = (onClick, label, color = "#b5472a") => (
+  const primaryBtn = (onClick, label, color = "var(--ly-accent)") => (
     <button onClick={onClick}
       style={{ background: color, color: "#faf8f5", fontWeight: 500, letterSpacing: "0.06em", fontSize: "0.8rem" }}
       className="w-full py-3.5 transition-opacity hover:opacity-85 mb-3">
@@ -39,9 +39,9 @@ export function IntroScreens({ screen, setStep, spheres, connections, session, s
             <circle cx="35" cy="55" r="12" fill="#c4973a" opacity="0.2"/>
           </svg>
         </div>
-        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{ color: "#b5472a", letterSpacing: "0.12em" }}>Step 1 of 3</p>
+        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{ color: "var(--ly-accent)", letterSpacing: "0.12em" }}>Step 1 of 3</p>
         <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.8rem", fontWeight: 600, color: "#1c1410", lineHeight: 1.3 }} className="mb-4">
-          Start with your <em style={{ color: "#b5472a" }}>spheres</em>
+          Start with your <em style={{ color: "var(--ly-accent)" }}>spheres</em>
         </h2>
         <p className="text-sm leading-relaxed mb-3" style={{ color: "#4a3828", fontWeight: 300 }}>
           Your life is made up of different areas — we call them <strong style={{ fontWeight: 500 }}>spheres</strong>. Career, health, relationships, creativity, finances...
@@ -62,14 +62,14 @@ export function IntroScreens({ screen, setStep, spheres, connections, session, s
       <div style={{ maxWidth: "480px" }} className="w-full">
         <div className="flex justify-center mb-6">
           <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <circle cx="40" cy="40" r="28" stroke="#b5472a" strokeWidth="1.5" opacity="0.2"/>
-            <circle cx="40" cy="40" r="18" stroke="#b5472a" strokeWidth="1.5" opacity="0.35"/>
-            <circle cx="40" cy="40" r="8" fill="#b5472a" opacity="0.5"/>
+            <circle cx="40" cy="40" r="28" stroke="var(--ly-accent)" strokeWidth="1.5" opacity="0.2"/>
+            <circle cx="40" cy="40" r="18" stroke="var(--ly-accent)" strokeWidth="1.5" opacity="0.35"/>
+            <circle cx="40" cy="40" r="8" fill="var(--ly-accent)" opacity="0.5"/>
           </svg>
         </div>
-        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{ color: "#b5472a", letterSpacing: "0.12em" }}>Step 2 of 3</p>
+        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{ color: "var(--ly-accent)", letterSpacing: "0.12em" }}>Step 2 of 3</p>
         <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.8rem", fontWeight: 600, color: "#1c1410", lineHeight: 1.3 }} className="mb-4">
-          Now set your <em style={{ color: "#b5472a" }}>goals</em>
+          Now set your <em style={{ color: "var(--ly-accent)" }}>goals</em>
         </h2>
         <p className="text-sm leading-relaxed mb-3" style={{ color: "#4a3828", fontWeight: 300 }}>
           For each sphere, you'll add goals — concrete things you want to achieve. These don't have to be perfect.
@@ -127,7 +127,7 @@ export function IntroScreens({ screen, setStep, spheres, connections, session, s
             <rect x="33" y="25" width="12" height="45" rx="2" fill="#4a7a72" opacity="0.45"/>
             <rect x="51" y="10" width="12" height="60" rx="2" fill="#4a7a72" opacity="0.6"/>
             <rect x="69" y="30" width="12" height="40" rx="2" fill="#4a7a72" opacity="0.4"/>
-            <circle cx="57" cy="10" r="5" fill="#b5472a" opacity="0.7"/>
+            <circle cx="57" cy="10" r="5" fill="var(--ly-accent)" opacity="0.7"/>
           </svg>
         </div>
         <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{ color: "#4a7a72", letterSpacing: "0.12em" }}>You're done!</p>
@@ -156,17 +156,17 @@ export function IntroScreens({ screen, setStep, spheres, connections, session, s
       <div style={{ maxWidth: "480px" }} className="w-full">
         <div className="flex justify-center mb-6">
           <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <rect x="20" y="12" width="40" height="56" rx="4" stroke="#b5472a" strokeWidth="1.5" opacity="0.3"/>
-            <line x1="28" y1="28" x2="52" y2="28" stroke="#b5472a" strokeWidth="1.5" opacity="0.2"/>
-            <line x1="28" y1="38" x2="52" y2="38" stroke="#b5472a" strokeWidth="1.5" opacity="0.2"/>
-            <line x1="28" y1="48" x2="45" y2="48" stroke="#b5472a" strokeWidth="1.5" opacity="0.2"/>
-            <polyline points="26,27 29,30 34,24" stroke="#b5472a" strokeWidth="2" fill="none" opacity="0.6"/>
-            <polyline points="26,37 29,40 34,34" stroke="#b5472a" strokeWidth="2" fill="none" opacity="0.6"/>
+            <rect x="20" y="12" width="40" height="56" rx="4" stroke="var(--ly-accent)" strokeWidth="1.5" opacity="0.3"/>
+            <line x1="28" y1="28" x2="52" y2="28" stroke="var(--ly-accent)" strokeWidth="1.5" opacity="0.2"/>
+            <line x1="28" y1="38" x2="52" y2="38" stroke="var(--ly-accent)" strokeWidth="1.5" opacity="0.2"/>
+            <line x1="28" y1="48" x2="45" y2="48" stroke="var(--ly-accent)" strokeWidth="1.5" opacity="0.2"/>
+            <polyline points="26,27 29,30 34,24" stroke="var(--ly-accent)" strokeWidth="2" fill="none" opacity="0.6"/>
+            <polyline points="26,37 29,40 34,34" stroke="var(--ly-accent)" strokeWidth="2" fill="none" opacity="0.6"/>
           </svg>
         </div>
-        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{ color: "#b5472a", letterSpacing: "0.12em" }}>Your plan</p>
+        <p className="text-xs uppercase tracking-widest mb-3 font-medium" style={{ color: "var(--ly-accent)", letterSpacing: "0.12em" }}>Your plan</p>
         <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.8rem", fontWeight: 600, color: "#1c1410", lineHeight: 1.3 }} className="mb-4">
-          Build it with <em style={{ color: "#b5472a" }}>action items</em>
+          Build it with <em style={{ color: "var(--ly-accent)" }}>action items</em>
         </h2>
         <p className="text-sm leading-relaxed mb-3" style={{ color: "#4a3828", fontWeight: 300 }}>
           Now that you've chosen a goal, it's time to break it into concrete steps. You can add action items yourself or talk to <strong style={{ fontWeight: 500 }}>Lyme</strong> — your AI coach — to build a plan together.

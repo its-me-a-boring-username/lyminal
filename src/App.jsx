@@ -320,6 +320,7 @@ function GoalChart() {
         setSelectedFocusSphereId={setSelectedFocusSphereId}
         setSelectedGoalId={setSelectedGoalId}
         DevReset={BoundDevReset}
+        selectedTheme={selectedTheme}
       />
     );
   }
@@ -338,6 +339,7 @@ function GoalChart() {
         setStep={setStep}
         session={session}
         DevReset={BoundDevReset}
+        selectedTheme={selectedTheme}
       />
     );
   }
@@ -395,6 +397,7 @@ function GoalChart() {
           setGoalStep={setGoalStep}
           setActiveGoals={setActiveGoals}
           generateChartReport={generateChartReport}
+          selectedTheme={selectedTheme}
         />
       </>
     );

@@ -131,7 +131,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
   };
 
   return (
-    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "var(--ly-bg)", fontFamily: "'Inter', sans-serif" }}>
       <style>{FONTS}</style>
 
       {/* Remove goal modal */}
@@ -177,7 +177,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         {/* Page header with sphere tint */}
-        <div style={{ background: isDefault ? hexToRgba(priorityColor, 0.07) : "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: isDefault ? `1px solid ${hexToRgba(priorityColor, 0.12)}` : "1px solid rgba(var(--ly-accent-rgb), 0.12)", padding: "28px 24px 24px", marginBottom: "0" }}
+        <div style={{ background: isDefault ? hexToRgba(priorityColor, 0.12) : "rgba(var(--ly-accent-rgb), 0.12)", borderBottom: isDefault ? `1px solid ${hexToRgba(priorityColor, 0.18)}` : "1px solid rgba(var(--ly-accent-rgb), 0.18)", padding: "28px 24px 24px", marginBottom: "0" }}
           className="lg:px-16">
           {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />}
           <p className="text-xs uppercase tracking-widest mb-1" style={{ color: isDefault ? priorityColor : "var(--ly-accent)", opacity: 0.8 }}>Your Active Goals</p>
@@ -415,8 +415,8 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               className="w-full py-3 text-xs font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
               style={{
                 borderRadius: "6px",
-                background: isPaid ? "#4a7a72" : "#f0ebe3",
-                color: isPaid ? "white" : "#6e5c4a",
+                background: isPaid ? "var(--ly-accent)" : "rgba(var(--ly-accent-rgb), 0.08)",
+                color: isPaid ? "white" : "var(--ly-accent)",
                 border: isPaid ? "none" : "1px dashed #d4c9bb",
                 letterSpacing: "0.04em",
                 opacity: pdfLoading ? 0.7 : 1,

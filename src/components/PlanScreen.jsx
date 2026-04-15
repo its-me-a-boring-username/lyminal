@@ -32,7 +32,8 @@ function RingButton({ color, isActive, onClick }) {
       width: "52px", height: "52px", flexShrink: 0,
     }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle cx={cx} cy={cy} r={r} fill={color + (isActive ? "28" : "18")} stroke={color} strokeWidth={sw} />
+        <circle cx={cx} cy={cy} r={r}
+          style={{ fill: color, fillOpacity: isActive ? 0.16 : 0.09, stroke: color, strokeWidth: sw }} />
       </svg>
     </button>
   );
@@ -60,7 +61,7 @@ function ForwardModal({ items, color, onClose }) {
         </div>
         {sent ? (
           <div style={{ padding: "32px 28px", textAlign: "center" }}>
-            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Forwarded ✓</p>
+            <p style={{ fontSize: "13px", color: "var(--ly-accent)", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Forwarded ✓</p>
             <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 20px", fontFamily: "'Inter', sans-serif" }}>Your email client should have opened.</p>
             <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
           </div>
@@ -119,7 +120,7 @@ function ScheduleModal({ items, color, onClose }) {
         </div>
         {saved ? (
           <div style={{ padding: "32px 28px", textAlign: "center" }}>
-            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Reminder set ✓</p>
+            <p style={{ fontSize: "13px", color: "var(--ly-accent)", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Reminder set ✓</p>
             <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>{date} at {time} · {repeat === "once" ? "One time" : repeat === "daily" ? "Every day" : "Every week"}</p>
             <p style={{ fontSize: "11px", color: "#8a7455", margin: "0 0 20px", fontStyle: "italic", fontFamily: "'Inter', sans-serif" }}>Push notifications coming soon.</p>
             <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
@@ -212,7 +213,7 @@ Search the web if needed and give one clear, useful response. Include specific n
   };
 
   return (
-    <div style={{ borderTop: "1px solid #e8e0d5", background: "#faf8f5" }}>
+    <div style={{ borderTop: "1px solid #e8e0d5", background: "var(--ly-bg)" }}>
       <div style={{ display: "flex", gap: "8px", padding: "10px 18px" }}>
         <input autoFocus value={input} onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === "Enter" && !e.shiftKey && ask()}
@@ -442,7 +443,7 @@ function NewFindPanel({ item, goal, onClose, onSaveFact }) {
   };
 
   return (
-    <div style={{ borderTop: "1px solid #e8e0d5", background: "#faf8f5" }}>
+    <div style={{ borderTop: "1px solid #e8e0d5", background: "var(--ly-bg)" }}>
       <div style={{ display: "flex", gap: "8px", padding: "10px 18px" }}>
         <input autoFocus value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && ask()} disabled={loading}
           placeholder={loading ? "Lyme is searching..." : "Ask Lyme to find something..."}
@@ -1060,7 +1061,7 @@ export function PlanScreen({
                     )}
                     <button onClick={() => toggleCheck(item.id)} style={{
                       width: "16px", height: "16px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
-                      border: `1.5px solid ${isDone ? hc : "#d4c9bb"}`, background: isDone ? hc : "white",
+                      border: `1.5px solid ${isDone ? hc : "rgba(var(--ly-accent-rgb), 0.25)"}`, background: isDone ? hc : "white",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       cursor: "pointer", padding: 0, transition: "all 0.15s",
                     }}>
@@ -1089,23 +1090,25 @@ export function PlanScreen({
                           )}
                         </div>
                       )}
+                      {isFind && activeType === "find" && (
+                        <div style={{ marginTop: "5px" }}>
+                          {isPro ? (
+                            <button onClick={() => (findOpen ? closeFindPanel({ completed: false }) : openFindPanel(item))}
+                              style={{ fontSize: "10px", fontWeight: 600, color: TC.find, background: "none", border: `1px solid ${TBORDER.find}`, padding: "3px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+                              {findOpen ? "Close" : "Ask Lyme"}
+                            </button>
+                          ) : (
+                            <button onClick={() => setAuthPrompt("upgrade")}
+                              style={{ fontSize: "11px", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                              title="Available on the $15/mo plan">
+                              🔒
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    {isFind && activeType === "find" && (
-                      isPro ? (
-                        <button onClick={() => (findOpen ? closeFindPanel({ completed: false }) : openFindPanel(item))}
-                          style={{ fontSize: "10px", fontWeight: 600, color: TC.find, background: "none", border: `1px solid ${TBORDER.find}`, padding: "3px 9px", cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
-                          {findOpen ? "Close" : "Ask Lyme"}
-                        </button>
-                      ) : (
-                        <button onClick={() => setAuthPrompt("upgrade")}
-                          style={{ fontSize: "13px", background: "none", border: "none", cursor: "pointer", flexShrink: 0, padding: 0 }}
-                          title="Available on the $15/mo plan">
-                          🔒
-                        </button>
-                      )
-                    )}
                     <select value={item.type} onChange={e => retagItem(item.id, e.target.value)}
-                      style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.04em", padding: "3px 8px", border: "none", borderRadius: "4px", background: TBG[item.type], color: TC[item.type], cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
+                      style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.04em", padding: "5px 10px", border: "none", borderRadius: "4px", background: TBG[item.type], color: TC[item.type], cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
                       {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t}</option>)}
                     </select>
                   </div>
