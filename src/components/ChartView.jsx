@@ -172,10 +172,10 @@ const ChartSVG = ({
               )}
               <circle
                 cx={pos.x} cy={pos.y} r={isMobile ? 60 : 48}
-                fill={isSelected ? b.color : "white"}
                 stroke={b.color}
                 strokeWidth={isSelected ? 0 : 2.5}
                 filter={isSelected ? "drop-shadow(0 0 8px " + b.color + "80)" : "drop-shadow(0 2px 4px rgba(0,0,0,0.08))"}
+                style={{ fill: isSelected ? b.color : "var(--ly-bg)" }}
               />
               {(() => {
                 const name = b.name;
@@ -382,7 +382,7 @@ export function ChartView({
         animation: "fadeIn 0.4s ease-out",
       }}>
         <div style={{
-          background: "white", maxWidth: "400px", width: "100%",
+          background: "var(--ly-bg)", maxWidth: "400px", width: "100%",
           padding: "40px 36px", textAlign: "center",
           borderTop: `5px solid ${top.color}`,
           animation: "fadeScaleIn 0.4s ease-out",

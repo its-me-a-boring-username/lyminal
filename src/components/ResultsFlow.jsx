@@ -29,7 +29,7 @@ export function ResultsFlow({
     const roundLabels = ["first", "second", "third"];
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "var(--ly-bg)", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: focusSphere?.color || "#b5472a" }} />
@@ -53,7 +53,7 @@ export function ResultsFlow({
                   className="w-full text-left border-2 transition-all"
                   style={{
                     borderColor: isSelected ? b.color : "#e8e0d5",
-                    background: isSelected ? b.color + "08" : "white",
+                    background: isSelected ? b.color + "08" : "var(--ly-bg)",
                     padding: isRecommended ? "1.25rem 1.25rem" : "0.875rem 1.25rem",
                   }}>
                   <div className="flex items-center gap-3">
@@ -63,7 +63,7 @@ export function ResultsFlow({
                       {b.name}
                     </span>
                     {isRecommended && (
-                      <span className="text-xs px-2 py-0.5 text-white flex-shrink-0" style={{ background: "#b5472a", letterSpacing: "0.04em" }}>WE RECOMMEND THIS</span>
+                      <span className="text-xs px-2 py-0.5 text-white flex-shrink-0" style={{ background: "var(--ly-accent)", letterSpacing: "0.04em" }}>WE RECOMMEND THIS</span>
                     )}
                   </div>
                   {isRecommended && b.goals.length > 0 && (
@@ -96,7 +96,7 @@ export function ResultsFlow({
                 setStep("action");
               }}
               className="flex-1 py-3 text-sm font-semibold hover:opacity-90 transition-opacity"
-              style={{ background: "#b5472a", color: "white" }}>
+              style={{ background: "var(--ly-accent)", color: "white" }}>
               Focus on {focusSphere?.name} →
             </button>
           </div>
@@ -110,7 +110,7 @@ export function ResultsFlow({
     const focusSphere = spheres.find(b => b.id === selectedFocusSphereId) || ranked[0];
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "var(--ly-bg)", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
         <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: focusSphere?.color || "#b5472a" }} />
@@ -129,10 +129,10 @@ export function ResultsFlow({
                   className="w-full flex items-center gap-3 p-4 border-2 transition-all text-left"
                   style={{
                     borderColor: selectedGoalId === g.id ? focusSphere.color : "#e8e0d5",
-                    background: selectedGoalId === g.id ? focusSphere.color + "08" : "white"
+                    background: selectedGoalId === g.id ? focusSphere.color + "08" : "var(--ly-bg)"
                   }}>
                   <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all"
-                    style={{ borderColor: focusSphere.color, background: selectedGoalId === g.id ? focusSphere.color : "white" }}>
+                    style={{ borderColor: focusSphere.color, background: selectedGoalId === g.id ? focusSphere.color : "var(--ly-bg)" }}>
                     {selectedGoalId === g.id && <span className="text-white text-xs font-bold">✓</span>}
                   </div>
                   <span className="text-sm font-medium" style={{ color: "#1c1410" }}>{g.text}</span>
@@ -161,7 +161,7 @@ export function ResultsFlow({
                 saveChart(session, { spheres, connections, activeGoals: newActiveGoals });
               }}
               className="flex-1 py-3 text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-30"
-              style={{ background: "#b5472a", color: "white" }}>
+              style={{ background: "var(--ly-accent)", color: "white" }}>
               Confirm & see my plan →
             </button>
           </div>

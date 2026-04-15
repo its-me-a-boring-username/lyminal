@@ -120,7 +120,7 @@ export function FlowScreens({
           <div className="flex flex-wrap gap-2">
             {SUGGESTED_SPHERES.filter(s => !spheres.some(b => b.name.toLowerCase() === s.toLowerCase())).map(s => (
               <button key={s} onClick={() => addSphere(s)} className="px-3 py-1.5 text-xs border transition-colors"
-                style={{ borderRadius: "2px", borderColor: "#d4c9bb", color: "#4a3828", background: "#f0ebe3" }}>
+                style={{ borderRadius: "2px", borderColor: "rgba(var(--ly-accent-rgb), 0.2)", color: "#4a3828", background: "var(--ly-bg)" }}>
                 + {s}
               </button>
             ))}
