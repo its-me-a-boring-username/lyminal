@@ -122,7 +122,7 @@ const ChartSVG = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-4" style={{ background: "var(--ly-bg)" }}>
+    <div className="flex-1 flex flex-col items-center justify-center p-4" style={{ background: "#faf8f5" }}>
       <svg
         viewBox="0 0 700 620"
         className="w-full max-w-xl"
@@ -172,10 +172,10 @@ const ChartSVG = ({
               )}
               <circle
                 cx={pos.x} cy={pos.y} r={isMobile ? 60 : 48}
+                fill={isSelected ? b.color : "white"}
                 stroke={b.color}
                 strokeWidth={isSelected ? 0 : 2.5}
                 filter={isSelected ? "drop-shadow(0 0 8px " + b.color + "80)" : "drop-shadow(0 2px 4px rgba(0,0,0,0.08))"}
-                style={{ fill: isSelected ? b.color : "var(--ly-bg)" }}
               />
               {(() => {
                 const name = b.name;
@@ -226,7 +226,7 @@ const ChartSVG = ({
         }}
         disabled={pdfLoading === "chart"}
         className="mt-4 px-5 py-2.5 text-xs font-semibold hover:opacity-90 transition-opacity"
-        style={{ background: "var(--ly-accent)", color: "white", letterSpacing: "0.04em" }}
+        style={{ background: "#4a7a72", color: "white", letterSpacing: "0.04em" }}
       >
         {pdfLoading === "chart" ? "Generating..." : "↓ DOWNLOAD SIMPLE CHART"}
       </button>
@@ -382,7 +382,7 @@ export function ChartView({
         animation: "fadeIn 0.4s ease-out",
       }}>
         <div style={{
-          background: "var(--ly-bg)", maxWidth: "400px", width: "100%",
+          background: "white", maxWidth: "400px", width: "100%",
           padding: "40px 36px", textAlign: "center",
           borderTop: `5px solid ${top.color}`,
           animation: "fadeScaleIn 0.4s ease-out",
@@ -414,10 +414,10 @@ export function ChartView({
       </div>
     )}
 
-    <div className="min-h-screen" style={{ background: "var(--ly-bg)", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+    <div className="min-h-screen" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
       {/* Header */}
-      <div style={{ background: isDefault ? hexToRgba(ranked[0]?.color, 0.12) : "rgba(var(--ly-accent-rgb), 0.12)", borderBottom: isDefault ? `1px solid ${hexToRgba(ranked[0]?.color, 0.18)}` : "1px solid rgba(var(--ly-accent-rgb), 0.18)", padding: "16px 24px", fontFamily: "'Inter', sans-serif" }}>
+      <div style={{ background: hexToRgba(ranked[0]?.color, 0.07), borderBottom: `1px solid ${hexToRgba(ranked[0]?.color, 0.12)}`, padding: "16px 24px", fontFamily: "'Inter', sans-serif" }}>
         {/* Title row with inline CTA */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", marginBottom: "10px" }}>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.5rem", fontWeight: 600, color: "#1c1410", margin: 0 }}>Your Goal Chart</h2>
@@ -429,7 +429,7 @@ export function ChartView({
         </div>
         {/* Secondary action buttons */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-          <button onClick={() => { setDragOffsets({}); setStep("connections"); }} style={{ fontSize: "11px", fontWeight: 500, color: isDefault ? "#b5472a" : "var(--ly-accent)", background: isDefault ? "rgba(181,71,42,0.08)" : "rgba(var(--ly-accent-rgb), 0.08)", border: isDefault ? "1px solid rgba(181,71,42,0.4)" : "1px solid rgba(var(--ly-accent-rgb), 0.4)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>← Edit</button>
+          <button onClick={() => { setDragOffsets({}); setStep("connections"); }} style={{ fontSize: "11px", fontWeight: 500, color: "#b5472a", background: "rgba(181,71,42,0.08)", border: "1px solid rgba(181,71,42,0.4)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>← Edit</button>
           <button onClick={handleRedoChart} style={{ fontSize: "11px", fontWeight: 500, color: "#5c4e40", background: "rgba(92,78,64,0.08)", border: "1px solid rgba(92,78,64,0.35)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>↺ Redo</button>
           {Object.keys(dragOffsets).length > 0 && (
             <button onClick={() => setDragOffsets({})} style={{ fontSize: "11px", fontWeight: 500, color: "#4a7a72", background: "rgba(74,122,114,0.08)", border: "1px solid rgba(74,122,114,0.4)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>↺ Reset layout</button>

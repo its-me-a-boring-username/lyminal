@@ -54,14 +54,14 @@ function ForwardModal({ items, color, onClose }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-      <div style={{ background: "var(--ly-bg)", maxWidth: "480px", width: "100%" }}>
+      <div style={{ background: "white", maxWidth: "480px", width: "100%" }}>
         <div style={{ padding: "24px 28px 18px", borderBottom: "1px solid #e8e0d5" }}>
           <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Forward {items.length} item{items.length > 1 ? "s" : ""}</p>
           <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#1c1410", margin: 0 }}>Who should handle these?</p>
         </div>
         {sent ? (
           <div style={{ padding: "32px 28px", textAlign: "center" }}>
-            <p style={{ fontSize: "13px", color: "var(--ly-accent)", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Forwarded ✓</p>
+            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Forwarded ✓</p>
             <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 20px", fontFamily: "'Inter', sans-serif" }}>Your email client should have opened.</p>
             <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
           </div>
@@ -78,16 +78,16 @@ function ForwardModal({ items, color, onClose }) {
               </div>
               <div style={{ display: "grid", gap: "10px" }}>
                 <input value={recipient} onChange={e => setRecipient(e.target.value)} placeholder="Recipient email or phone"
-                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box", background: "var(--ly-bg)" }} />
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />
                 <input value={subject} onChange={e => setSubject(e.target.value)} placeholder="Subject"
-                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box", background: "var(--ly-bg)" }} />
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />
                 <textarea value={note} onChange={e => setNote(e.target.value)} placeholder="Add a note (optional)" rows={3}
-                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", resize: "none", width: "100%", boxSizing: "border-box", background: "var(--ly-bg)" }} />
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", resize: "none", width: "100%", boxSizing: "border-box" }} />
               </div>
             </div>
             <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", gap: "10px" }}>
               <button onClick={onClose} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
-              <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "var(--ly-accent)", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send →</button>
+              <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send →</button>
             </div>
           </>
         )}
@@ -113,14 +113,14 @@ function ScheduleModal({ items, color, onClose }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-      <div style={{ background: "var(--ly-bg)", maxWidth: "480px", width: "100%" }}>
+      <div style={{ background: "white", maxWidth: "480px", width: "100%" }}>
         <div style={{ padding: "24px 28px 18px", borderBottom: "1px solid #e8e0d5" }}>
           <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Schedule {items.length} item{items.length > 1 ? "s" : ""}</p>
           <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#1c1410", margin: 0 }}>When should these happen?</p>
         </div>
         {saved ? (
           <div style={{ padding: "32px 28px", textAlign: "center" }}>
-            <p style={{ fontSize: "13px", color: "var(--ly-accent)", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Reminder set ✓</p>
+            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Reminder set ✓</p>
             <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>{date} at {time} · {repeat === "once" ? "One time" : repeat === "daily" ? "Every day" : "Every week"}</p>
             <p style={{ fontSize: "11px", color: "#8a7455", margin: "0 0 20px", fontStyle: "italic", fontFamily: "'Inter', sans-serif" }}>Push notifications coming soon.</p>
             <button onClick={onClose} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
@@ -139,16 +139,16 @@ function ScheduleModal({ items, color, onClose }) {
               <div style={{ display: "grid", gap: "10px" }}>
                 <div style={{ display: "flex", gap: "10px" }}>
                   <input type="date" value={date} onChange={e => setDate(e.target.value)}
-                    style={{ flex: 1, border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", background: "var(--ly-bg)" }} />
+                    style={{ flex: 1, border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
                   <input type="time" value={time} onChange={e => setTime(e.target.value)}
-                    style={{ width: "100px", border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", background: "var(--ly-bg)" }} />
+                    style={{ width: "100px", border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
                 </div>
                 <div style={{ display: "flex", gap: "8px" }}>
                   {["once", "daily", "weekly"].map(r => (
                     <button key={r} onClick={() => setRepeat(r)} style={{
                       flex: 1, padding: "8px", fontSize: "12px", cursor: "pointer",
                       fontFamily: "'Inter', sans-serif", fontWeight: repeat === r ? 600 : 400,
-                      background: repeat === r ? color : "var(--ly-bg)",
+                      background: repeat === r ? color : "white",
                       color: repeat === r ? "white" : "#6e5c4a",
                       border: `1px solid ${repeat === r ? color : "#d4c9bb"}`,
                     }}>{r.charAt(0).toUpperCase() + r.slice(1)}</button>
@@ -213,24 +213,24 @@ Search the web if needed and give one clear, useful response. Include specific n
   };
 
   return (
-    <div style={{ borderTop: "1px solid #e8e0d5", background: "var(--ly-bg)" }}>
+    <div style={{ borderTop: "1px solid #e8e0d5", background: "#faf8f5" }}>
       <div style={{ display: "flex", gap: "8px", padding: "10px 18px" }}>
         <input autoFocus value={input} onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === "Enter" && !e.shiftKey && ask()}
           disabled={loading}
           placeholder={loading ? "Lyme is searching…" : "Ask Lyme to find something…"}
-          style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "var(--ly-bg)", outline: "none", opacity: loading ? 0.6 : 1 }}
+          style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "white", outline: "none", opacity: loading ? 0.6 : 1 }}
         />
         <button onClick={ask} disabled={loading || !input.trim()}
-          style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "var(--ly-accent)", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>
+          style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "#b5472a", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>
           Ask →
         </button>
       </div>
       {response && (
-        <div style={{ padding: "14px 18px", background: "var(--ly-bg)", borderTop: "1px solid #f0ebe3" }}>
-          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ly-accent)", margin: "0 0 8px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
+        <div style={{ padding: "14px 18px", background: "white", borderTop: "1px solid #f0ebe3" }}>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "#b5472a", margin: "0 0 8px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
           <p style={{ fontSize: "13px", color: "#1c1410", margin: "0 0 12px", lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: "'Inter', sans-serif" }}>{response}</p>
-          <button onClick={onClose} style={{ fontSize: "11px", fontWeight: 600, color: "var(--ly-accent)", background: "none", border: "1px solid var(--ly-accent)", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+          <button onClick={onClose} style={{ fontSize: "11px", fontWeight: 600, color: "#b5472a", background: "none", border: "1px solid #b5472a", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
             Done →
           </button>
         </div>
@@ -260,7 +260,7 @@ function NewForwardModal({ items, color, onClose, onCommit }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-      <div style={{ background: "var(--ly-bg)", maxWidth: "480px", width: "100%" }}>
+      <div style={{ background: "white", maxWidth: "480px", width: "100%" }}>
         <div style={{ padding: "24px 28px 18px", borderBottom: "1px solid #e8e0d5" }}>
           <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Forward {items.length} item{items.length > 1 ? "s" : ""}</p>
           <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#1c1410", margin: 0 }}>Who should handle these?</p>
@@ -284,20 +284,20 @@ function NewForwardModal({ items, color, onClose, onCommit }) {
               </div>
               <div style={{ display: "flex", gap: "8px", marginBottom: "10px" }}>
                 {["email", "sms"].map((mode) => (
-                  <button key={mode} onClick={() => setChannel(mode)} style={{ flex: 1, padding: "8px", fontSize: "12px", border: `1px solid ${channel === mode ? "var(--ly-accent)" : "#d4c9bb"}`, background: channel === mode ? "var(--ly-accent)" : "var(--ly-bg)", color: channel === mode ? "white" : "#6e5c4a", cursor: "pointer" }}>{mode === "email" ? "Email" : "Text"}</button>
+                  <button key={mode} onClick={() => setChannel(mode)} style={{ flex: 1, padding: "8px", fontSize: "12px", border: `1px solid ${channel === mode ? "#b5472a" : "#d4c9bb"}`, background: channel === mode ? "#b5472a" : "white", color: channel === mode ? "white" : "#6e5c4a", cursor: "pointer" }}>{mode === "email" ? "Email" : "Text"}</button>
                 ))}
               </div>
               <div style={{ display: "grid", gap: "10px" }}>
                 <input value={recipient} onChange={(e) => setRecipient(e.target.value)} placeholder={channel === "sms" ? "Phone number" : "Recipient email"}
-                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box", background: "var(--ly-bg)" }} />
-                {channel === "email" && <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box", background: "var(--ly-bg)" }} />}
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />
+                {channel === "email" && <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", width: "100%", boxSizing: "border-box" }} />}
                 <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note (optional)" rows={3}
-                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", resize: "none", width: "100%", boxSizing: "border-box", background: "var(--ly-bg)" }} />
+                  style={{ border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", resize: "none", width: "100%", boxSizing: "border-box" }} />
               </div>
             </div>
             <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", gap: "10px" }}>
               <button onClick={() => onClose?.({ completed: false })} style={{ flex: 1, padding: "11px", fontSize: "13px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Cancel</button>
-              <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "var(--ly-accent)", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send</button>
+              <button onClick={handleSend} style={{ flex: 2, padding: "11px", fontSize: "13px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Send</button>
             </div>
           </>
         )}
@@ -369,14 +369,14 @@ function NewScheduleModal({ items, color, onClose, onCommit, session }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-      <div style={{ background: "var(--ly-bg)", maxWidth: "480px", width: "100%" }}>
+      <div style={{ background: "white", maxWidth: "480px", width: "100%" }}>
         <div style={{ padding: "24px 28px 18px", borderBottom: "1px solid #e8e0d5" }}>
           <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Schedule {items.length} item{items.length > 1 ? "s" : ""}</p>
           <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#1c1410", margin: 0 }}>When should these happen?</p>
         </div>
         {saved ? (
           <div style={{ padding: "32px 28px", textAlign: "center" }}>
-            <p style={{ fontSize: "13px", color: "var(--ly-accent)", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Reminder set</p>
+            <p style={{ fontSize: "13px", color: "#4a7a72", fontWeight: 500, margin: "0 0 6px", fontFamily: "'Inter', sans-serif" }}>Reminder set</p>
             <p style={{ fontSize: "12px", color: "#8a7455", margin: "0 0 20px", fontFamily: "'Inter', sans-serif" }}>{date} at {time} - {repeat}</p>
             <button onClick={() => onClose?.({ completed: true })} style={{ fontSize: "12px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "9px 24px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
           </div>
@@ -386,10 +386,10 @@ function NewScheduleModal({ items, color, onClose, onCommit, session }) {
               <div style={{ marginBottom: "16px" }}>{items.map((i) => <div key={i.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "7px" }}><div style={{ width: "5px", height: "5px", borderRadius: "50%", background: color, marginTop: "6px", flexShrink: 0 }} /><p style={{ fontSize: "13px", color: "#1c1410", margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>{i.text}</p></div>)}</div>
               <div style={{ display: "grid", gap: "10px" }}>
                 <div style={{ display: "flex", gap: "10px" }}>
-                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ flex: 1, border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", background: "var(--ly-bg)" }} />
-                  <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={{ width: "100px", border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none", background: "var(--ly-bg)" }} />
+                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ flex: 1, border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
+                  <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={{ width: "100px", border: "1px solid #d4c9bb", padding: "10px 12px", fontSize: "13px", fontFamily: "'Inter', sans-serif", color: "#1c1410", outline: "none" }} />
                 </div>
-                <div style={{ display: "flex", gap: "8px" }}>{["once", "daily", "weekly"].map((r) => <button key={r} onClick={() => setRepeat(r)} style={{ flex: 1, padding: "8px", fontSize: "12px", cursor: "pointer", fontFamily: "'Inter', sans-serif", fontWeight: repeat === r ? 600 : 400, background: repeat === r ? color : "var(--ly-bg)", color: repeat === r ? "white" : "#6e5c4a", border: `1px solid ${repeat === r ? color : "#d4c9bb"}` }}>{r.charAt(0).toUpperCase() + r.slice(1)}</button>)}</div>
+                <div style={{ display: "flex", gap: "8px" }}>{["once", "daily", "weekly"].map((r) => <button key={r} onClick={() => setRepeat(r)} style={{ flex: 1, padding: "8px", fontSize: "12px", cursor: "pointer", fontFamily: "'Inter', sans-serif", fontWeight: repeat === r ? 600 : 400, background: repeat === r ? color : "white", color: repeat === r ? "white" : "#6e5c4a", border: `1px solid ${repeat === r ? color : "#d4c9bb"}` }}>{r.charAt(0).toUpperCase() + r.slice(1)}</button>)}</div>
                 {conflictError && <p style={{ fontSize: "11px", color: "#8a7455", margin: 0 }}>{conflictError}</p>}
                 {busyWindows.length > 0 && <p style={{ fontSize: "11px", color: "#9b2a2a", margin: 0 }}>{busyWindows.length} conflict(s) found for this time.</p>}
               </div>
@@ -443,19 +443,19 @@ function NewFindPanel({ item, goal, onClose, onSaveFact }) {
   };
 
   return (
-    <div style={{ borderTop: "1px solid #e8e0d5", background: "var(--ly-bg)" }}>
+    <div style={{ borderTop: "1px solid #e8e0d5", background: "#faf8f5" }}>
       <div style={{ display: "flex", gap: "8px", padding: "10px 18px" }}>
         <input autoFocus value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && ask()} disabled={loading}
           placeholder={loading ? "Lyme is searching..." : "Ask Lyme to find something..."}
-          style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "var(--ly-bg)", outline: "none", opacity: loading ? 0.6 : 1 }}
+          style={{ flex: 1, border: "1px solid #d4c9bb", padding: "7px 10px", fontSize: "12px", fontFamily: "'Inter', sans-serif", color: "#1c1410", background: "white", outline: "none", opacity: loading ? 0.6 : 1 }}
         />
-        <button onClick={ask} disabled={loading || !input.trim()} style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "var(--ly-accent)", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>Ask</button>
+        <button onClick={ask} disabled={loading || !input.trim()} style={{ padding: "7px 14px", fontSize: "11px", fontWeight: 600, background: "#b5472a", color: "white", border: "none", cursor: loading ? "default" : "pointer", opacity: loading ? 0.6 : 1, fontFamily: "'Inter', sans-serif" }}>Ask</button>
       </div>
       {response && (
-        <div style={{ padding: "14px 18px", background: "var(--ly-bg)", borderTop: "1px solid #f0ebe3" }}>
-          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ly-accent)", margin: "0 0 8px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
+        <div style={{ padding: "14px 18px", background: "white", borderTop: "1px solid #f0ebe3" }}>
+          <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", color: "#b5472a", margin: "0 0 8px", fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>Lyme</p>
           <p style={{ fontSize: "13px", color: "#1c1410", margin: "0 0 12px", lineHeight: 1.6, whiteSpace: "pre-wrap", fontFamily: "'Inter', sans-serif" }}>{response}</p>
-          <button onClick={() => onClose?.({ completed: true })} style={{ fontSize: "11px", fontWeight: 600, color: "var(--ly-accent)", background: "none", border: "1px solid var(--ly-accent)", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
+          <button onClick={() => onClose?.({ completed: true })} style={{ fontSize: "11px", fontWeight: 600, color: "#b5472a", background: "none", border: "1px solid #b5472a", padding: "6px 14px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>Done</button>
         </div>
       )}
     </div>
@@ -537,7 +537,7 @@ function IntroStep1() {
         <MiniTypeButtons active={active ? "forward" : null} />
         <div>
           {(active ? fwdItems : DEMO_ITEMS).map(item => (
-            <div key={item.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: "9px 12px", borderBottom: "1px solid #f0ebe3", background: "var(--ly-bg)", transition: "all 0.3s" }}>
+            <div key={item.id} style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: "9px 12px", borderBottom: "1px solid #f0ebe3", background: "white", transition: "all 0.3s" }}>
               {active && <input type="checkbox" readOnly style={{ marginTop: "2px", flexShrink: 0, accentColor: TC.forward }} />}
               <span style={{ fontSize: "12px", color: "#1c1410", lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>{item.text}</span>
             </div>
@@ -617,13 +617,13 @@ function IntroStep3() {
         </div>
       </div>
       {showPreview && (
-        <div style={{ border: "1px solid #e8e0d5", marginTop: "8px", background: "var(--ly-bg)", padding: "12px 14px", animation: "fadeIn 0.3s ease-out" }}>
+        <div style={{ border: "1px solid #e8e0d5", marginTop: "8px", background: "white", padding: "12px 14px", animation: "fadeIn 0.3s ease-out" }}>
           <p style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.08em", color: "#8a7455", margin: "0 0 2px", fontFamily: "'Inter', sans-serif" }}>Forward 2 items</p>
           <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "13px", color: "#1c1410", margin: "0 0 8px" }}>Who should handle these?</p>
           <div style={{ border: "1px solid #d4c9bb", padding: "6px 10px", fontSize: "11px", color: "#8a7455", marginBottom: "6px", fontFamily: "'Inter', sans-serif" }}>Recipient email or phone</div>
           <div style={{ display: "flex", gap: "6px" }}>
             <div style={{ flex: 1, padding: "6px", fontSize: "11px", color: "#5c4e40", border: "1px solid #d4c9bb", textAlign: "center", fontFamily: "'Inter', sans-serif" }}>Cancel</div>
-            <div style={{ flex: 2, padding: "6px", fontSize: "11px", fontWeight: 600, color: "white", background: "var(--ly-accent)", textAlign: "center", fontFamily: "'Inter', sans-serif" }}>Send →</div>
+          <div style={{ flex: 2, padding: "6px", fontSize: "11px", fontWeight: 600, color: "white", background: "#b5472a", textAlign: "center", fontFamily: "'Inter', sans-serif" }}>Send →</div>
           </div>
         </div>
       )}
@@ -639,7 +639,7 @@ function IntroModal({ step, onNext, onBack, onDot }) {
   const StepComponent = INTRO_STEPS[step];
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(28,20,16,0.5)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-      <div style={{ background: "var(--ly-bg)", maxWidth: "480px", width: "100%", maxHeight: "90vh", overflowY: "auto" }}>
+      <div style={{ background: "white", maxWidth: "480px", width: "100%", maxHeight: "90vh", overflowY: "auto" }}>
         <div style={{ background: "rgba(181,71,42,0.13)", borderBottom: "1px solid rgba(181,71,42,0.20)", padding: "24px 28px 18px" }}>
           <p style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", color: "#8a7455", margin: "0 0 4px", fontFamily: "'Inter', sans-serif" }}>Welcome to</p>
           <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "22px", fontWeight: 600, color: "#1c1410", margin: 0 }}>The Plan</p>
@@ -650,13 +650,13 @@ function IntroModal({ step, onNext, onBack, onDot }) {
         <div style={{ padding: "16px 28px", borderTop: "1px solid #e8e0d5", display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{ display: "flex", gap: "6px", flex: 1 }}>
             {Array.from({ length: INTRO_TOTAL }).map((_, i) => (
-              <div key={i} onClick={() => onDot(i)} style={{ width: "8px", height: "8px", borderRadius: "50%", background: i === step ? "var(--ly-accent)" : "#d4c9bb", cursor: "pointer", transition: "background 0.2s" }} />
+              <div key={i} onClick={() => onDot(i)} style={{ width: "8px", height: "8px", borderRadius: "50%", background: i === step ? "#b5472a" : "#d4c9bb", cursor: "pointer", transition: "background 0.2s" }} />
             ))}
           </div>
           {step > 0 && (
             <button onClick={onBack} style={{ fontSize: "12px", color: "#8a7455", background: "none", border: "1px solid #d4c9bb", padding: "8px 16px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>← Back</button>
           )}
-          <button onClick={onNext} style={{ fontSize: "12px", fontWeight: 600, color: "white", background: "var(--ly-accent)", border: "none", padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
+          <button onClick={onNext} style={{ fontSize: "12px", fontWeight: 600, color: "white", background: "#b5472a", border: "none", padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
             {step === INTRO_TOTAL - 1 ? "GOT IT →" : "NEXT →"}
           </button>
         </div>
@@ -998,7 +998,7 @@ export function PlanScreen({
                   letterSpacing: "0.06em", textTransform: "uppercase",
                   borderRadius: "999px",
                   border: `1.5px solid ${isAct ? TC[t] : TBORDER[t]}`,
-                  background: isAct ? TC[t] : "var(--ly-bg)",
+                  background: isAct ? TC[t] : "white",
                   color: isAct ? "white" : TC[t],
                   transition: "all 0.15s",
                 }}>
@@ -1008,7 +1008,7 @@ export function PlanScreen({
             })}
           </div>
 
-          <div style={{ background: "var(--ly-bg)", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+          <div style={{ background: "white", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
 
           {/* Goal strip — solid sphere color card header */}
           {goal && (
@@ -1054,14 +1054,14 @@ export function PlanScreen({
 
               return (
                 <div key={item.id}>
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "var(--ly-bg)", transition: "background 0.15s" }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
                     {showBulk && (
                       <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
                         style={{ marginTop: "2px", flexShrink: 0, accentColor: hc }} />
                     )}
                     <button onClick={() => toggleCheck(item.id)} style={{
                       width: "16px", height: "16px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
-                      border: `1.5px solid ${isDone ? hc : "rgba(var(--ly-accent-rgb), 0.25)"}`, background: isDone ? hc : "var(--ly-bg)",
+                      border: `1.5px solid ${isDone ? hc : "#d4c9bb"}`, background: isDone ? hc : "white",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       cursor: "pointer", padding: 0, transition: "all 0.15s",
                     }}>

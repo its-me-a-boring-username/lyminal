@@ -86,10 +86,10 @@ export function FlowScreens({
 
   // ── SPHERES ──
   if (step === "spheres") return (
-    <div className="min-h-screen lg:flex" style={{ background: "var(--ly-bg)", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+    <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
       <style>{FONTS}</style>
       <DevReset />
-      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: accentColor }} />
+      <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#b5472a" }} />
       <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
         <div className="mb-2 text-xs uppercase tracking-widest font-medium" style={{ color: "#6e5c4a" }}>Step 1 of 3</div>
         <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", fontWeight: 600, color: "#1c1410" }} className="mb-2">Define your spheres</h2>
@@ -101,14 +101,14 @@ export function FlowScreens({
             value={newSphere}
             onChange={e => setNewSphere(e.target.value)}
             onKeyDown={e => e.key === "Enter" && addSphere(newSphere)}
-            style={{ background: "var(--ly-bg)" }}
+            style={{ background: "#faf8f5" }}
           />
           <button
             onClick={() => addSphere(newSphere)}
             disabled={!newSphere.trim()}
             className="absolute right-2 px-3 py-1.5 text-xs font-semibold transition-all"
             style={{
-              background: newSphere.trim() ? accentColor : "transparent",
+              background: newSphere.trim() ? "#b5472a" : "transparent",
               color: newSphere.trim() ? "white" : "#8a7455",
               border: newSphere.trim() ? "none" : "1px solid #d4c9bb",
               letterSpacing: "0.04em"
@@ -120,7 +120,7 @@ export function FlowScreens({
           <div className="flex flex-wrap gap-2">
             {SUGGESTED_SPHERES.filter(s => !spheres.some(b => b.name.toLowerCase() === s.toLowerCase())).map(s => (
               <button key={s} onClick={() => addSphere(s)} className="px-3 py-1.5 text-xs border transition-colors"
-                style={{ borderRadius: "2px", borderColor: "rgba(var(--ly-accent-rgb), 0.2)", color: "#4a3828", background: "var(--ly-bg)" }}>
+                style={{ borderRadius: "2px", borderColor: "#d4c9bb", color: "#4a3828", background: "#f0ebe3" }}>
                 + {s}
               </button>
             ))}
@@ -146,7 +146,7 @@ export function FlowScreens({
               saveChart(session, { spheres, connections });
             }}
             disabled={spheres.length < 3}
-            style={{ background: accentColor, color: "white", fontWeight: 500 }}
+            style={{ background: "#b5472a", color: "white", fontWeight: 500 }}
             className="flex-1 hover:opacity-90 disabled:opacity-30 py-3 transition-opacity"
           >
             {spheres.length < 3 ? `Add at least ${3 - spheres.length} more sphere${3 - spheres.length === 1 ? "" : "s"} to continue` : `Continue with ${spheres.length} spheres →`}
@@ -162,10 +162,10 @@ export function FlowScreens({
     const isLast = goalStep === spheres.length - 1;
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "var(--ly-bg)", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
-        <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: currentSphere?.color || accentColor }} />
+        <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: currentSphere?.color || "#b5472a" }} />
         <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
@@ -267,10 +267,10 @@ export function FlowScreens({
     const isLast = connStep === spheres.length - 1;
 
     return (
-      <div className="min-h-screen lg:flex" style={{ background: "var(--ly-bg)", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
+      <div className="min-h-screen lg:flex" style={{ background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
         <style>{FONTS}</style>
         <DevReset />
-        <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: fromSphere?.color || accentColor }} />
+        <div className="hidden lg:block flex-shrink-0 transition-colors duration-300" style={{ width: "350px", background: fromSphere?.color || "#4a7a72" }} />
         <div className="px-6 py-16 max-w-2xl mx-auto w-full lg:px-16 lg:flex lg:flex-col lg:justify-center">
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
