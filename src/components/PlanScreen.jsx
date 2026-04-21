@@ -19,24 +19,9 @@ const TC     = { forward: "#8a5a44", schedule: "#4a7a72", find: "#5c6f9b", none:
 const TBG    = { forward: "#f7f0ec", schedule: "#edf4f1", find: "#eef0f6", none: "#f5f2ee" };
 const TBORDER = { forward: "#d4a890", schedule: "#9fd4c4", find: "#b0bcd8", none: "#d4c9bb" };
 
-// ── Ring sidebar button ──────────────────────────────────────────────────────
-function RingButton({ color, isActive, onClick }) {
-  const size = isActive ? 44 : 32;
-  const sw   = isActive ? 5  : 3;
-  const cx = size / 2, cy = size / 2, r = size / 2 - sw / 2 - 1;
-  return (
-    <button onClick={onClick} style={{
-      background: "none", border: "none", padding: 0, cursor: "pointer",
-      opacity: isActive ? 1 : 0.38, transition: "opacity 0.2s",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      width: "52px", height: "52px", flexShrink: 0,
-    }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle cx={cx} cy={cy} r={r}
-          style={{ fill: color, fillOpacity: isActive ? 0.16 : 0.09, stroke: color, strokeWidth: sw }} />
-      </svg>
-    </button>
-  );
+// ── Per-goal accent color helper ─────────────────────────────────────────────
+function hcForGoal(g, isDefault) {
+  return (isDefault && g?.sphereColor) ? g.sphereColor : "var(--ly-accent)";
 }
 
 // ── Forward modal ────────────────────────────────────────────────────────────
@@ -717,11 +702,11 @@ export function PlanScreen({
   };
 
   useEffect(() => {
-    if (selIndex > activeGoals.length - 1) setSelIndex(Math.max(0, activeGoals.length - 1));
+    if (selIndex !== null && selIndex > activeGoals.length - 1) setSelIndex(Math.max(0, activeGoals.length - 1));
   }, [activeGoals.length]);
 
   const goal          = activeGoals[selIndex] || null;
-  const hc            = (isDefault && goal?.sphereColor) ? goal.sphereColor : "var(--ly-accent)";
+  const hc            = hcForGoal(goal, isDefault);
   const allItems      = goal ? normalizeActionItems(goal.actionItems || []) : [];
   const filteredItems = activeType ? allItems.filter(i => i.type === activeType) : allItems;
   const showBulk      = activeType === "forward" || activeType === "schedule";
@@ -940,32 +925,13 @@ export function PlanScreen({
           <p style={{ fontSize: "0.8rem", color: "#5c4e40", fontWeight: 300, margin: 0, lineHeight: 1.5, fontFamily: "'Inter', sans-serif" }}>Forward tasks, schedule reminders, send messages, or search for resources.</p>
         </div>
 
-        {/* Mobile horizontal carousel — CSS-gated, always shown on small screens */}
-        <div className="flex lg:hidden" style={{ overflowX: "auto", gap: "4px", padding: "8px 16px", justifyContent: "center", borderBottom: "1px solid #e8e0d5", background: "#faf8f5", WebkitOverflowScrolling: "touch" }}>
-          {activeGoals.map((ag, i) => (
-            <RingButton key={ag.goalId} color={isDefault ? ag.sphereColor : "var(--ly-accent)"} isActive={i === selIndex}
-              onClick={() => { setSelIndex(i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} />
-          ))}
-        </div>
-
-        {/* Body — desktop vertical sidebar + content */}
+        {/* Body */}
         <div style={{ flex: 1, paddingBottom: isMobile ? "60px" : 0 }}>
-        <div className="max-w-4xl mx-auto lg:px-8" style={{ display: "flex", height: "100%" }}>
-
-        {/* Desktop vertical sidebar — CSS-gated */}
-        <div className="hidden lg:flex flex-col" style={{ width: "60px", flexShrink: 0, alignItems: "center", paddingTop: "16px", gap: "4px", borderRight: "1px solid #e8e0d5", background: "#faf8f5" }}>
-          {activeGoals.map((ag, i) => (
-            <RingButton key={ag.goalId} color={isDefault ? ag.sphereColor : "var(--ly-accent)"} isActive={i === selIndex}
-              onClick={() => { setSelIndex(i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} />
-          ))}
-        </div>
-
-        {/* Content */}
-        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", padding: "12px 14px" }}>
+        <div className="max-w-4xl mx-auto px-4 lg:px-16" style={{ paddingTop: "16px", paddingBottom: "24px" }}>
 
           {/* Free preview banner */}
           {!isPaid && (
-            <button onClick={() => setAuthPrompt("upgrade")} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", marginBottom: "10px", padding: "9px 14px", background: "rgba(var(--ly-accent-rgb), 0.06)", border: "1px solid rgba(var(--ly-accent-rgb), 0.18)", borderRadius: "8px", width: "100%", cursor: "pointer", textAlign: "left" }}>
+            <button onClick={() => setAuthPrompt("upgrade")} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", marginBottom: "14px", padding: "9px 14px", background: "rgba(var(--ly-accent-rgb), 0.06)", border: "1px solid rgba(var(--ly-accent-rgb), 0.18)", borderRadius: "8px", width: "100%", cursor: "pointer", textAlign: "left" }}>
               <p style={{ fontSize: "11px", color: "#5c4e40", margin: 0, lineHeight: 1.4, fontFamily: "'Inter', sans-serif" }}>
                 <span style={{ fontWeight: 600, color: "var(--ly-accent)" }}>Preview mode.</span> Upgrade to use Forward, Schedule, and Find.
               </p>
@@ -973,8 +939,8 @@ export function PlanScreen({
             </button>
           )}
 
-          {/* Type pills — floating above the card */}
-          <div style={{ display: "flex", gap: "8px", marginBottom: "10px", overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: "2px", flexShrink: 0 }}>
+          {/* Global filter pills */}
+          <div style={{ display: "flex", gap: "8px", marginBottom: "14px", overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: "2px" }}>
             <button onClick={() => { setActiveType(null); setBulkSel(new Set()); setFindItem(null); }} style={{
               padding: "7px 14px", cursor: "pointer", flexShrink: 0,
               fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: activeType === null ? 600 : 500,
@@ -1008,134 +974,156 @@ export function PlanScreen({
             })}
           </div>
 
-          <div style={{ background: "white", border: "1px solid #e8e0d5", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-
-          {/* Goal strip — solid sphere color card header */}
-          {goal && (
-            <div style={{ background: hc, padding: "14px 18px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", transition: "background 0.3s ease", flexShrink: 0 }}>
-              <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.75)", fontFamily: "'Inter', sans-serif", flexShrink: 0, fontWeight: 600 }}>{goal.sphereName}</span>
-              <span style={{ fontSize: "14px", color: "white", fontFamily: "'Playfair Display', serif", fontWeight: 600, lineHeight: 1.3 }}>{goal.goalText}</span>
-            </div>
-          )}
-
-          {/* Item list */}
-          <div style={{ flex: 1 }}>
-            {filteredItems.length === 0 ? (
-              <div style={{ padding: "28px 18px", textAlign: "center" }}>
-                {allItems.length === 0 ? (
-                  <>
-                    <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 16px", fontStyle: "italic" }}>No action items yet for this goal.</p>
-                    <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
-                      <button onClick={() => goal && handleTalkToLyme(goal)}
-                        style={{ fontSize: "11px", fontWeight: 600, color: "white", background: hc, border: "none", padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px", letterSpacing: "0.04em" }}>
-                        Talk to Lyme →
-                      </button>
-                      <button onClick={() => setStep("active")}
-                        style={{ fontSize: "11px", color: "#6e5c4a", background: "none", border: "1px solid #d4c9bb", padding: "9px 18px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px" }}>
-                        Add on Home
-                      </button>
+          {/* Goal accordion */}
+          {activeGoals.map((g, i) => {
+            const gHc = hcForGoal(g, isDefault);
+            const isExpanded = i === selIndex;
+            return (
+              <div key={g.goalId} style={{ marginBottom: "10px", borderLeft: `3px solid ${gHc}`, borderRadius: "0 6px 6px 0", overflow: "hidden" }}>
+                {/* Accordion header row */}
+                <div
+                  onClick={() => { setSelIndex(i === selIndex ? null : i); setActiveType(null); setBulkSel(new Set()); setFindItem(null); }}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", background: "white", border: "1px solid #e8e0d5", borderLeft: "none", cursor: "pointer" }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: "9px", color: gHc, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "3px", fontFamily: "'Inter', sans-serif" }}>
+                      ● {g.sphereName}
                     </div>
-                  </>
-                ) : (
-                  <>
-                    <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 14px", fontStyle: "italic" }}>No {activeType === "none" ? "unassigned" : activeType} items for this goal.</p>
-                    <button onClick={() => { setActiveType(null); setBulkSel(new Set()); }}
-                      style={{ fontSize: "11px", color: "var(--ly-accent)", background: "none", border: "1px solid #e8e0d5", padding: "7px 16px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
-                      Show all items
-                    </button>
-                  </>
+                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "13px", fontWeight: 600, color: "#1c1410" }}>
+                      {g.goalText}
+                    </div>
+                  </div>
+                  {!isExpanded
+                    ? <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0, marginLeft: "12px" }}>
+                        <span style={{ fontSize: "10px", color: "#8a7455" }}>{g.actionItems?.length || 0} items</span>
+                        <span style={{ color: "#8a7455", fontSize: "14px" }}>∨</span>
+                      </div>
+                    : <span style={{ color: gHc, fontSize: "14px", flexShrink: 0, marginLeft: "12px" }}>∧</span>
+                  }
+                </div>
+                {/* Expanded body */}
+                {isExpanded && (
+                  <div style={{ border: "1px solid #e8e0d5", borderLeft: "none", borderTop: "none", background: "white", overflow: "hidden" }}>
+                    <div>
+                      {filteredItems.length === 0 ? (
+                        <div style={{ padding: "28px 18px", textAlign: "center" }}>
+                          {allItems.length === 0 ? (
+                            <>
+                              <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 16px", fontStyle: "italic" }}>No action items yet for this goal.</p>
+                              <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+                                <button onClick={() => goal && handleTalkToLyme(goal)}
+                                  style={{ fontSize: "11px", fontWeight: 600, color: "white", background: hc, border: "none", padding: "9px 20px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px", letterSpacing: "0.04em" }}>
+                                  Talk to Lyme →
+                                </button>
+                                <button onClick={() => setStep("active")}
+                                  style={{ fontSize: "11px", color: "#6e5c4a", background: "none", border: "1px solid #d4c9bb", padding: "9px 18px", cursor: "pointer", fontFamily: "'Inter', sans-serif", borderRadius: "6px" }}>
+                                  Add on Home
+                                </button>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <p style={{ fontSize: "13px", color: "#8a7455", margin: "0 0 14px", fontStyle: "italic" }}>No {activeType === "none" ? "unassigned" : activeType} items for this goal.</p>
+                              <button onClick={() => { setActiveType(null); setBulkSel(new Set()); }}
+                                style={{ fontSize: "11px", color: "var(--ly-accent)", background: "none", border: "1px solid #e8e0d5", padding: "7px 16px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+                                Show all items
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      ) : filteredItems.map(item => {
+                        const isDone   = checkedItems[goal.goalId]?.has(item.id) || false;
+                        const isBulked = bulkSel.has(item.id);
+                        const isFind   = item.type === "find";
+                        const findOpen = findItem?.id === item.id;
+
+                        return (
+                          <div key={item.id}>
+                            <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
+                              {showBulk && (
+                                <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
+                                  style={{ marginTop: "2px", flexShrink: 0, accentColor: hc }} />
+                              )}
+                              <button onClick={() => toggleCheck(item.id)} style={{
+                                width: "16px", height: "16px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
+                                border: `1.5px solid ${isDone ? hc : "#d4c9bb"}`, background: isDone ? hc : "white",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                cursor: "pointer", padding: 0, transition: "all 0.15s",
+                              }}>
+                                {isDone && <svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" /></svg>}
+                              </button>
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <span style={{ display: "block", fontSize: "13px", lineHeight: 1.5, color: isDone ? "#8a7455" : "#1c1410", textDecoration: isDone ? "line-through" : "none" }}>
+                                  {item.text}
+                                </span>
+                                {(item.schedule || item.forwardLogs?.length || item.findFacts?.length) && (
+                                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "4px" }}>
+                                    {item.schedule && (
+                                      <span style={{ fontSize: "10px", color: "#4a7a72", border: "1px solid #cde3dc", padding: "2px 6px", borderRadius: "999px" }}>
+                                        {item.schedule.status || "scheduled"} {item.schedule.scheduledFor ? new Date(item.schedule.scheduledFor).toLocaleString() : ""}
+                                      </span>
+                                    )}
+                                    {item.forwardLogs?.length > 0 && (
+                                      <span style={{ fontSize: "10px", color: "#8a5a44", border: "1px solid #e8d4ca", padding: "2px 6px", borderRadius: "999px" }}>
+                                        forwarded {item.forwardLogs.length}x
+                                      </span>
+                                    )}
+                                    {item.findFacts?.length > 0 && (
+                                      <span style={{ fontSize: "10px", color: "#5c6f9b", border: "1px solid #d5dcee", padding: "2px 6px", borderRadius: "999px" }}>
+                                        saved facts: {item.findFacts.length}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                                {isFind && activeType === "find" && (
+                                  <div style={{ marginTop: "5px" }}>
+                                    {isPro ? (
+                                      <button onClick={() => (findOpen ? closeFindPanel({ completed: false }) : openFindPanel(item))}
+                                        style={{ fontSize: "10px", fontWeight: 600, color: TC.find, background: "none", border: `1px solid ${TBORDER.find}`, padding: "3px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+                                        {findOpen ? "Close" : "Ask Lyme"}
+                                      </button>
+                                    ) : (
+                                      <button onClick={() => setAuthPrompt("upgrade")}
+                                        style={{ fontSize: "11px", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                                        title="Available on the $15/mo plan">
+                                        🔒
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                              <select value={item.type} onChange={e => retagItem(item.id, e.target.value)}
+                                style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.04em", padding: "5px 10px", border: "none", borderRadius: "4px", background: TBG[item.type], color: TC[item.type], cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
+                                {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t}</option>)}
+                              </select>
+                            </div>
+                            {findOpen && <NewFindPanel item={item} goal={goal} onSaveFact={(fact) => saveFindFact(item.id, fact)} onClose={closeFindPanel} />}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {/* Bulk bar */}
+                    {showBulk && filteredItems.length > 0 && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 18px", background: "#faf8f5", borderTop: "1px solid #e8e0d5" }}>
+                        <button onClick={bulkSel.size === filteredItems.length ? () => setBulkSel(new Set()) : () => setBulkSel(new Set(filteredItems.map(i => i.id)))}
+                          style={{ fontSize: "11px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "5px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
+                          {bulkSel.size === filteredItems.length ? "Clear" : "Select all"}
+                        </button>
+                        <span style={{ fontSize: "11px", color: "#8a7455", flex: 1 }}>{bulkSel.size} selected</span>
+                        <button onClick={() => openBulkModal(activeType)} disabled={bulkSel.size === 0}
+                          style={{ fontSize: "11px", fontWeight: 600, color: "white", background: bulkSel.size > 0 ? hc : "#c4b8a8", border: "none", padding: "7px 16px", cursor: bulkSel.size > 0 ? "pointer" : "default", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
+                          {activeType === "forward" ? "Forward selected →" : "Schedule selected →"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
-            ) : filteredItems.map(item => {
-              const isDone   = checkedItems[goal.goalId]?.has(item.id) || false;
-              const isBulked = bulkSel.has(item.id);
-              const isFind   = item.type === "find";
-              const findOpen = findItem?.id === item.id;
+            );
+          })}
 
-              return (
-                <div key={item.id}>
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", padding: isMobile ? "12px 14px" : "14px 20px", borderBottom: "1px solid #f0ebe3", background: isBulked ? TBG[item.type] : "white", transition: "background 0.15s" }}>
-                    {showBulk && (
-                      <input type="checkbox" checked={isBulked} onChange={() => toggleBulk(item.id)}
-                        style={{ marginTop: "2px", flexShrink: 0, accentColor: hc }} />
-                    )}
-                    <button onClick={() => toggleCheck(item.id)} style={{
-                      width: "16px", height: "16px", borderRadius: "50%", flexShrink: 0, marginTop: "2px",
-                      border: `1.5px solid ${isDone ? hc : "#d4c9bb"}`, background: isDone ? hc : "white",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      cursor: "pointer", padding: 0, transition: "all 0.15s",
-                    }}>
-                      {isDone && <svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.5 4L3 5.5L6.5 2" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" /></svg>}
-                    </button>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <span style={{ display: "block", fontSize: "13px", lineHeight: 1.5, color: isDone ? "#8a7455" : "#1c1410", textDecoration: isDone ? "line-through" : "none" }}>
-                        {item.text}
-                      </span>
-                      {(item.schedule || item.forwardLogs?.length || item.findFacts?.length) && (
-                        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "4px" }}>
-                          {item.schedule && (
-                            <span style={{ fontSize: "10px", color: "#4a7a72", border: "1px solid #cde3dc", padding: "2px 6px", borderRadius: "999px" }}>
-                              {item.schedule.status || "scheduled"} {item.schedule.scheduledFor ? new Date(item.schedule.scheduledFor).toLocaleString() : ""}
-                            </span>
-                          )}
-                          {item.forwardLogs?.length > 0 && (
-                            <span style={{ fontSize: "10px", color: "#8a5a44", border: "1px solid #e8d4ca", padding: "2px 6px", borderRadius: "999px" }}>
-                              forwarded {item.forwardLogs.length}x
-                            </span>
-                          )}
-                          {item.findFacts?.length > 0 && (
-                            <span style={{ fontSize: "10px", color: "#5c6f9b", border: "1px solid #d5dcee", padding: "2px 6px", borderRadius: "999px" }}>
-                              saved facts: {item.findFacts.length}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      {isFind && activeType === "find" && (
-                        <div style={{ marginTop: "5px" }}>
-                          {isPro ? (
-                            <button onClick={() => (findOpen ? closeFindPanel({ completed: false }) : openFindPanel(item))}
-                              style={{ fontSize: "10px", fontWeight: 600, color: TC.find, background: "none", border: `1px solid ${TBORDER.find}`, padding: "3px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
-                              {findOpen ? "Close" : "Ask Lyme"}
-                            </button>
-                          ) : (
-                            <button onClick={() => setAuthPrompt("upgrade")}
-                              style={{ fontSize: "11px", background: "none", border: "none", cursor: "pointer", padding: 0 }}
-                              title="Available on the $15/mo plan">
-                              🔒
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <select value={item.type} onChange={e => retagItem(item.id, e.target.value)}
-                      style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.04em", padding: "5px 10px", border: "none", borderRadius: "4px", background: TBG[item.type], color: TC[item.type], cursor: "pointer", fontFamily: "'Inter', sans-serif", flexShrink: 0 }}>
-                      {ACTION_TYPES.map(t => <option key={t} value={t}>{t === "none" ? "—" : t}</option>)}
-                    </select>
-                  </div>
-                  {findOpen && <NewFindPanel item={item} goal={goal} onSaveFact={(fact) => saveFindFact(item.id, fact)} onClose={closeFindPanel} />}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Bulk bar */}
-          {showBulk && filteredItems.length > 0 && (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 18px", background: "#faf8f5", borderTop: "1px solid #e8e0d5" }}>
-              <button onClick={bulkSel.size === filteredItems.length ? () => setBulkSel(new Set()) : () => setBulkSel(new Set(filteredItems.map(i => i.id)))}
-                style={{ fontSize: "11px", color: "#5c4e40", background: "none", border: "1px solid #d4c9bb", padding: "5px 10px", cursor: "pointer", fontFamily: "'Inter', sans-serif" }}>
-                {bulkSel.size === filteredItems.length ? "Clear" : "Select all"}
-              </button>
-              <span style={{ fontSize: "11px", color: "#8a7455", flex: 1 }}>{bulkSel.size} selected</span>
-              <button onClick={() => openBulkModal(activeType)} disabled={bulkSel.size === 0}
-                style={{ fontSize: "11px", fontWeight: 600, color: "white", background: bulkSel.size > 0 ? hc : "#c4b8a8", border: "none", padding: "7px 16px", cursor: bulkSel.size > 0 ? "pointer" : "default", fontFamily: "'Inter', sans-serif", letterSpacing: "0.04em" }}>
-                {activeType === "forward" ? "Forward selected →" : "Schedule selected →"}
-              </button>
-            </div>
-          )}
-          </div> {/* closes white card */}
-        </div> {/* closes content */}
-        </div> {/* closes centering wrapper */}
-        </div> {/* closes body flex */}
+        </div>
+        </div>
         </div>{/* end fade wrapper */}
       </div> {/* closes right column */}
     </div>

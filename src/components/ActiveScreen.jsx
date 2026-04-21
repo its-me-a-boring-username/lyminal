@@ -191,29 +191,29 @@ Do NOT introduce yourself or explain what you do — that has already been handl
 
           <div className="space-y-4 mb-8">
             {allActive.map((ag) => (
-              <div key={ag.sphereId} style={{ borderRadius: "8px", border: isDefault ? `1px solid ${hexToRgba(ag.sphereColor, 0.2)}` : "1px solid rgba(var(--ly-accent-rgb), 0.2)", background: "white", overflow: "hidden" }}>
+              <div key={ag.sphereId} style={{ borderRadius: "8px", border: "1px solid #e8e0d5", borderLeft: `3px solid ${isDefault ? ag.sphereColor : "var(--ly-accent)"}`, background: "white", overflow: "hidden" }}>
 
-                {/* Card header */}
-                <div style={{ background: isDefault ? ag.sphereColor : "var(--ly-accent)", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, minWidth: 0 }}>
+                {/* B-style card header */}
+                <div style={{ padding: "14px 16px", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", flex: 1, minWidth: 0 }}>
                     <button
                       onClick={() => setCompletedGoals(prev => {
                         const next = new Set(prev);
                         prev.has(ag.goalId) ? next.delete(ag.goalId) : next.add(ag.goalId);
                         return next;
                       })}
-                      style={{ width: "18px", height: "18px", borderRadius: "4px", flexShrink: 0, border: `2px solid ${completedGoals.has(ag.goalId) ? "white" : "rgba(255,255,255,0.5)"}`, background: completedGoals.has(ag.goalId) ? "white" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, transition: "all 0.2s" }}
+                      style={{ width: "16px", height: "16px", borderRadius: "3px", flexShrink: 0, marginTop: "3px", border: `2px solid ${isDefault ? ag.sphereColor : "var(--ly-accent)"}`, background: completedGoals.has(ag.goalId) ? (isDefault ? ag.sphereColor : "var(--ly-accent)") : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0, transition: "all 0.2s" }}
                     >
-                      {completedGoals.has(ag.goalId) && <span style={{ color: isDefault ? ag.sphereColor : "var(--ly-accent)", fontSize: "10px", fontWeight: "bold" }}>✓</span>}
+                      {completedGoals.has(ag.goalId) && <span style={{ color: "white", fontSize: "9px", fontWeight: "bold" }}>✓</span>}
                     </button>
                     <div style={{ minWidth: 0 }}>
-                      <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.7)", fontWeight: 600, fontFamily: "'Inter', sans-serif", display: "block", marginBottom: "2px" }}>{ag.sphereName}</span>
-                      <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1rem", color: completedGoals.has(ag.goalId) ? "rgba(255,255,255,0.6)" : "white", margin: 0, lineHeight: 1.3, textDecoration: completedGoals.has(ag.goalId) ? "line-through" : "none" }}>{ag.goalText}</p>
+                      <span style={{ fontSize: "9px", textTransform: "uppercase", letterSpacing: "0.1em", color: isDefault ? ag.sphereColor : "var(--ly-accent)", fontWeight: 600, fontFamily: "'Inter', sans-serif", display: "block", marginBottom: "3px" }}>● {ag.sphereName}</span>
+                      <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1rem", color: completedGoals.has(ag.goalId) ? "#8a7455" : "#1c1410", margin: 0, lineHeight: 1.3, textDecoration: completedGoals.has(ag.goalId) ? "line-through" : "none" }}>{ag.goalText}</p>
                     </div>
                   </div>
                   <button
                     onClick={() => setConfirmRemove(ag)}
-                    style={{ background: "none", border: "none", color: "rgba(255,255,255,0.6)", cursor: "pointer", fontSize: "13px", padding: 0, lineHeight: 1, flexShrink: 0 }}
+                    style={{ background: "none", border: "none", color: "#8a7455", cursor: "pointer", fontSize: "13px", padding: 0, lineHeight: 1, flexShrink: 0, marginLeft: "8px", marginTop: "2px" }}
                     title="Remove this goal"
                   >
                     ✕

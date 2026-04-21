@@ -3,547 +3,325 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lyminal — Design Drafts v2</title>
+<title>Lyminal — Design Directions v3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: #e8e0d5; padding: 40px 24px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #e8e0d5; padding: 40px 24px; }
 
-  .page-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #1c1410; margin-bottom: 6px; }
-  .page-desc { font-size: 13px; color: #6e5c4a; margin-bottom: 24px; line-height: 1.6; }
-  .page-sep { height: 2px; background: #c8b8a8; margin: 48px 0 32px; }
+.page-heading { font-family: 'Playfair Display', serif; font-size: 28px; color: #1c1410; margin-bottom: 8px; }
+.page-sub { font-size: 13px; color: #6e5c4a; margin-bottom: 48px; line-height: 1.7; max-width: 700px; }
+.section-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #1c1410; margin-bottom: 4px; }
+.section-desc { font-size: 12px; color: #6e5c4a; margin-bottom: 24px; line-height: 1.6; max-width: 640px; }
+.section-sep { height: 1px; background: #c8b8a8; margin: 60px 0 44px; }
 
-  .drafts-row { display: flex; flex-direction: column; gap: 0; margin-bottom: 48px; }
-  .draft-col { width: 100%; }
-  .draft-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #6e5c4a; font-weight: 600; margin-bottom: 12px; }
-  .direction-divider { height: 1px; background: #c8b8a8; margin: 32px 0; }
+.screens-row { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
+.screen-col { flex: 1; min-width: 300px; max-width: 400px; }
+.screen-label { font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase; color: #6e5c4a; font-weight: 600; margin-bottom: 10px; }
 
-  /* ── SHARED CHROME ── */
-  .app-shell { background: #faf8f5; border: 1px solid #d4c9bb; box-shadow: 0 8px 40px rgba(0,0,0,0.14); overflow: hidden; width: 100%; display: flex; flex-direction: column; border-radius: 4px; }
+/* ── App shell ── */
+.shell { background: #faf8f5; border: 1px solid #d4c9bb; box-shadow: 0 6px 32px rgba(0,0,0,0.13); overflow: hidden; border-radius: 4px; }
 
-  /* NAV */
-  .nav { display: flex; border-bottom: 1px solid #e8e0d5; background: #faf8f5; flex-shrink: 0; }
-  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 0; font-size: 11px; color: #8a7455; cursor: pointer; border-bottom: 2px solid transparent; }
-  .nav-item.active { color: #b5472a; border-bottom-color: #b5472a; }
-  .nav-icon { font-size: 15px; }
+/* ── Nav ── */
+.nav { display: flex; border-bottom: 1px solid #e8e0d5; background: #faf8f5; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 9px 0; font-size: 10px; color: #8a7455; border-bottom: 2px solid transparent; }
+.nav-item.active { color: #b5472a; border-bottom-color: #b5472a; }
+.nav-icon { font-size: 13px; }
 
-  /* LEFT STRIP */
-  .with-strip { display: flex; flex: 1; min-height: 580px; }
-  .strip { width: 350px; flex-shrink: 0; background: #b5472a; }
-  .strip-sage { background: #4a7a72; }
-  .main-col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+/* ── Shared tokens ── */
+.eyebrow { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a7455; font-weight: 500; margin-bottom: 4px; }
+.h1 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: #1c1410; line-height: 1.2; }
+.h2 { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: #1c1410; line-height: 1.3; }
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 10px; font-weight: 500; }
+.pill-terra { background: rgba(181,71,42,0.10); border: 1px solid rgba(181,71,42,0.22); color: #b5472a; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.page-hdr { padding: 24px 24px 20px; border-bottom: 1px solid rgba(181,71,42,0.12); background: rgba(181,71,42,0.07); }
 
-  /* SHARED TOKENS */
-  .eyebrow { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a7455; font-weight: 500; margin-bottom: 4px; }
-  .screen-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 600; color: #1c1410; line-height: 1.2; }
-  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 500; }
-  .pill-sphere { background: rgba(181,71,42,0.1); border: 1px solid rgba(181,71,42,0.25); color: #b5472a; }
-  .pill-sage  { background: rgba(74,122,114,0.1); border: 1px solid rgba(74,122,114,0.25); color: #4a7a72; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-  .btn-primary { border: none; padding: 11px 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-  .btn-ghost   { background: none; border: 1px solid #d4c9bb; padding: 11px 18px; font-size: 12px; color: #5c4e40; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-  .btn-dark    { background: #1c1410; color: #faf8f5; border: none; padding: 11px 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-  .input-base  { border: 1px solid #d4c9bb; padding: 9px 14px; font-size: 13px; color: #1c1410; font-family: 'Inter', sans-serif; background: white; border-radius: 6px; outline: none; }
-  .card        { background: white; border: 1px solid #e8e0d5; border-radius: 8px; box-shadow: 0 2px 10px rgba(28,20,16,0.06); }
+/* ── Buttons ── */
+.btn-primary { border: none; padding: 10px 18px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; background: #b5472a; color: white; }
+.btn-ghost { background: none; border: 1px solid #d4c9bb; padding: 10px 16px; font-size: 11px; color: #5c4e40; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+.btn-dark { background: #1c1410; color: #faf8f5; border: none; padding: 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
 
+/* ── Input ── */
+.input-row { display: flex; gap: 6px; }
+.input { flex: 1; border: 1px solid #d4c9bb; padding: 8px 12px; font-size: 12px; color: #1c1410; font-family: 'Inter', sans-serif; border-radius: 6px; background: white; outline: none; }
+.input-btn { background: #b5472a; color: white; border: none; padding: 8px 14px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
 
-  /* ═══════════════════════════════════════════
-     DIRECTION A — Card Containment
-  ═══════════════════════════════════════════ */
+/* ── Action item row ── */
+.item-row { display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; border-bottom: 1px solid #f0ebe3; }
+.item-row:last-child { border-bottom: none; }
+.check { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid #d4c9bb; flex-shrink: 0; margin-top: 1px; }
+.item-text { font-size: 12px; color: #1c1410; line-height: 1.5; flex: 1; }
+.tag { font-size: 9px; font-weight: 600; padding: 2px 7px; background: #f7f0ec; color: #8a5a44; flex-shrink: 0; border-radius: 3px; }
 
-  .a-body { padding: 32px 36px; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+/* ── Ring sidebar (plan) ── */
+.ring-sidebar { width: 52px; border-right: 1px solid #e8e0d5; padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 10px; flex-shrink: 0; }
+.ring-active { width: 32px; height: 32px; border-radius: 50%; border: 3px solid #b5472a; background: rgba(181,71,42,0.10); }
+.ring-inactive { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #e8e0d5; }
 
-  /* Goal card */
-  .a-goal-card { background: white; border: 1px solid #e8e0d5; border-radius: 10px; box-shadow: 0 2px 12px rgba(28,20,16,0.07); overflow: hidden; }
-  .a-goal-card-header { background: #b5472a; color: white; padding: 9px 16px 9px 14px; display: flex; justify-content: space-between; align-items: center; }
-  .a-goal-card-header-label { font-size: 9px; letter-spacing: 0.14em; font-weight: 600; opacity: 0.85; }
-  .a-goal-card-body { padding: 16px 18px; }
-  .a-goal-row { display: flex; align-items: center; gap: 11px; padding-bottom: 13px; margin-bottom: 13px; border-bottom: 1px solid #f0e8df; }
-  .a-checkbox { width: 18px; height: 18px; border: 1.5px solid #c8b8a8; border-radius: 4px; flex-shrink: 0; }
-  .a-goal-text { font-size: 15px; color: #1c1410; font-weight: 500; }
-  .a-empty { font-size: 13px; color: #8a7455; margin-bottom: 12px; font-style: italic; }
-  .a-input-row { display: flex; gap: 6px; margin-bottom: 12px; }
-  .a-select { border: 1px solid #d4c9bb; padding: 8px 10px; font-size: 11px; color: #5c4e40; background: white; font-family: 'Inter', sans-serif; border-radius: 6px; }
-  .a-input { flex: 1; border: 1px solid #d4c9bb; padding: 8px 12px; font-size: 12px; color: #1c1410; font-family: 'Inter', sans-serif; border-radius: 6px; }
-  .a-add-btn { background: #b5472a; color: white; border: none; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-  .a-talk-row { display: flex; gap: 8px; }
-  .a-talk-btn { flex: 1; background: #b5472a; color: white; border: none; padding: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-  .a-change-btn { background: none; border: 1px solid #d4c9bb; padding: 10px 14px; font-size: 12px; color: #5c4e40; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
+/* ── Progress rings ── */
+.prog-rings { display: flex; gap: 20px; padding: 20px 24px; border-bottom: 1px solid #e8e0d5; }
+.prog-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.prog-ring { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+.prog-ring-active { border: 3px solid #b5472a; color: #b5472a; }
+.prog-ring-dim { border: 2.5px solid #e8e0d5; color: #c8b8a8; }
+.prog-ring-label { font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a7455; text-align: center; }
+.prog-ring-label.sel { color: #b5472a; font-weight: 600; }
 
-  /* Add goal card */
-  .a-add-card { background: white; border: 1.5px dashed #c8b8a8; border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
-  .a-add-icon { color: #b5472a; font-size: 20px; line-height: 1; }
-  .a-add-title { font-size: 13px; color: #5c4e40; font-weight: 500; }
-  .a-add-sub { font-size: 11px; color: #8a7455; }
-
-  /* Footer */
-  .a-footer { display: flex; gap: 10px; margin-top: auto; padding-top: 4px; }
-  .a-report-btn { flex: 1; background: #1c1410; color: #faf8f5; border: none; padding: 13px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-  .a-chart-btn { background: none; border: 1px solid #c8b8a8; padding: 13px 18px; font-size: 12px; color: #5c4e40; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-
-  /* Plan A */
-  .plan-a-top { padding: 28px 36px 20px; border-bottom: 1px solid #e8e0d5; }
-  .plan-a-main { display: flex; flex: 1; }
-  .plan-a-sidebar { width: 52px; border-right: 1px solid #e8e0d5; padding: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0; }
-  .plan-ring-active { width: 30px; height: 30px; border-radius: 50%; border: 2.5px solid #b5472a; display: flex; align-items: center; justify-content: center; }
-  .plan-ring-dot { width: 8px; height: 8px; border-radius: 50%; background: #b5472a; }
-  .plan-ring-inactive { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #e8e0d5; display: flex; align-items: center; justify-content: center; }
-  .plan-ring-dot-i { width: 8px; height: 8px; border-radius: 50%; background: #4a7a72; opacity: 0.35; }
-  .plan-a-content { flex: 1; display: flex; flex-direction: column; }
-  .plan-a-goal-bar { background: #b5472a; color: white; padding: 10px 18px; display: flex; flex-direction: column; gap: 1px; }
-  .plan-a-goal-sphere { font-size: 9px; letter-spacing: 0.12em; opacity: 0.75; font-weight: 600; }
-  .plan-a-goal-name { font-size: 14px; font-weight: 600; }
-  .plan-a-tabs { display: flex; border-bottom: 1px solid #e8e0d5; }
-  .plan-a-tab { flex: 1; padding: 11px 8px; text-align: center; cursor: pointer; border-bottom: 2px solid transparent; }
-  .plan-a-tab.active { border-bottom-color: #b5472a; }
-  .plan-a-tab-name { font-size: 10px; letter-spacing: 0.1em; font-weight: 600; color: #1c1410; }
-  .plan-a-tab-sub { font-size: 9px; color: #8a7455; letter-spacing: 0.05em; margin-top: 2px; }
-  .plan-a-tab.inactive .plan-a-tab-name { color: #8a7455; font-weight: 400; }
-  .plan-a-empty { padding: 44px 20px; text-align: center; }
-  .plan-a-empty-text { font-size: 13px; color: #8a7455; font-style: italic; margin-bottom: 14px; }
-  .plan-show-all { background: none; border: 1px solid #d4c9bb; padding: 7px 18px; font-size: 12px; color: #b5472a; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 999px; font-weight: 500; }
-
-  /* Progress A */
-  .prog-a-top { padding: 28px 36px 20px; border-bottom: 1px solid #e8e0d5; }
-  .prog-a-rings { display: flex; gap: 24px; padding: 24px 36px; border-bottom: 1px solid #e8e0d5; }
-  .prog-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 7px; }
-  .prog-ring-svg { position: relative; width: 68px; height: 68px; }
-  .prog-ring-circle { width: 68px; height: 68px; border-radius: 50%; border: 3px solid #b5472a; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #b5472a; }
-  .prog-ring-circle.dim { border-color: #e8e0d5; color: #c8b8a8; }
-  .prog-ring-label { font-size: 9px; letter-spacing: 0.09em; color: #8a7455; text-align: center; text-transform: uppercase; }
-  .prog-ring-label.sel { color: #b5472a; font-weight: 600; }
-  .prog-a-detail { padding: 22px 36px; }
-  .prog-a-goal-card { background: white; border: 1px solid #e8e0d5; border-radius: 10px; box-shadow: 0 2px 10px rgba(28,20,16,0.06); overflow: hidden; }
-  .prog-a-card-header { background: #b5472a; color: white; padding: 9px 16px; font-size: 9px; letter-spacing: 0.12em; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-  .prog-a-card-body { padding: 16px 18px; }
-  .prog-goal-check-row { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
-  .prog-goal-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #b5472a; flex-shrink: 0; }
-  .prog-goal-name { font-size: 15px; color: #1c1410; font-weight: 500; font-family: 'Playfair Display', serif; }
-  .prog-no-steps { font-size: 13px; color: #8a7455; font-style: italic; margin-bottom: 16px; }
-  .prog-stuck-btn { width: 100%; background: #b5472a; color: white; border: none; padding: 11px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-
-
-  /* ═══════════════════════════════════════════
-     DIRECTION B — Structured Warmth
-     Dark header, left-border accent, pills everywhere
-  ═══════════════════════════════════════════ */
-
-  /* Home B */
-  .b-header { padding: 28px 36px 22px; border-bottom: 2px solid #1c1410; }
-  .b-body { padding: 28px 36px; flex: 1; display: flex; flex-direction: column; gap: 0; }
-  .b-goal-block { border-left: 3px solid #b5472a; padding: 0 0 0 18px; margin-bottom: 24px; }
-  .b-sphere-pill { margin-bottom: 10px; }
-  .b-goal-row { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
-  .b-checkbox { width: 18px; height: 18px; border: 1.5px solid #b5472a; border-radius: 4px; flex-shrink: 0; }
-  .b-goal-text { font-size: 16px; color: #1c1410; font-weight: 500; font-family: 'Playfair Display', serif; }
-  .b-actions-eyebrow { font-size: 10px; letter-spacing: 0.12em; color: #8a7455; font-weight: 500; text-transform: uppercase; margin-bottom: 8px; }
-  .b-empty { font-size: 13px; color: #8a7455; font-style: italic; margin-bottom: 12px; }
-  .b-input-group { display: flex; border: 1px solid #d4c9bb; border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
-  .b-select { border: none; border-right: 1px solid #d4c9bb; padding: 9px 10px; font-size: 11px; color: #5c4e40; background: #faf8f5; font-family: 'Inter', sans-serif; }
-  .b-input { flex: 1; border: none; padding: 9px 12px; font-size: 12px; color: #1c1410; font-family: 'Inter', sans-serif; background: white; }
-  .b-add-btn { border: none; border-left: 1px solid #d4c9bb; padding: 9px 14px; font-size: 12px; color: #b5472a; font-weight: 600; cursor: pointer; background: white; font-family: 'Inter', sans-serif; }
-  .b-cta-row { display: flex; align-items: center; gap: 12px; }
-  .b-talk-btn { flex: 1; background: #b5472a; color: white; border: none; padding: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-  .b-change-link { font-size: 11px; color: #8a7455; text-decoration: underline; cursor: pointer; white-space: nowrap; }
-  .b-divider { height: 1px; background: #e8e0d5; margin: 20px 0; }
-  .b-add-row { display: flex; align-items: center; gap: 10px; color: #b5472a; cursor: pointer; margin-bottom: 24px; }
-  .b-add-icon { font-size: 18px; font-weight: 300; }
-  .b-add-text { font-size: 13px; font-weight: 500; }
-  .b-add-sub { font-size: 11px; color: #8a7455; font-weight: 400; }
-  .b-footer { display: flex; gap: 10px; margin-top: auto; }
-  .b-report-btn { flex: 1; background: #1c1410; color: #faf8f5; border: none; padding: 13px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-  .b-chart-btn { background: none; border: 1px solid #c8b8a8; padding: 13px 18px; font-size: 12px; color: #5c4e40; cursor: pointer; font-family: 'Inter', sans-serif; border-radius: 6px; }
-
-  /* Plan B */
-  .plan-b-header { background: #1c1410; padding: 22px 36px; flex-shrink: 0; }
-  .plan-b-eyebrow { font-size: 9px; letter-spacing: 0.16em; color: rgba(250,248,245,0.45); margin-bottom: 4px; }
-  .plan-b-title { font-family: 'Playfair Display', serif; font-size: 24px; color: #faf8f5; font-weight: 600; }
-  .plan-b-main { display: flex; flex: 1; }
-  .plan-b-sidebar { width: 52px; background: rgba(28,20,16,0.03); border-right: 1px solid #e8e0d5; padding: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0; }
-  .plan-b-content { flex: 1; display: flex; flex-direction: column; }
-  .plan-b-goal-bar { background: #b5472a; color: white; padding: 10px 18px; display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
-  .plan-b-goal-sphere { font-size: 9px; letter-spacing: 0.12em; opacity: 0.75; font-weight: 600; }
-  .plan-b-goal-name { font-size: 14px; font-weight: 600; }
-  .plan-b-tabs { display: flex; flex-shrink: 0; }
-  .plan-b-tab { flex: 1; padding: 13px 8px; text-align: center; border-bottom: 1px solid #e8e0d5; border-right: 1px solid #e8e0d5; cursor: pointer; }
-  .plan-b-tab:last-child { border-right: none; }
-  .plan-b-tab.active { background: white; border-bottom: 2px solid #b5472a; }
-  .plan-b-tab-name { font-size: 10px; letter-spacing: 0.1em; font-weight: 600; color: #1c1410; }
-  .plan-b-tab-sub { font-size: 9px; color: #8a7455; letter-spacing: 0.05em; margin-top: 2px; }
-  .plan-b-tab.inactive .plan-b-tab-name { color: #8a7455; font-weight: 400; }
-  .plan-b-empty { padding: 44px 20px; text-align: center; flex: 1; }
-  .plan-b-empty-text { font-size: 13px; color: #8a7455; font-style: italic; margin-bottom: 14px; }
-
-  /* Progress B */
-  .prog-b-header { background: #1c1410; padding: 22px 36px; flex-shrink: 0; }
-  .prog-b-eyebrow { font-size: 9px; letter-spacing: 0.16em; color: rgba(250,248,245,0.45); margin-bottom: 4px; }
-  .prog-b-title { font-family: 'Playfair Display', serif; font-size: 24px; color: #faf8f5; font-weight: 600; }
-  .prog-b-rings { display: flex; gap: 24px; padding: 24px 36px; border-bottom: 1px solid #e8e0d5; }
-  .prog-b-detail { padding: 24px 36px; }
-  .prog-b-goal-block { border-left: 3px solid #b5472a; padding-left: 18px; }
-  .prog-b-sphere-pill { margin-bottom: 10px; }
-  .prog-b-goal-row { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
-  .prog-b-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #b5472a; flex-shrink: 0; }
-  .prog-b-goal-name { font-size: 15px; color: #1c1410; font-weight: 500; font-family: 'Playfair Display', serif; }
-  .prog-b-no-steps { font-size: 13px; color: #8a7455; font-style: italic; margin-bottom: 16px; }
+/* ── Type filter row ── */
+.type-row { display: flex; border-bottom: 1px solid #e8e0d5; }
+.type-btn { flex: 1; padding: 9px 4px; text-align: center; font-size: 9px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #8a7455; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; border-right: 1px solid #f0ebe3; }
+.type-btn:last-child { border-right: none; }
+.type-btn.active { color: #b5472a; border-bottom-color: #b5472a; background: rgba(181,71,42,0.03); }
 </style>
 </head>
 <body>
-<div style="max-width:1200px; margin:0 auto;">
+<div style="max-width:1400px;margin:0 auto;">
 
-  <div style="margin-bottom:32px;">
-    <div style="font-family:'Playfair Display',serif; font-size:32px; color:#1c1410; margin-bottom:8px;">Lyminal — Design Directions v2</div>
-    <div style="font-size:13px; color:#6e5c4a; line-height:1.6;">Updated with consistent rounded corners, pill tags, sphere-color CTAs, and Playfair for goal titles — matching the language of the early onboarding screens.</div>
-  </div>
+<div class="page-heading">Lyminal — Design Directions v3</div>
+<div class="page-sub">Three directions for Home, Plan, and Progress. Direction A (solid color card header) removed. All three keep the ring sidebar on Plan and treat the sphere color as an accent, not a fill. The difference is in how goal identity is expressed inside the content area.</div>
 
 
-  <!-- ═══ HOME ═══ -->
-  <div class="page-title">Home tab</div>
-  <div class="page-desc">Both directions now use a terracotta CTA, rounded cards, and pill sphere tags. A uses a contained card per goal. B uses a left-border accent with an editorial layout.</div>
-  <div class="drafts-row">
+<!-- ════════════════════════════════════
+     B — STRUCTURED WARMTH
+     Left-border accent, tinted pill header
+     ════════════════════════════════════ -->
+<div class="section-title">B — Structured Warmth</div>
+<div class="section-desc">Sphere color appears as a 3px left-border accent on the content block, a sphere pill, and the CTA. The card header is lightly tinted (rgba, not solid). Closest to what we had, cleaned up.</div>
 
-    <!-- HOME A -->
-    <div class="draft-col">
-      <div class="draft-label">A — Card containment</div>
-      <div class="app-shell">
-        <div class="nav">
-          <div class="nav-item active"><span class="nav-icon">⌂</span>Home</div>
-          <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
-          <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
-          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
-          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+<div class="screens-row">
+
+  <!-- HOME B -->
+  <div class="screen-col">
+    <div class="screen-label">Home</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item active"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your active goals</div>
+        <div class="h1">What you're working on</div>
+      </div>
+      <!-- Left-border accent block -->
+      <div style="padding:20px 20px 0;border-left:3px solid #b5472a;margin:20px 20px 0 20px;">
+        <div style="margin-bottom:8px;"><span class="pill pill-terra"><span class="dot"></span>Social Life</span></div>
+        <div class="h2" style="margin-bottom:14px;">Reconnect with old friends</div>
+        <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span></div>
+        <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm message</span></div>
+        <div class="item-row" style="border-bottom:none;margin-bottom:14px;"><div class="check"></div><span class="item-text">Set up a phone or video call</span></div>
+        <div class="input-row" style="margin-bottom:10px;">
+          <input class="input" placeholder="Add an action item…" />
+          <button class="input-btn">Add</button>
         </div>
-        <div class="with-strip">
-          <div class="strip"></div>
-          <div class="main-col">
-            <div class="a-body">
-              <div>
-                <div class="eyebrow">Your active goals</div>
-                <div class="screen-title" style="margin-bottom:20px;">Here's what you're working on</div>
-              </div>
-
-              <div class="a-goal-card">
-                <div class="a-goal-card-header">
-                  <span class="a-goal-card-header-label">EDUCATION</span>
-                  <span style="opacity:0.5; font-size:13px; cursor:pointer;">✕</span>
-                </div>
-                <div class="a-goal-card-body">
-                  <div class="a-goal-row">
-                    <div class="a-checkbox"></div>
-                    <div class="a-goal-text">Learn to write better</div>
-                  </div>
-                  <div class="a-empty">No action items yet. Add your own or talk to Lyme.</div>
-                  <div class="a-input-row">
-                    <select class="a-select"><option>Find</option><option>Forward</option><option>Schedule</option></select>
-                    <input class="a-input" placeholder="Add an action item…" />
-                    <button class="a-add-btn">Add</button>
-                  </div>
-                  <div class="a-talk-row">
-                    <button class="a-talk-btn">TALK TO LYME</button>
-                    <button class="a-change-btn">⇄ Change</button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="a-add-card">
-                <div class="a-add-icon">+</div>
-                <div>
-                  <div class="a-add-title">Add another goal</div>
-                  <div class="a-add-sub">Track a goal from a different sphere</div>
-                </div>
-              </div>
-
-              <div class="a-footer">
-                <button class="a-report-btn">↓ DOWNLOAD FULL REPORT</button>
-                <button class="a-chart-btn">View chart</button>
-              </div>
-            </div>
-          </div>
+        <div style="display:flex;gap:8px;padding-bottom:20px;">
+          <button class="btn-primary" style="flex:1;padding:10px;">TALK TO LYME</button>
+          <button class="btn-ghost" style="font-size:11px;">⇄ Change</button>
         </div>
       </div>
-    </div>
-
-    <div class="direction-divider"></div>
-    <!-- HOME B -->
-    <div class="draft-col">
-      <div class="draft-label">B — Structured warmth</div>
-      <div class="app-shell">
-        <div class="nav">
-          <div class="nav-item active"><span class="nav-icon">⌂</span>Home</div>
-          <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
-          <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
-          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
-          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      <div style="margin:12px 20px 0;padding:13px 18px;display:flex;align-items:center;gap:10px;border:1.5px dashed #d4c9bb;border-radius:8px;cursor:pointer;">
+        <span style="color:#b5472a;font-size:18px;font-weight:300;">+</span>
+        <div>
+          <div style="font-size:12px;color:#5c4e40;font-weight:500;">Add another goal</div>
+          <div style="font-size:10px;color:#8a7455;">Track a goal from a different sphere</div>
         </div>
-        <div class="with-strip">
-          <div class="strip"></div>
-          <div class="main-col">
-            <div class="b-header">
-              <div class="eyebrow">Your active goals</div>
-              <div class="screen-title">Here's what you're working on</div>
-            </div>
-            <div class="b-body">
+      </div>
+      <div style="padding:16px 20px;display:flex;gap:8px;">
+        <button class="btn-dark" style="flex:1;">↓ DOWNLOAD FULL REPORT</button>
+        <button class="btn-ghost">View chart</button>
+      </div>
+    </div>
+  </div>
 
-              <div class="b-goal-block">
-                <div class="b-sphere-pill">
-                  <span class="pill pill-sphere"><span class="dot"></span>Education</span>
-                </div>
-                <div class="b-goal-row">
-                  <div class="b-checkbox"></div>
-                  <div class="b-goal-text">Learn to write better</div>
-                </div>
-                <div class="b-actions-eyebrow">Action items</div>
-                <div class="b-empty">No action items yet. Add your own or talk to Lyme.</div>
-                <div class="b-input-group">
-                  <select class="b-select"><option>Find</option><option>Forward</option><option>Schedule</option></select>
-                  <input class="b-input" placeholder="Add an action item…" />
-                  <button class="b-add-btn">Add</button>
-                </div>
-                <div class="b-cta-row">
-                  <button class="b-talk-btn">TALK TO LYME</button>
-                  <span class="b-change-link">⇄ Change goal</span>
-                </div>
-              </div>
-
-              <div class="b-divider"></div>
-
-              <div class="b-add-row">
-                <div class="b-add-icon">+</div>
-                <div>
-                  <span class="b-add-text">Add another goal </span>
-                  <span class="b-add-sub">— from a different sphere</span>
-                </div>
-              </div>
-
-              <div class="b-footer">
-                <button class="b-report-btn">↓ DOWNLOAD FULL REPORT</button>
-                <button class="b-chart-btn">View chart</button>
-              </div>
-            </div>
+  <!-- PLAN B -->
+  <div class="screen-col">
+    <div class="screen-label">Plan</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <div style="display:flex;">
+        <div class="ring-sidebar">
+          <div class="ring-active"></div>
+          <div class="ring-inactive"></div>
+          <div class="ring-inactive" style="opacity:0.5;"></div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <!-- Tinted goal header (not solid) -->
+          <div style="padding:14px 16px;background:rgba(181,71,42,0.07);border-bottom:1px solid rgba(181,71,42,0.14);">
+            <div style="margin-bottom:7px;"><span class="pill pill-terra"><span class="dot"></span>Social Life</span></div>
+            <div class="h2">Reconnect with old friends</div>
+          </div>
+          <div class="type-row">
+            <div class="type-btn active">All</div>
+            <div class="type-btn">Forward</div>
+            <div class="type-btn">Schedule</div>
+            <div class="type-btn">Find</div>
+          </div>
+          <div style="padding:4px 16px 12px;">
+            <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span><span class="tag">find</span></div>
+            <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm, casual message</span><span class="tag">forward</span></div>
+            <div class="item-row"><div class="check"></div><span class="item-text">Set up phone or video calls within 2 weeks</span><span class="tag">schedule</span></div>
+            <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Research community events to reconnect</span><span class="tag">find</span></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-
-  <!-- ═══ PLAN ═══ -->
-  <div class="page-sep"></div>
-  <div class="page-title">Plan tab</div>
-  <div class="page-desc">Both use pill-shaped "Show all items" and rounded tab treatment. A keeps the flat cream header with a border. B anchors with a dark header that matches the onboarding "focus" screen's weight.</div>
-  <div class="drafts-row">
-
-    <!-- PLAN A -->
-    <div class="draft-col">
-      <div class="draft-label">A — Card containment</div>
-      <div class="app-shell">
-        <div class="nav">
-          <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
-          <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
-          <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
-          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
-          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+  <!-- PROGRESS B -->
+  <div class="screen-col">
+    <div class="screen-label">Progress</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item active"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your progress</div>
+        <div class="h1">How far you've come</div>
+      </div>
+      <div class="prog-rings">
+        <div class="prog-ring-wrap">
+          <div class="prog-ring prog-ring-active">0%</div>
+          <div class="prog-ring-label sel">Social Life</div>
         </div>
-        <div class="with-strip">
-          <div class="strip"></div>
-          <div class="main-col">
-            <div class="plan-a-top">
-              <div class="eyebrow">Plan</div>
-              <div class="screen-title">Get things done</div>
-            </div>
-            <div class="plan-a-main">
-              <div class="plan-a-sidebar">
-                <div class="plan-ring-active"><div class="plan-ring-dot"></div></div>
-                <div class="plan-ring-inactive"><div class="plan-ring-dot-i"></div></div>
-              </div>
-              <div class="plan-a-content">
-                <div class="plan-a-goal-bar">
-                  <div class="plan-a-goal-sphere">EDUCATION</div>
-                  <div class="plan-a-goal-name">Learn to write better</div>
-                </div>
-                <div class="plan-a-tabs">
-                  <div class="plan-a-tab active">
-                    <div class="plan-a-tab-name">FORWARD</div>
-                    <div class="plan-a-tab-sub">SEND/DELEGATE</div>
-                  </div>
-                  <div class="plan-a-tab inactive">
-                    <div class="plan-a-tab-name">SCHEDULE</div>
-                    <div class="plan-a-tab-sub">REMIND/CAL</div>
-                  </div>
-                  <div class="plan-a-tab inactive">
-                    <div class="plan-a-tab-name">FIND</div>
-                    <div class="plan-a-tab-sub">LYME SEARCH</div>
-                  </div>
-                </div>
-                <div class="plan-a-empty">
-                  <div class="plan-a-empty-text">No items for this goal yet.</div>
-                  <button class="plan-show-all">Show all items</button>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="prog-ring-wrap">
+          <div class="prog-ring prog-ring-dim">—</div>
+          <div class="prog-ring-label">Self-Reliance</div>
+        </div>
+        <div class="prog-ring-wrap">
+          <div class="prog-ring prog-ring-dim">—</div>
+          <div class="prog-ring-label">Family</div>
         </div>
       </div>
+      <!-- Left-border accent block -->
+      <div style="padding:16px 20px 16px 17px;border-left:3px solid #b5472a;margin:20px 24px;">
+        <div style="margin-bottom:8px;"><span class="pill pill-terra"><span class="dot"></span>Social Life</span></div>
+        <div class="h2" style="margin-bottom:14px;">Reconnect with old friends</div>
+        <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span></div>
+        <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm message</span></div>
+        <div class="item-row" style="border-bottom:none;margin-bottom:16px;"><div class="check"></div><span class="item-text">Set up a phone or video call</span></div>
+        <button class="btn-primary" style="width:100%;padding:11px;font-size:10px;letter-spacing:0.08em;">FEELING STUCK? TALK TO LYME →</button>
+      </div>
     </div>
+  </div>
 
-    <div class="direction-divider"></div>
-    <!-- PLAN B -->
-    <div class="draft-col">
-      <div class="draft-label">B — Structured warmth</div>
-      <div class="app-shell">
-        <div class="nav">
-          <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
-          <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
-          <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
-          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
-          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
-        </div>
-        <div class="with-strip">
-          <div class="strip"></div>
-          <div class="main-col">
-            <div class="plan-b-header">
-              <div class="plan-b-eyebrow">PLAN</div>
-              <div class="plan-b-title">Get things done</div>
-            </div>
-            <div class="plan-b-main">
-              <div class="plan-b-sidebar">
-                <div class="plan-ring-active"><div class="plan-ring-dot"></div></div>
-                <div class="plan-ring-inactive"><div class="plan-ring-dot-i"></div></div>
-              </div>
-              <div class="plan-b-content">
-                <div class="plan-b-goal-bar">
-                  <span class="plan-b-goal-sphere">EDUCATION</span>
-                  <span class="plan-b-goal-name">Learn to write better</span>
-                </div>
-                <div class="plan-b-tabs">
-                  <div class="plan-b-tab active">
-                    <div class="plan-b-tab-name">FORWARD</div>
-                    <div class="plan-b-tab-sub">SEND/DELEGATE</div>
-                  </div>
-                  <div class="plan-b-tab inactive">
-                    <div class="plan-b-tab-name">SCHEDULE</div>
-                    <div class="plan-b-tab-sub">REMIND/CAL</div>
-                  </div>
-                  <div class="plan-b-tab inactive">
-                    <div class="plan-b-tab-name">FIND</div>
-                    <div class="plan-b-tab-sub">LYME SEARCH</div>
-                  </div>
-                </div>
-                <div class="plan-b-empty">
-                  <div class="plan-b-empty-text">No items for this goal yet.</div>
-                  <button class="plan-show-all">Show all items</button>
-                </div>
-              </div>
-            </div>
+</div>
+
+
+<div class="section-sep"></div>
+
+
+<!-- ════════════════════════════════════
+     C — OPEN
+     No colored header. Dot label only.
+     ════════════════════════════════════ -->
+<div class="section-title">C — Open</div>
+<div class="section-desc">No colored header region at all. Cards are plain white with a light border. Sphere color appears only as a small dot label, the ring stroke, and the CTA. Maximum breathing room — the content speaks for itself.</div>
+
+<div class="screens-row">
+
+  <!-- HOME C -->
+  <div class="screen-col">
+    <div class="screen-label">Home</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item active"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your active goals</div>
+        <div class="h1">What you're working on</div>
+      </div>
+      <div style="padding:20px;">
+        <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;padding:18px;margin-bottom:12px;box-shadow:0 1px 6px rgba(28,20,16,0.05);">
+          <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;color:#b5472a;display:flex;align-items:center;gap:5px;margin-bottom:7px;">● Social Life</div>
+          <div class="h2" style="margin-bottom:14px;">Reconnect with old friends</div>
+          <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span></div>
+          <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm message</span></div>
+          <div class="item-row" style="border-bottom:none;margin-bottom:14px;"><div class="check"></div><span class="item-text">Set up a phone or video call</span></div>
+          <div class="input-row" style="margin-bottom:10px;">
+            <input class="input" placeholder="Add an action item…" />
+            <button class="input-btn">Add</button>
           </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-primary" style="flex:1;padding:10px;">TALK TO LYME</button>
+            <button class="btn-ghost" style="font-size:11px;">⇄ Change</button>
+          </div>
+        </div>
+        <div style="background:white;border:1.5px dashed #d4c9bb;border-radius:8px;padding:13px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:14px;">
+          <span style="color:#b5472a;font-size:18px;font-weight:300;">+</span>
+          <div>
+            <div style="font-size:12px;color:#5c4e40;font-weight:500;">Add another goal</div>
+            <div style="font-size:10px;color:#8a7455;">Track a goal from a different sphere</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-dark" style="flex:1;">↓ DOWNLOAD FULL REPORT</button>
+          <button class="btn-ghost">View chart</button>
         </div>
       </div>
     </div>
   </div>
 
-
-  <!-- ═══ PROGRESS ═══ -->
-  <div class="page-sep"></div>
-  <div class="page-title">Progress tab</div>
-  <div class="page-desc">The strip tracks the selected sphere color (sage shown here). A wraps the goal detail in a card. B uses the left-border accent with a pill sphere tag — matching the connection flow's visual language.</div>
-  <div class="drafts-row">
-
-    <!-- PROGRESS A -->
-    <div class="draft-col">
-      <div class="draft-label">A — Card containment</div>
-      <div class="app-shell">
-        <div class="nav">
-          <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
-          <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
-          <div class="nav-item active"><span class="nav-icon">◬</span>Progress</div>
-          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
-          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
-        </div>
-        <div class="with-strip">
-          <div class="strip strip-sage"></div>
-          <div class="main-col">
-            <div class="prog-a-top">
-              <div class="eyebrow">Progress</div>
-              <div class="screen-title">How far you've come</div>
-            </div>
-            <div class="prog-a-rings">
-              <div class="prog-ring-wrap">
-                <div class="prog-ring-circle">0%</div>
-                <div class="prog-ring-label sel">EDUCATION</div>
-              </div>
-              <div class="prog-ring-wrap">
-                <div class="prog-ring-circle dim">—</div>
-                <div class="prog-ring-label">MENTAL HEALTH</div>
-              </div>
-              <div class="prog-ring-wrap">
-                <div class="prog-ring-circle dim">—</div>
-                <div class="prog-ring-label">PRACTICAL SKILLS</div>
-              </div>
-            </div>
-            <div class="prog-a-detail">
-              <div class="prog-a-goal-card">
-                <div class="prog-a-card-header">● EDUCATION</div>
-                <div class="prog-a-card-body">
-                  <div class="prog-goal-check-row">
-                    <div class="prog-goal-check"></div>
-                    <div class="prog-goal-name">Learn to write better</div>
-                  </div>
-                  <div class="prog-no-steps">No steps added yet — talk to Lyme to build your plan.</div>
-                  <button class="prog-stuck-btn">FEELING STUCK? TALK TO LYME →</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+  <!-- PLAN C -->
+  <div class="screen-col">
+    <div class="screen-label">Plan</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
       </div>
-    </div>
-
-    <div class="direction-divider"></div>
-    <!-- PROGRESS B -->
-    <div class="draft-col">
-      <div class="draft-label">B — Structured warmth</div>
-      <div class="app-shell">
-        <div class="nav">
-          <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
-          <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
-          <div class="nav-item active"><span class="nav-icon">◬</span>Progress</div>
-          <div class="nav-item"><span class="nav-icon">⎘</span>My Chart</div>
-          <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <div style="display:flex;">
+        <div class="ring-sidebar">
+          <div class="ring-active"></div>
+          <div class="ring-inactive"></div>
+          <div class="ring-inactive" style="opacity:0.5;"></div>
         </div>
-        <div class="with-strip">
-          <div class="strip strip-sage"></div>
-          <div class="main-col">
-            <div class="prog-b-header">
-              <div class="prog-b-eyebrow">PROGRESS</div>
-              <div class="prog-b-title">How far you've come</div>
+        <div style="flex:1;min-width:0;padding:16px 16px 16px 12px;">
+          <!-- Clean card, no colored header -->
+          <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;overflow:hidden;box-shadow:0 1px 6px rgba(28,20,16,0.05);">
+            <div style="padding:14px 16px 12px;border-bottom:1px solid #e8e0d5;">
+              <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;color:#b5472a;margin-bottom:6px;">● Social Life</div>
+              <div class="h2">Reconnect with old friends</div>
             </div>
-            <div class="prog-b-rings">
-              <div class="prog-ring-wrap">
-                <div class="prog-ring-circle">0%</div>
-                <div class="prog-ring-label sel">EDUCATION</div>
-              </div>
-              <div class="prog-ring-wrap">
-                <div class="prog-ring-circle dim">—</div>
-                <div class="prog-ring-label">MENTAL HEALTH</div>
-              </div>
-              <div class="prog-ring-wrap">
-                <div class="prog-ring-circle dim">—</div>
-                <div class="prog-ring-label">PRACTICAL SKILLS</div>
-              </div>
+            <div class="type-row">
+              <div class="type-btn active">All</div>
+              <div class="type-btn">Forward</div>
+              <div class="type-btn">Schedule</div>
+              <div class="type-btn">Find</div>
             </div>
-            <div class="prog-b-detail">
-              <div class="prog-b-goal-block">
-                <div class="prog-b-sphere-pill">
-                  <span class="pill pill-sphere"><span class="dot"></span>Education</span>
-                </div>
-                <div class="prog-b-goal-row">
-                  <div class="prog-b-check"></div>
-                  <div class="prog-b-goal-name">Learn to write better</div>
-                </div>
-                <div class="prog-b-no-steps">No steps added yet — talk to Lyme to build your plan.</div>
-                <button class="prog-stuck-btn">FEELING STUCK? TALK TO LYME →</button>
-              </div>
+            <div style="padding:4px 16px 12px;">
+              <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span><span class="tag">find</span></div>
+              <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm, casual message</span><span class="tag">forward</span></div>
+              <div class="item-row"><div class="check"></div><span class="item-text">Set up phone or video calls within 2 weeks</span><span class="tag">schedule</span></div>
+              <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Research community events to reconnect</span><span class="tag">find</span></div>
             </div>
           </div>
         </div>
@@ -551,9 +329,911 @@
     </div>
   </div>
 
-  <div style="font-size:12px; color:#8a7455; padding-bottom:48px;">
-    Both directions keep the left strip full height and sphere-color. The strip on Progress tracks the selected sphere (sage shown). On Home and Plan it stays terracotta.
+  <!-- PROGRESS C -->
+  <div class="screen-col">
+    <div class="screen-label">Progress</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item active"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your progress</div>
+        <div class="h1">How far you've come</div>
+      </div>
+      <div class="prog-rings">
+        <div class="prog-ring-wrap">
+          <div class="prog-ring prog-ring-active">0%</div>
+          <div class="prog-ring-label sel">Social Life</div>
+        </div>
+        <div class="prog-ring-wrap">
+          <div class="prog-ring prog-ring-dim">—</div>
+          <div class="prog-ring-label">Self-Reliance</div>
+        </div>
+        <div class="prog-ring-wrap">
+          <div class="prog-ring prog-ring-dim">—</div>
+          <div class="prog-ring-label">Family</div>
+        </div>
+      </div>
+      <div style="padding:20px;">
+        <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;padding:18px;box-shadow:0 1px 6px rgba(28,20,16,0.05);">
+          <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;color:#b5472a;margin-bottom:7px;">● Social Life</div>
+          <div class="h2" style="margin-bottom:14px;">Reconnect with old friends</div>
+          <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span></div>
+          <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm message</span></div>
+          <div class="item-row" style="border-bottom:none;margin-bottom:16px;"><div class="check"></div><span class="item-text">Set up a phone or video call</span></div>
+          <button class="btn-primary" style="width:100%;padding:11px;font-size:10px;letter-spacing:0.08em;">FEELING STUCK? TALK TO LYME →</button>
+        </div>
+      </div>
+    </div>
   </div>
+
+</div>
+
+
+<div class="section-sep"></div>
+
+
+<!-- ════════════════════════════════════
+     D — ABOVE THE FOLD
+     Goal identity outside the card
+     ════════════════════════════════════ -->
+<div class="section-title">D — Above the Fold</div>
+<div class="section-desc">Goal identity — sphere pill and goal title — lives outside the card entirely, as a section heading above it. The card is purely functional: filter tabs and action items, nothing else. Two clear layers: "here's what we're working on" then "here's how." On Plan, the ring sidebar and the goal heading form a natural pair — both identify the goal, the card just executes it.</div>
+
+<div class="screens-row">
+
+  <!-- HOME D -->
+  <div class="screen-col">
+    <div class="screen-label">Home</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item active"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your active goals</div>
+        <div class="h1">What you're working on</div>
+      </div>
+      <div style="padding:20px;">
+        <!-- Goal heading — outside card -->
+        <div style="margin-bottom:12px;">
+          <div style="margin-bottom:7px;"><span class="pill pill-terra"><span class="dot"></span>Social Life</span></div>
+          <div class="h2">Reconnect with old friends</div>
+        </div>
+        <!-- Functional card — no header -->
+        <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;padding:16px 18px;margin-bottom:12px;box-shadow:0 1px 6px rgba(28,20,16,0.05);">
+          <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span></div>
+          <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm message</span></div>
+          <div class="item-row" style="border-bottom:none;margin-bottom:14px;"><div class="check"></div><span class="item-text">Set up a phone or video call</span></div>
+          <div class="input-row" style="margin-bottom:10px;">
+            <input class="input" placeholder="Add an action item…" />
+            <button class="input-btn">Add</button>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-primary" style="flex:1;padding:10px;">TALK TO LYME</button>
+            <button class="btn-ghost" style="font-size:11px;">⇄ Change</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 2px;cursor:pointer;margin-bottom:14px;">
+          <span style="color:#b5472a;font-size:18px;font-weight:300;">+</span>
+          <span style="font-size:12px;color:#5c4e40;font-weight:500;">Add another goal </span>
+          <span style="font-size:11px;color:#8a7455;">— from a different sphere</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-dark" style="flex:1;">↓ DOWNLOAD FULL REPORT</button>
+          <button class="btn-ghost">View chart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAN D -->
+  <div class="screen-col">
+    <div class="screen-label">Plan</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <div style="display:flex;">
+        <div class="ring-sidebar">
+          <div class="ring-active"></div>
+          <div class="ring-inactive"></div>
+          <div class="ring-inactive" style="opacity:0.5;"></div>
+        </div>
+        <div style="flex:1;min-width:0;padding:16px 16px 16px 12px;">
+          <!-- Goal heading — outside card, pairs with ring sidebar -->
+          <div style="margin-bottom:12px;">
+            <div style="margin-bottom:6px;"><span class="pill pill-terra"><span class="dot"></span>Social Life</span></div>
+            <div class="h2">Reconnect with old friends</div>
+          </div>
+          <!-- Purely functional card — filter + items only -->
+          <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;overflow:hidden;box-shadow:0 1px 6px rgba(28,20,16,0.05);">
+            <div class="type-row">
+              <div class="type-btn active">All</div>
+              <div class="type-btn">Forward</div>
+              <div class="type-btn">Schedule</div>
+              <div class="type-btn">Find</div>
+            </div>
+            <div style="padding:4px 16px 12px;">
+              <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span><span class="tag">find</span></div>
+              <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm, casual message</span><span class="tag">forward</span></div>
+              <div class="item-row"><div class="check"></div><span class="item-text">Set up phone or video calls within 2 weeks</span><span class="tag">schedule</span></div>
+              <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Research community events to reconnect</span><span class="tag">find</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS D -->
+  <div class="screen-col">
+    <div class="screen-label">Progress</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item active"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your progress</div>
+        <div class="h1">How far you've come</div>
+      </div>
+      <div class="prog-rings">
+        <div class="prog-ring-wrap">
+          <div class="prog-ring prog-ring-active">0%</div>
+          <div class="prog-ring-label sel">Social Life</div>
+        </div>
+        <div class="prog-ring-wrap">
+          <div class="prog-ring prog-ring-dim">—</div>
+          <div class="prog-ring-label">Self-Reliance</div>
+        </div>
+        <div class="prog-ring-wrap">
+          <div class="prog-ring prog-ring-dim">—</div>
+          <div class="prog-ring-label">Family</div>
+        </div>
+      </div>
+      <div style="padding:20px;">
+        <!-- Goal heading — outside card -->
+        <div style="margin-bottom:12px;">
+          <div style="margin-bottom:6px;"><span class="pill pill-terra"><span class="dot"></span>Social Life</span></div>
+          <div class="h2">Reconnect with old friends</div>
+        </div>
+        <!-- Functional card only -->
+        <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;padding:16px 18px;box-shadow:0 1px 6px rgba(28,20,16,0.05);">
+          <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span></div>
+          <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm message</span></div>
+          <div class="item-row" style="border-bottom:none;margin-bottom:16px;"><div class="check"></div><span class="item-text">Set up a phone or video call</span></div>
+          <button class="btn-primary" style="width:100%;padding:11px;font-size:10px;letter-spacing:0.08em;">FEELING STUCK? TALK TO LYME →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="font-size:11px;color:#8a7455;padding:48px 0 64px;line-height:1.8;max-width:700px;">
+  All three directions keep the ring sidebar on Plan, share the same page header treatment, and use sphere color only as an accent. The question is purely how much the goal identity lives inside vs. outside the content card — from B (inside, with context) to C (inside, minimal) to D (outside entirely, cleanest separation).
+</div>
+
+<div class="section-sep"></div>
+<div style="font-family:'Playfair Display',serif;font-size:26px;color:#1c1410;margin-bottom:6px;">Plan tab — Further explorations</div>
+<div style="font-size:13px;color:#6e5c4a;margin-bottom:48px;line-height:1.7;max-width:700px;">Plan tab directions that abandon the vertical ring carousel as a navigation mechanism.</div>
+
+
+<div class="section-sep"></div>
+<div style="font-family:'Playfair Display',serif;font-size:26px;color:#1c1410;margin-bottom:6px;">Plan tab — Further explorations</div>
+<div style="font-size:13px;color:#6e5c4a;margin-bottom:48px;line-height:1.7;max-width:700px;">Three plan tab directions that abandon the vertical ring carousel as a navigation mechanism. The strip stays as a decorative accent. Goal switching moves to the top of the content area, or disappears entirely.</div>
+
+
+<!-- ════════════════════════════════════
+     HOME — Multi-goal (B style)
+     Shows how left-border handles 2 goals
+     ════════════════════════════════════ -->
+<div class="section-title" style="margin-bottom:4px;">Home — Two goals (B style reference)</div>
+<div class="section-desc">How the left-border accent handles multiple goals. Each goal gets its own bordered block. The border is the separator — no card needed.</div>
+
+<div class="screens-row" style="margin-bottom:0;">
+  <div class="screen-col" style="max-width:420px;">
+    <div class="screen-label">Home — 2 goals</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item active"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your active goals</div>
+        <div class="h1">What you're working on</div>
+      </div>
+      <!-- Goal 1 -->
+      <div style="padding:18px 20px 16px 17px;border-left:3px solid #b5472a;margin:20px 20px 0 20px;">
+        <div style="margin-bottom:8px;"><span class="pill pill-terra"><span class="dot"></span>Social Life</span></div>
+        <div class="h2" style="margin-bottom:12px;">Reconnect with old friends</div>
+        <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span></div>
+        <div class="item-row" style="border-bottom:none;margin-bottom:12px;"><div class="check"></div><span class="item-text">Reach out with a warm message</span></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-primary" style="flex:1;padding:9px;font-size:10px;">TALK TO LYME</button>
+          <button class="btn-ghost" style="font-size:11px;">⇄ Change</button>
+        </div>
+      </div>
+      <!-- Divider -->
+      <div style="height:1px;background:#e8e0d5;margin:16px 20px;"></div>
+      <!-- Goal 2 — different sphere color -->
+      <div style="padding:18px 20px 16px 17px;border-left:3px solid #4a7a72;margin:0 20px 0 20px;">
+        <div style="margin-bottom:8px;"><span class="pill" style="background:rgba(74,122,114,0.10);border:1px solid rgba(74,122,114,0.22);color:#4a7a72;"><span class="dot"></span>Self-Reliance</span></div>
+        <div class="h2" style="margin-bottom:12px;">Build an emergency fund</div>
+        <div class="item-row"><div class="check"></div><span class="item-text">Open a dedicated savings account</span></div>
+        <div class="item-row" style="border-bottom:none;margin-bottom:12px;"><div class="check"></div><span class="item-text">Set up a $50/week auto-transfer</span></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-primary" style="flex:1;padding:9px;font-size:10px;background:#4a7a72;">TALK TO LYME</button>
+          <button class="btn-ghost" style="font-size:11px;">⇄ Change</button>
+        </div>
+      </div>
+      <div style="padding:16px 20px;display:flex;gap:8px;margin-top:8px;">
+        <button class="btn-dark" style="flex:1;">↓ DOWNLOAD FULL REPORT</button>
+        <button class="btn-ghost">View chart</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div style="height:1px;background:#c8b8a8;margin:48px 0 44px;"></div>
+
+
+<!-- ════════════════════════════════════
+     PLAN E — Goal tabs
+     Horizontal tab strip, strip is decorative
+     ════════════════════════════════════ -->
+<div class="section-title">Plan E — Goal tabs</div>
+<div class="section-desc">A horizontal tab row replaces the vertical carousel. Each goal is a tab — active goal has an accent underline. The left strip stays as a sphere-color accent bar, not a navigation element. Filter tabs sit inside the card below the goal name.</div>
+
+<div class="screens-row">
+  <div class="screen-col" style="max-width:480px;">
+    <div class="screen-label">Plan</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <!-- Decorative left strip + content -->
+      <div style="display:flex;">
+        <div style="width:6px;background:#b5472a;flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <!-- Goal tab row -->
+          <div style="display:flex;border-bottom:1px solid #e8e0d5;background:#faf8f5;overflow-x:auto;">
+            <div style="padding:11px 16px;font-size:11px;font-weight:600;color:#b5472a;border-bottom:2px solid #b5472a;white-space:nowrap;cursor:pointer;">Social Life</div>
+            <div style="padding:11px 16px;font-size:11px;color:#8a7455;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;">Self-Reliance</div>
+            <div style="padding:11px 16px;font-size:11px;color:#8a7455;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;">Family</div>
+          </div>
+          <!-- Content for active goal -->
+          <div style="padding:16px 20px 20px;">
+            <div style="margin-bottom:4px;"><span class="pill pill-terra"><span class="dot"></span>Social Life</span></div>
+            <div class="h2" style="margin-bottom:14px;">Reconnect with old friends</div>
+            <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;overflow:hidden;">
+              <div class="type-row">
+                <div class="type-btn active">All</div>
+                <div class="type-btn">Forward</div>
+                <div class="type-btn">Schedule</div>
+                <div class="type-btn">Find</div>
+              </div>
+              <div style="padding:4px 16px 12px;">
+                <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span><span class="tag">find</span></div>
+                <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm, casual message</span><span class="tag">forward</span></div>
+                <div class="item-row"><div class="check"></div><span class="item-text">Set up phone or video calls within 2 weeks</span><span class="tag">schedule</span></div>
+                <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Research community events to reconnect</span><span class="tag">find</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div style="height:1px;background:#c8b8a8;margin:48px 0 44px;"></div>
+
+
+<!-- ════════════════════════════════════
+     PLAN F — Unified list
+     All goals as sections, no switcher
+     ════════════════════════════════════ -->
+<div class="section-title">Plan F — Unified list</div>
+<div class="section-desc">No goal switcher at all. Every goal appears as a section, stacked vertically. A filter strip at the top applies across all goals — so "Forward" shows all forwardable items from every goal at once. Same left-border language as the home tab. The plan tab becomes a complete view of everything, organized by what you need to do.</div>
+
+<div class="screens-row">
+  <div class="screen-col" style="max-width:480px;">
+    <div class="screen-label">Plan — all goals</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <!-- Global filter strip -->
+      <div style="display:flex;border-bottom:2px solid #e8e0d5;background:white;">
+        <div class="type-btn active" style="padding:11px 8px;">All</div>
+        <div class="type-btn" style="padding:11px 8px;">Forward</div>
+        <div class="type-btn" style="padding:11px 8px;">Schedule</div>
+        <div class="type-btn" style="padding:11px 8px;">Find</div>
+        <div class="type-btn" style="padding:11px 8px;">Unassigned</div>
+      </div>
+      <!-- Goal 1 section -->
+      <div style="padding:16px 20px 14px 17px;border-left:3px solid #b5472a;margin:20px 20px 0 20px;">
+        <div style="margin-bottom:6px;"><span class="pill pill-terra"><span class="dot"></span>Social Life</span></div>
+        <div class="h2" style="margin-bottom:10px;">Reconnect with old friends</div>
+        <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span><span class="tag">find</span></div>
+        <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm, casual message</span><span class="tag">forward</span></div>
+        <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Set up phone or video calls within 2 weeks</span><span class="tag">schedule</span></div>
+      </div>
+      <!-- Goal 2 section -->
+      <div style="padding:16px 20px 14px 17px;border-left:3px solid #4a7a72;margin:16px 20px 0 20px;">
+        <div style="margin-bottom:6px;"><span class="pill" style="background:rgba(74,122,114,0.10);border:1px solid rgba(74,122,114,0.22);color:#4a7a72;font-size:10px;font-weight:500;padding:3px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;"><span class="dot"></span>Self-Reliance</span></div>
+        <div class="h2" style="margin-bottom:10px;">Build an emergency fund</div>
+        <div class="item-row"><div class="check"></div><span class="item-text">Open a dedicated savings account</span><span class="tag">find</span></div>
+        <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Set up a $50/week auto-transfer</span><span class="tag">schedule</span></div>
+      </div>
+      <div style="height:24px;"></div>
+    </div>
+  </div>
+</div>
+
+
+<div style="height:1px;background:#c8b8a8;margin:48px 0 44px;"></div>
+
+
+<!-- ════════════════════════════════════
+     PLAN G — Type-first
+     Organized by action type, not goal
+     ════════════════════════════════════ -->
+<div class="section-title">Plan G — Type-first</div>
+<div class="section-desc">Flip the primary organization: group by what you need to do (Forward / Schedule / Find), with goals as labels within each group. The plan tab becomes a to-do list organized by action mode — useful when you want to batch your tasks ("I'll do all my forwarding now, then scheduling"). Goals are context, not navigation.</div>
+
+<div class="screens-row">
+  <div class="screen-col" style="max-width:480px;">
+    <div class="screen-label">Plan — type-first</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <div style="padding:16px 20px 24px;">
+
+        <!-- FORWARD section -->
+        <div style="margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8a5a44;">↗ Forward</div>
+            <div style="flex:1;height:1px;background:#e8e0d5;"></div>
+          </div>
+          <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;overflow:hidden;">
+            <div class="item-row" style="padding:11px 16px;">
+              <div class="check"></div>
+              <div style="flex:1;">
+                <div class="item-text">Reach out to 2–3 friends with a warm message</div>
+                <div style="font-size:9px;color:#8a7455;margin-top:3px;">Social Life · Reconnect with old friends</div>
+              </div>
+            </div>
+            <div class="item-row" style="padding:11px 16px;border-bottom:none;">
+              <div class="check"></div>
+              <div style="flex:1;">
+                <div class="item-text">Email your bank about opening a savings account</div>
+                <div style="font-size:9px;color:#8a7455;margin-top:3px;">Self-Reliance · Build an emergency fund</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCHEDULE section -->
+        <div style="margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#4a6e7a;">◷ Schedule</div>
+            <div style="flex:1;height:1px;background:#e8e0d5;"></div>
+          </div>
+          <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;overflow:hidden;">
+            <div class="item-row" style="padding:11px 16px;">
+              <div class="check"></div>
+              <div style="flex:1;">
+                <div class="item-text">Set up phone calls with friends who respond</div>
+                <div style="font-size:9px;color:#8a7455;margin-top:3px;">Social Life · Reconnect with old friends</div>
+              </div>
+            </div>
+            <div class="item-row" style="padding:11px 16px;border-bottom:none;">
+              <div class="check"></div>
+              <div style="flex:1;">
+                <div class="item-text">Set up $50/week auto-transfer</div>
+                <div style="font-size:9px;color:#8a7455;margin-top:3px;">Self-Reliance · Build an emergency fund</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FIND section -->
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5c6f9b;">⌕ Find</div>
+            <div style="flex:1;height:1px;background:#e8e0d5;"></div>
+          </div>
+          <div style="background:white;border:1px solid #e8e0d5;border-radius:8px;overflow:hidden;">
+            <div class="item-row" style="padding:11px 16px;">
+              <div class="check"></div>
+              <div style="flex:1;">
+                <div class="item-text">Look up 3–5 old friends on social media</div>
+                <div style="font-size:9px;color:#8a7455;margin-top:3px;">Social Life · Reconnect with old friends</div>
+              </div>
+            </div>
+            <div class="item-row" style="padding:11px 16px;border-bottom:none;">
+              <div class="check"></div>
+              <div style="flex:1;">
+                <div class="item-text">Research high-yield savings account options</div>
+                <div style="font-size:9px;color:#8a7455;margin-top:3px;">Self-Reliance · Build an emergency fund</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div style="font-size:11px;color:#8a7455;padding:28px 0 20px;line-height:1.8;max-width:700px;">
+  E keeps goal-by-goal focus with a familiar tab pattern. F mirrors the home tab structure — one consistent visual language across the whole app. G is the most opinionated: it assumes users want to batch by task type, which may or may not match how people actually plan.
+</div>
+
+<div style="height:1px;background:#c8b8a8;margin:28px 0 44px;"></div>
+
+<!-- ════════════════════════════════════
+     PLAN J — Collapsed accordion (F variant)
+     All goals visible, only one expanded
+     ════════════════════════════════════ -->
+<div class="section-title">Plan J — Accordion (F variant)</div>
+<div class="section-desc">All goals visible at once as collapsed rows — you see everything you're working on at a glance. Tap a goal to expand it and see its items and filter. Only one goal open at a time. Same left-border language as F and the home tab, but without the scroll penalty of multiple full goal sections.</div>
+
+<div class="screens-row">
+
+  <!-- Goal 1 expanded -->
+  <div class="screen-col" style="max-width:480px;">
+    <div class="screen-label">Plan — goal 1 expanded</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <div style="padding:16px 20px 24px;">
+
+        <!-- Goal 1 — expanded -->
+        <div style="border:1px solid rgba(181,71,42,0.25);border-left:3px solid #b5472a;border-radius:8px;overflow:hidden;margin-bottom:10px;background:white;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;">
+            <div>
+              <div style="font-size:9px;color:#b5472a;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Social Life</div>
+              <div class="h2">Reconnect with old friends</div>
+            </div>
+            <span style="color:#b5472a;font-size:16px;line-height:1;">∧</span>
+          </div>
+          <div class="type-row" style="border-top:1px solid #f0ebe3;">
+            <div class="type-btn active">All</div>
+            <div class="type-btn">Forward</div>
+            <div class="type-btn">Schedule</div>
+            <div class="type-btn">Find</div>
+          </div>
+          <div style="padding:4px 14px 12px;">
+            <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span><span class="tag">find</span></div>
+            <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm message</span><span class="tag">forward</span></div>
+            <div class="item-row"><div class="check"></div><span class="item-text">Set up video calls within 2 weeks</span><span class="tag">schedule</span></div>
+            <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Research community events</span><span class="tag">find</span></div>
+          </div>
+        </div>
+
+        <!-- Goal 2 — collapsed -->
+        <div style="border:1px solid #e8e0d5;border-left:3px solid #4a7a72;border-radius:8px;background:white;margin-bottom:10px;cursor:pointer;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
+            <div>
+              <div style="font-size:9px;color:#4a7a72;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Self-Reliance</div>
+              <div style="font-size:13px;font-weight:500;color:#1c1410;">Build an emergency fund</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:10px;color:#8a7455;">3 items</span>
+              <span style="color:#8a7455;font-size:16px;line-height:1;">∨</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal 3 — collapsed -->
+        <div style="border:1px solid #e8e0d5;border-left:3px solid #5c6f9b;border-radius:8px;background:white;cursor:pointer;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
+            <div>
+              <div style="font-size:9px;color:#5c6f9b;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Family</div>
+              <div style="font-size:13px;font-weight:500;color:#1c1410;">Host a family dinner</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:10px;color:#8a7455;">2 items</span>
+              <span style="color:#8a7455;font-size:16px;line-height:1;">∨</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Goal 2 expanded -->
+  <div class="screen-col" style="max-width:480px;">
+    <div class="screen-label">Plan — goal 2 expanded</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <div style="padding:16px 20px 24px;">
+
+        <!-- Goal 1 — collapsed -->
+        <div style="border:1px solid #e8e0d5;border-left:3px solid #b5472a;border-radius:8px;background:white;margin-bottom:10px;cursor:pointer;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
+            <div>
+              <div style="font-size:9px;color:#b5472a;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Social Life</div>
+              <div style="font-size:13px;font-weight:500;color:#1c1410;">Reconnect with old friends</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:10px;color:#8a7455;">4 items</span>
+              <span style="color:#8a7455;font-size:16px;line-height:1;">∨</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal 2 — expanded -->
+        <div style="border:1px solid rgba(74,122,114,0.25);border-left:3px solid #4a7a72;border-radius:8px;overflow:hidden;margin-bottom:10px;background:white;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;">
+            <div>
+              <div style="font-size:9px;color:#4a7a72;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Self-Reliance</div>
+              <div class="h2">Build an emergency fund</div>
+            </div>
+            <span style="color:#4a7a72;font-size:16px;line-height:1;">∧</span>
+          </div>
+          <div class="type-row" style="border-top:1px solid #f0ebe3;">
+            <div class="type-btn active" style="color:#4a7a72;border-bottom-color:#4a7a72;">All</div>
+            <div class="type-btn">Forward</div>
+            <div class="type-btn">Schedule</div>
+            <div class="type-btn">Find</div>
+          </div>
+          <div style="padding:4px 14px 12px;">
+            <div class="item-row"><div class="check"></div><span class="item-text">Open a dedicated savings account</span><span class="tag">find</span></div>
+            <div class="item-row"><div class="check"></div><span class="item-text">Set up a $50/week auto-transfer</span><span class="tag">schedule</span></div>
+            <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Research high-yield savings options</span><span class="tag">find</span></div>
+          </div>
+        </div>
+
+        <!-- Goal 3 — collapsed -->
+        <div style="border:1px solid #e8e0d5;border-left:3px solid #5c6f9b;border-radius:8px;background:white;cursor:pointer;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
+            <div>
+              <div style="font-size:9px;color:#5c6f9b;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Family</div>
+              <div style="font-size:13px;font-weight:500;color:#1c1410;">Host a family dinner</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:10px;color:#8a7455;">2 items</span>
+              <span style="color:#8a7455;font-size:16px;line-height:1;">∨</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="height:1px;background:#c8b8a8;margin:28px 0 44px;"></div>
+
+
+<!-- ════════════════════════════════════
+     PLAN H — Goal name navigator (B style)
+     Full goal name + › to cycle, left-border accent
+     ════════════════════════════════════ -->
+<div class="section-title">Plan H — Goal name navigator (B style)</div>
+<div class="section-desc">One goal at a time. The goal name and a "›" chevron sit above a left-border accent block — same visual language as direction B and the home tab. No card, no colored shadow. Filter tabs sit clearly below as a second row.</div>
+
+<div class="screens-row">
+  <div class="screen-col" style="max-width:480px;">
+    <div class="screen-label">Plan — 1 of 3 goals</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <div style="padding:20px 20px 24px;">
+        <!-- Goal name row — outside the border block, acts as header -->
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;">
+          <div class="h2">Reconnect with old friends</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:12px;">
+            <span style="font-size:9px;color:#8a7455;">1 of 3</span>
+            <button style="background:none;border:1px solid #d4c9bb;border-radius:6px;padding:5px 9px;font-size:14px;color:#5c4e40;cursor:pointer;line-height:1;">›</button>
+          </div>
+        </div>
+        <!-- Filter row -->
+        <div style="display:flex;border-top:1px solid #e8e0d5;border-bottom:1px solid #e8e0d5;margin:0 -20px 0;padding:0 20px 0;">
+          <div class="type-btn active" style="padding-left:0;">All</div>
+          <div class="type-btn">Forward</div>
+          <div class="type-btn">Schedule</div>
+          <div class="type-btn">Find</div>
+          <div class="type-btn">Unassigned</div>
+          </div>
+        <!-- Items — left-border accent block -->
+        <div style="padding:14px 0 0 17px;border-left:3px solid #b5472a;margin-top:14px;">
+          <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span><span class="tag">find</span></div>
+          <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm, casual message</span><span class="tag">forward</span></div>
+          <div class="item-row"><div class="check"></div><span class="item-text">Set up phone or video calls within 2 weeks</span><span class="tag">schedule</span></div>
+          <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Research community events to reconnect</span><span class="tag">find</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Same design, second goal shown -->
+  <div class="screen-col" style="max-width:480px;">
+    <div class="screen-label">Plan — 2 of 3 goals (after pressing ›)</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <div style="padding:20px 20px 24px;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;">
+          <div class="h2">Build an emergency fund</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:12px;">
+            <span style="font-size:9px;color:#8a7455;">2 of 3</span>
+            <button style="background:none;border:1px solid #d4c9bb;border-radius:6px;padding:5px 9px;font-size:14px;color:#5c4e40;cursor:pointer;line-height:1;">›</button>
+          </div>
+        </div>
+        <div style="display:flex;border-top:1px solid #e8e0d5;border-bottom:1px solid #e8e0d5;margin:0 -20px 0;padding:0 20px 0;">
+          <div class="type-btn active" style="padding-left:0;">All</div>
+          <div class="type-btn">Forward</div>
+          <div class="type-btn">Schedule</div>
+          <div class="type-btn">Find</div>
+          <div class="type-btn">Unassigned</div>
+        </div>
+        <div style="padding:14px 0 0 17px;border-left:3px solid #4a7a72;margin-top:14px;">
+          <div class="item-row"><div class="check"></div><span class="item-text">Open a dedicated savings account</span><span class="tag">find</span></div>
+          <div class="item-row"><div class="check"></div><span class="item-text">Set up a $50/week auto-transfer</span><span class="tag">schedule</span></div>
+          <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Research high-yield savings account options</span><span class="tag">find</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div style="height:1px;background:#c8b8a8;margin:48px 0 44px;"></div>
+
+
+<!-- ════════════════════════════════════
+     PLAN J — Accordion, filter above all cards
+     ════════════════════════════════════ -->
+<div class="section-title">Plan J — Accordion, revised</div>
+<div class="section-desc">Filter row sits above all goal cards — one set of controls for everything below. Goal cards are collapsed by default, showing sphere color, goal name, and item count. Expand one to see its items. The filter applies to whichever goal is open.</div>
+
+<div class="screens-row">
+
+  <!-- Goal 1 expanded -->
+  <div class="screen-col" style="max-width:480px;">
+    <div class="screen-label">Plan — goal 1 expanded</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <!-- Filter row — above everything -->
+      <div style="display:flex;border-bottom:2px solid #e8e0d5;background:white;">
+        <div class="type-btn active" style="padding:11px 8px;">All</div>
+        <div class="type-btn" style="padding:11px 8px;">Forward</div>
+        <div class="type-btn" style="padding:11px 8px;">Schedule</div>
+        <div class="type-btn" style="padding:11px 8px;">Find</div>
+        <div class="type-btn" style="padding:11px 8px;">Unassigned</div>
+      </div>
+      <div style="padding:16px 20px 24px;">
+
+        <!-- Goal 1 — expanded -->
+        <div style="border-left:3px solid #b5472a;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:white;border:1px solid #e8e0d5;border-left:none;cursor:pointer;">
+            <div>
+              <div style="font-size:9px;color:#b5472a;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;">Social Life</div>
+              <div style="font-size:13px;font-weight:600;color:#1c1410;">Reconnect with old friends</div>
+            </div>
+            <span style="color:#b5472a;font-size:15px;line-height:1;">∧</span>
+          </div>
+          <div style="padding:10px 14px 4px;border-left:none;">
+            <div class="item-row"><div class="check"></div><span class="item-text">Look up 3–5 old friends on social media</span><span class="tag">find</span></div>
+            <div class="item-row"><div class="check"></div><span class="item-text">Reach out with a warm message</span><span class="tag">forward</span></div>
+            <div class="item-row"><div class="check"></div><span class="item-text">Set up video calls within 2 weeks</span><span class="tag">schedule</span></div>
+            <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Research community events</span><span class="tag">find</span></div>
+          </div>
+        </div>
+
+        <!-- Goal 2 — collapsed -->
+        <div style="border-left:3px solid #4a7a72;margin-bottom:10px;cursor:pointer;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:white;border:1px solid #e8e0d5;border-left:none;">
+            <div>
+              <div style="font-size:9px;color:#4a7a72;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;">Self-Reliance</div>
+              <div style="font-size:13px;font-weight:500;color:#1c1410;">Build an emergency fund</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:10px;color:#8a7455;">3 items</span>
+              <span style="color:#8a7455;font-size:15px;line-height:1;">∨</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal 3 — collapsed -->
+        <div style="border-left:3px solid #5c6f9b;cursor:pointer;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:white;border:1px solid #e8e0d5;border-left:none;">
+            <div>
+              <div style="font-size:9px;color:#5c6f9b;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;">Family</div>
+              <div style="font-size:13px;font-weight:500;color:#1c1410;">Host a family dinner</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:10px;color:#8a7455;">2 items</span>
+              <span style="color:#8a7455;font-size:15px;line-height:1;">∨</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Goal 2 expanded -->
+  <div class="screen-col" style="max-width:480px;">
+    <div class="screen-label">Plan — goal 2 expanded</div>
+    <div class="shell">
+      <div class="nav">
+        <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+        <div class="nav-item active"><span class="nav-icon">▦</span>Plan</div>
+        <div class="nav-item"><span class="nav-icon">◬</span>Progress</div>
+        <div class="nav-item"><span class="nav-icon">⎘</span>Chart</div>
+        <div class="nav-item"><span class="nav-icon">○</span>Account</div>
+      </div>
+      <div class="page-hdr">
+        <div class="eyebrow">Your plan</div>
+        <div class="h1">Progress, one step at a time</div>
+      </div>
+      <!-- Filter row — above everything -->
+      <div style="display:flex;border-bottom:2px solid #e8e0d5;background:white;">
+        <div class="type-btn" style="padding:11px 8px;">All</div>
+        <div class="type-btn" style="padding:11px 8px;">Forward</div>
+        <div class="type-btn active" style="padding:11px 8px;">Schedule</div>
+        <div class="type-btn" style="padding:11px 8px;">Find</div>
+        <div class="type-btn" style="padding:11px 8px;">Unassigned</div>
+      </div>
+      <div style="padding:16px 20px 24px;">
+
+        <!-- Goal 1 — collapsed -->
+        <div style="border-left:3px solid #b5472a;margin-bottom:10px;cursor:pointer;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:white;border:1px solid #e8e0d5;border-left:none;">
+            <div>
+              <div style="font-size:9px;color:#b5472a;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;">Social Life</div>
+              <div style="font-size:13px;font-weight:500;color:#1c1410;">Reconnect with old friends</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:10px;color:#8a7455;">4 items</span>
+              <span style="color:#8a7455;font-size:15px;line-height:1;">∨</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Goal 2 — expanded, Schedule filter active -->
+        <div style="border-left:3px solid #4a7a72;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:white;border:1px solid #e8e0d5;border-left:none;cursor:pointer;">
+            <div>
+              <div style="font-size:9px;color:#4a7a72;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;">Self-Reliance</div>
+              <div style="font-size:13px;font-weight:600;color:#1c1410;">Build an emergency fund</div>
+            </div>
+            <span style="color:#4a7a72;font-size:15px;line-height:1;">∧</span>
+          </div>
+          <div style="padding:10px 14px 4px;">
+            <div class="item-row"><div class="check"></div><span class="item-text">Set up a $50/week auto-transfer</span><span class="tag">schedule</span></div>
+            <div class="item-row" style="border-bottom:none;"><div class="check"></div><span class="item-text">Schedule a 3-month review</span><span class="tag">schedule</span></div>
+          </div>
+        </div>
+
+        <!-- Goal 3 — collapsed -->
+        <div style="border-left:3px solid #5c6f9b;cursor:pointer;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:white;border:1px solid #e8e0d5;border-left:none;">
+            <div>
+              <div style="font-size:9px;color:#5c6f9b;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;">Family</div>
+              <div style="font-size:13px;font-weight:500;color:#1c1410;">Host a family dinner</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:10px;color:#8a7455;">2 items</span>
+              <span style="color:#8a7455;font-size:15px;line-height:1;">∨</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="font-size:11px;color:#8a7455;padding:48px 0 64px;line-height:1.8;max-width:700px;">
+  H and J updated. H now uses the B-style left border with no card wrapper. J moves the filter row above all goal cards — the second mockup shows Schedule filter active on goal 2, demonstrating how the global filter + individual expansion work together.
+</div>
 
 </div>
 </body>
