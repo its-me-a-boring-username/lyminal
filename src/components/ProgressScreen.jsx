@@ -224,7 +224,7 @@ Do NOT introduce yourself. Just ask your question directly.`,
   };
 
   return (
-    <div style={{ background: "white", border: "1px solid #e8e0d5", borderLeft: `3px solid ${goalColor}`, borderRadius: "8px", overflow: "hidden" }}>
+    <div style={{ background: "white", borderLeft: `3px solid ${goalColor}` }}>
       {/* B-style card header */}
       <div style={{ padding: "14px 18px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
         <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", flex: 1, minWidth: 0 }}>

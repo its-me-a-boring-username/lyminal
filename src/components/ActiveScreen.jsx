@@ -191,7 +191,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
 
           <div className="space-y-4 mb-8">
             {allActive.map((ag) => (
-              <div key={ag.sphereId} style={{ borderRadius: "8px", border: "1px solid #e8e0d5", borderLeft: `3px solid ${isDefault ? ag.sphereColor : "var(--ly-accent)"}`, background: "white", overflow: "hidden" }}>
+              <div key={ag.sphereId} style={{ borderLeft: `3px solid ${isDefault ? ag.sphereColor : "var(--ly-accent)"}`, background: "white" }}>
 
                 {/* B-style card header */}
                 <div style={{ padding: "14px 16px", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
