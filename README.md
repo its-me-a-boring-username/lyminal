@@ -45,6 +45,10 @@ cp .env.example .env.local
 npm run dev
 ```
 
+## Supabase migrations
+
+Apply SQL files in `supabase/migrations` to the Supabase project before deploying code that depends on them. The archived chart feature requires `202611200001_create_chart_archives.sql`.
+
 ## Changing the password
 Open `src/App.jsx` and find:
 ```js

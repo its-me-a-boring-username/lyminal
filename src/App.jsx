@@ -16,11 +16,12 @@ import { DevReset } from "./components/DevReset.jsx";
 import { WelcomeScreen } from "./components/WelcomeScreen.jsx";
 import { AccountScreen } from "./components/AccountScreen.jsx";
 import { generateChartReport, generateFullReport } from "./utils/pdf.js";
-import { loadChart, makeLocalState, readLocalState, writeLocalState } from "./utils/supabase.js";
+import { archiveChart, loadChart, makeLocalState, readLocalState, saveChart, writeLocalState } from "./utils/supabase.js";
 import { getCapabilities } from "./utils/entitlements.js";
 import { applyTheme, loadThemeFromStorage, persistThemeToStorage } from "./utils/theme.js";
 import { loadUserProfile, saveThemePreference } from "./utils/profile.js";
 import { trackUserEvent, mapStepToScreenName } from "./utils/events.js";
+import { chartsAreEquivalent, shouldPreferLocalChart } from "./utils/chartReconciliation.js";
 
 class ErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null }; }
@@ -67,6 +68,9 @@ function GoalChart() {
   const [hasSeenPlanPrompt, setHasSeenPlanPrompt] = useState(false);
   const previousGoalCountRef = useRef(null);
   const previousActionItemCountRef = useRef(null);
+  const hydratingUserIdRef = useRef(null);
+  const hydratedUserIdRef = useRef(null);
+  const localChartRef = useRef(readLocalState());
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handler);
@@ -75,49 +79,101 @@ function GoalChart() {
 
   // Auth session listener + profile/chart fetch
   useEffect(() => {
+    let cancelled = false;
+
+    const applyChartData = (data, preferredStep = null) => {
+      setSpheres(data.spheres);
+      setConnections(data.connections);
+      setActiveGoals(data.activeGoals);
+      setCheckedItems(data.checkedItems);
+      setCompletedGoals(data.completedGoals);
+
+      if (preferredStep && preferredStep !== "welcome") {
+        setStep(preferredStep);
+      } else {
+        setStep(data.activeGoals.length > 0 ? "active" : "chart-view");
+      }
+    };
+
     const hydrateSessionData = async (activeSession) => {
       if (!activeSession) {
         setTier("free");
         return;
       }
 
+      const userId = activeSession.user.id;
+      if (hydratedUserIdRef.current === userId || hydratingUserIdRef.current === userId) return;
+      hydratingUserIdRef.current = userId;
+
+      // Capture the local draft before any async cloud work can change UI state.
+      // A chart made while logged out must survive the transition into an account.
+      const localData = localChartRef.current;
       const [profile, data] = await Promise.all([
         loadUserProfile(activeSession),
         loadChart(activeSession),
       ]);
+      if (cancelled) return;
 
       setTier(profile.tier);
       setAppearance(profile.appearance);
       setSelectedTheme(profile.selectedTheme);
 
-      if (data) {
-        setSpheres(data.spheres);
-        setConnections(data.connections);
-        setActiveGoals(data.activeGoals);
-        setCheckedItems(data.checkedItems);
-        setCompletedGoals(data.completedGoals);
-        if (data.activeGoals.length > 0) setStep("active");
+      const hasLocalChart = Boolean(localData?.spheres?.length);
+      const hasCloudChart = Boolean(data?.spheres?.length);
+      const chartsDiffer = hasLocalChart && hasCloudChart && !chartsAreEquivalent(localData, data);
+      const shouldKeepLocal = shouldPreferLocalChart(localData, data);
+
+      if (chartsDiffer && shouldKeepLocal) {
+        // Preserve the existing account chart before promoting the newer local draft.
+        const archived = await archiveChart(activeSession, data, { source: "login_conflict" });
+        if (archived.ok) await saveChart(activeSession, localData);
+        if (cancelled) return;
+        applyChartData(localData, localData.step);
+      } else if (chartsDiffer) {
+        // The account copy is newer, but the local draft is still user data. Archive
+        // it before opening the cloud chart; if archiving fails, leave local visible.
+        const archived = await archiveChart(activeSession, localData, { source: "login_conflict" });
+        if (cancelled) return;
+        applyChartData(archived.ok ? data : localData, archived.ok ? null : localData.step);
+      } else if (shouldKeepLocal) {
+        await saveChart(activeSession, localData);
+        if (cancelled) return;
+        applyChartData(localData, localData.step);
+      } else if (data) {
+        applyChartData(data);
       }
+
+      hydratingUserIdRef.current = null;
+      hydratedUserIdRef.current = userId;
     };
 
     // getSession handles the initial load — sets session, profile, and chart
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (cancelled) return;
       setSession(session);
       hydrateSessionData(session);
     });
 
-    // onAuthStateChange handles subsequent changes (sign in, sign out, token refresh)
+    // Only a real sign-in should hydrate chart data. Rehydrating on token refresh
+    // can replace in-progress local edits with an older cloud snapshot.
     // Skip INITIAL_SESSION — already handled by getSession above
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') return;
       setSession(session);
-      hydrateSessionData(session);
       if (event === "SIGNED_IN" && session?.user?.id) {
+        hydrateSessionData(session);
         trackUserEvent(session, "signup_completed", {}, { onceScope: "local" });
+      } else if (event === "SIGNED_OUT") {
+        hydratingUserIdRef.current = null;
+        hydratedUserIdRef.current = null;
+        setTier("free");
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -191,7 +247,7 @@ function GoalChart() {
 
   // Local state restore for fast boot before cloud hydration
   useEffect(() => {
-    const localState = readLocalState();
+    const localState = localChartRef.current;
     if (!localState) return;
     if (localState.spheres) setSpheres(localState.spheres);
     if (localState.connections) setConnections(localState.connections);
@@ -203,15 +259,22 @@ function GoalChart() {
 
   useEffect(() => {
     if (spheres.length > 0) {
-      writeLocalState(makeLocalState({
+      const currentState = {
         spheres,
         connections,
         activeGoals,
         step,
         completedGoals,
         checkedItems,
-        updatedAt: new Date().toISOString(),
-      }));
+      };
+      const previousState = localChartRef.current;
+      const contentChanged = !previousState || !chartsAreEquivalent(previousState, currentState);
+      const updatedAt = contentChanged
+        ? new Date().toISOString()
+        : previousState.updatedAt || new Date().toISOString();
+      const nextState = { ...currentState, updatedAt };
+      writeLocalState(makeLocalState(nextState));
+      localChartRef.current = nextState;
     }
   }, [spheres, connections, activeGoals, step, completedGoals, checkedItems]);
 
@@ -303,7 +366,12 @@ function GoalChart() {
 
   const BoundDevReset = () => <DevReset session={session} devPaidOverride={devPaidOverride} setDevPaidOverride={setDevPaidOverride} />;
 
-  if (step === "welcome") return <WelcomeScreen setStep={setStep} DevReset={BoundDevReset} setAuthPrompt={setAuthPrompt} isMobile={isMobile} />;
+  if (step === "welcome") return (
+    <>
+      <WelcomeScreen setStep={setStep} DevReset={BoundDevReset} setAuthPrompt={setAuthPrompt} isMobile={isMobile} />
+      <AuthOverlay />
+    </>
+  );
 
   // ── INTRO SCREENS ──
   if (["intro-spheres","intro-goals","intro-connections","intro-results","intro-active"].includes(step)) {

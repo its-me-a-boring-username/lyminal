@@ -13,6 +13,7 @@ export default async function handler(req, res) {
 
     await admin.from("active_goals").delete().eq("user_id", uid);
     await admin.from("charts").delete().eq("user_id", uid);
+    await admin.from("chart_archives").delete().eq("user_id", uid);
     await admin.from("profiles").delete().eq("id", uid);
 
     const { error } = await admin.auth.admin.deleteUser(uid);

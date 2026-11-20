@@ -1,6 +1,14 @@
 ﻿import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient.js";
-import { clearChart } from "../utils/supabase.js";
+import {
+  archiveAndClearChart,
+  clearChart,
+  deleteArchivedChart,
+  loadArchivedCharts,
+  readLocalState,
+  restoreArchivedChart,
+  writeLocalState,
+} from "../utils/supabase.js";
 import { postJson } from "../utils/api.js";
 import { trackUserEvent } from "../utils/events.js";
 import { FONTS } from "../constants.js";
@@ -27,10 +35,35 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
   const [changeMsg, setChangeMsg] = useState("");
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [billingBusy, setBillingBusy] = useState(false);
+  const [archives, setArchives] = useState([]);
+  const [archivesLoading, setArchivesLoading] = useState(false);
+  const [archiveBusy, setArchiveBusy] = useState(null);
+  const [archiveAction, setArchiveAction] = useState(null);
+  const [archiveError, setArchiveError] = useState("");
 
   useEffect(() => {
     setVisible(true);
   }, []);
+
+  useEffect(() => {
+    if (!session?.user?.id) {
+      setArchives([]);
+      return;
+    }
+
+    let cancelled = false;
+    setArchivesLoading(true);
+    setArchiveError("");
+    loadArchivedCharts(session)
+      .then((items) => { if (!cancelled) setArchives(items); })
+      .catch((error) => {
+        console.error("[Archives] Failed to load:", error);
+        if (!cancelled) setArchiveError("Archived charts are temporarily unavailable.");
+      })
+      .finally(() => { if (!cancelled) setArchivesLoading(false); });
+
+    return () => { cancelled = true; };
+  }, [session?.user?.id]);
 
   const sectionLabel = { fontSize: "0.65rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--ly-accent)", fontWeight: 600, margin: "0 0 12px", fontFamily: "'Inter',sans-serif" };
   const card = { background: "white", border: "1px solid #e8e0d5", marginBottom: "32px", borderRadius: "8px", overflow: "hidden" };
@@ -96,6 +129,65 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
       alert(error?.message || "Could not open billing portal.");
     } finally {
       setBillingBusy(false);
+    }
+  };
+
+  const handleArchiveReset = async () => {
+    if (!session?.user?.id) return;
+    setArchiveBusy("reset");
+    setArchiveError("");
+    const ok = await archiveAndClearChart(session, readLocalState());
+    if (ok) {
+      localStorage.removeItem("goalchart_state");
+      window.location.reload();
+      return;
+    }
+    setArchiveError("Your chart could not be archived, so nothing was reset.");
+    setArchiveBusy(null);
+  };
+
+  const handleDeleteReset = async () => {
+    setArchiveBusy("reset");
+    setArchiveError("");
+    const ok = session?.user?.id ? await clearChart(session) : true;
+    if (ok) {
+      localStorage.removeItem("goalchart_state");
+      window.location.reload();
+      return;
+    }
+    setArchiveError("Your chart could not be reset, so it is still available.");
+    setArchiveBusy(null);
+  };
+
+  const handleRestoreArchive = async (archive) => {
+    setArchiveBusy(archive.id);
+    setArchiveError("");
+    const result = await restoreArchivedChart(session, archive);
+    if (result.ok) {
+      writeLocalState({
+        ...result.chart,
+        step: result.chart.activeGoals?.length ? "active" : "chart-view",
+        updatedAt: new Date().toISOString(),
+      });
+      window.location.reload();
+      return;
+    }
+    setArchiveError("The archived chart could not be reopened. Your preserved versions are still available here.");
+    setArchiveBusy(null);
+  };
+
+  const handleDeleteArchive = async (archiveId) => {
+    setArchiveBusy(archiveId);
+    setArchiveError("");
+    try {
+      await deleteArchivedChart(session, archiveId);
+      setArchives((items) => items.filter((item) => item.id !== archiveId));
+      setArchiveAction(null);
+    } catch (error) {
+      console.error("[Archives] Failed to delete:", error);
+      setArchiveError("The archived chart could not be deleted.");
+    } finally {
+      setArchiveBusy(null);
     }
   };
 
@@ -165,6 +257,62 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
             </div>
           </div>
 
+          <p style={sectionLabel}>Archived Charts</p>
+          <div style={card}>
+            {!session?.user?.id ? (
+              <div style={{ padding: "20px 22px" }}>
+                <p style={{ fontSize: "0.8rem", color: "#5c4e40", margin: 0, lineHeight: 1.6 }}>Sign in to keep and reopen archived chart versions.</p>
+              </div>
+            ) : archivesLoading ? (
+              <div style={{ padding: "20px 22px", fontSize: "0.8rem", color: "#8a7455" }}>Loading archived charts...</div>
+            ) : archives.length === 0 ? (
+              <div style={{ padding: "20px 22px" }}>
+                <p style={{ fontSize: "0.8rem", color: "#5c4e40", margin: "0 0 4px", lineHeight: 1.6 }}>No archived charts yet.</p>
+                <p style={{ fontSize: "0.68rem", color: "#8a7455", margin: 0, lineHeight: 1.5 }}>When you archive a chart or reopen an older version, preserved versions will appear here.</p>
+              </div>
+            ) : archives.map((archive, index) => {
+              const sphereCount = archive.snapshot?.spheres?.length || 0;
+              const goalCount = archive.snapshot?.activeGoals?.length || 0;
+              const action = archiveAction?.id === archive.id ? archiveAction.type : null;
+              return (
+                <div key={archive.id} style={{ ...row(index === archives.length - 1), alignItems: action ? "flex-start" : "center" }}>
+                  <div style={{ minWidth: 0, paddingRight: "16px" }}>
+                    <p style={{ fontSize: "0.875rem", color: "#1c1410", margin: "0 0 3px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{archive.title}</p>
+                    <p style={{ fontSize: "0.68rem", color: "#8a7455", margin: 0 }}>
+                      {new Date(archive.archived_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })} · {sphereCount} {sphereCount === 1 ? "sphere" : "spheres"} · {goalCount} {goalCount === 1 ? "goal" : "goals"}
+                    </p>
+                  </div>
+                  {action ? (
+                    <div style={{ textAlign: "right", maxWidth: "310px" }}>
+                      <p style={{ fontSize: "0.72rem", color: action === "delete" ? "#9b2a2a" : "#5c4e40", margin: "0 0 8px", lineHeight: 1.45 }}>
+                        {action === "delete" ? "Delete this archived chart permanently?" : "Reopen this chart? Your current active chart will be archived first."}
+                      </p>
+                      <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+                        <button
+                          style={btn(action === "delete" ? "danger" : "primary")}
+                          disabled={archiveBusy === archive.id}
+                          onClick={() => action === "delete" ? handleDeleteArchive(archive.id) : handleRestoreArchive(archive)}
+                        >
+                          {archiveBusy === archive.id ? "Working..." : action === "delete" ? "Delete permanently" : "Reopen"}
+                        </button>
+                        <button style={btn("default")} disabled={archiveBusy === archive.id} onClick={() => setArchiveAction(null)}>Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+                      <button style={btn("primary")} disabled={archiveBusy !== null} onClick={() => setArchiveAction({ id: archive.id, type: "restore" })}>Reopen</button>
+                      <button style={btn("danger")} disabled={archiveBusy !== null} onClick={() => setArchiveAction({ id: archive.id, type: "delete" })}>Delete</button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {archiveError && (
+            <p style={{ fontSize: "0.72rem", color: "#9b2a2a", margin: "-20px 0 28px", lineHeight: 1.5 }}>{archiveError}</p>
+          )}
+
           <p style={sectionLabel}>Plan & Billing</p>
           <div style={card}>
             <div style={row(false)}>
@@ -195,9 +343,15 @@ export function AccountScreen({ session, tier, isPaid, setAuthPrompt, selectedTh
                 <p style={{ fontSize: "0.68rem", color: "#8a7455", margin: "2px 0 0", fontFamily: "'Inter',sans-serif" }}>Start over with new spheres and goals</p>
               </div>
               {confirmReset ? (
-                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                  <span style={{ fontSize: "0.75rem", color: "#9b2a2a", fontFamily: "'Inter',sans-serif" }}>Are you sure?</span>
-                  <button style={btn("danger")} onClick={() => { localStorage.removeItem("goalchart_state"); clearChart(session); location.reload(); }}>Yes, reset</button>
+                <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
+                  {session?.user?.id && (
+                    <button style={btn("primary")} disabled={archiveBusy === "reset"} onClick={handleArchiveReset}>
+                      {archiveBusy === "reset" ? "Working..." : "Archive & start over"}
+                    </button>
+                  )}
+                  <button style={btn("danger")} disabled={archiveBusy === "reset"} onClick={handleDeleteReset}>
+                    {archiveBusy === "reset" ? "Working..." : session?.user?.id ? "Delete & start over" : "Delete local chart"}
+                  </button>
                   <button style={btn("default")} onClick={() => setConfirmReset(false)}>Cancel</button>
                 </div>
               ) : (

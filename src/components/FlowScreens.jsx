@@ -234,13 +234,17 @@ export function FlowScreens({
           )}
           <div className="flex gap-3">
             <button
-              onClick={() => goalStep === 0 ? setStep("spheres") : setGoalStep(g => g - 1)}
+              onClick={() => {
+                saveChart(session, { spheres, connections });
+                goalStep === 0 ? setStep("spheres") : setGoalStep(g => g - 1);
+              }}
               className="px-6 py-3 text-sm font-medium transition-colors"
               style={{ color: "#faf8f5", background: "#2c1f14", border: "1px solid #2c1f14" }}>
               ← Back
             </button>
             <button
               onClick={() => {
+                saveChart(session, { spheres, connections });
                 if (isLast) {
                   const goalsCount = spheres.reduce((sum, s) => sum + (s.goals?.length || 0), 0);
                   trackUserEvent(session, "goals_setup_completed", { goals_count: goalsCount });

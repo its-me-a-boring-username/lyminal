@@ -15,6 +15,12 @@ export function MagicLinkAuth({ context, isLoggedIn = false, session = null, onS
   const showUpgrade = context === "upgrade" && isLoggedIn;
 
   const copy = {
+    signin: {
+      eyebrow: "Welcome back",
+      heading: "Sign in to Lyminal",
+      body: "Enter your email and we'll send you a secure sign-in link.",
+      skip: null,
+    },
     save_chart: {
       eyebrow: "Save your progress",
       heading: "Your chart is ready to save",

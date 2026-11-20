@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { clearChart } from "../utils/supabase.js";
+import { archiveAndClearChart, readLocalState } from "../utils/supabase.js";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
 @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -340,15 +340,34 @@ export function ChartView({
   selectedTheme,
 }) {
   const isDefault = !selectedTheme || selectedTheme === "warm_earth";
-  const handleRedoChart = () => {
+  const [redoBusy, setRedoBusy] = useState(false);
+  const [redoError, setRedoError] = useState("");
+  const handleRedoChart = async () => {
+    if (!session?.user?.id) {
+      const confirmed = window.confirm("Start a new chart? This local chart cannot be archived unless you sign in.");
+      if (!confirmed) return;
+    }
+
+    setRedoBusy(true);
+    setRedoError("");
+    if (session?.user?.id) {
+      const ok = await archiveAndClearChart(session, readLocalState());
+      if (!ok) {
+        setRedoError("Your chart could not be archived, so it was not reset.");
+        setRedoBusy(false);
+        return;
+      }
+    }
+
+    localStorage.removeItem("goalchart_state");
     setDragOffsets({});
     setSpheres([]);
     setConnections({});
     setGoalStep(0);
     setActiveGoals([]);
     setSelectedId(null);
-    clearChart(session);
     setStep("spheres");
+    setRedoBusy(false);
   };
 
   const handleChooseFocus = () => {
@@ -430,11 +449,12 @@ export function ChartView({
         {/* Secondary action buttons */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
           <button onClick={() => { setDragOffsets({}); setStep("connections"); }} style={{ fontSize: "11px", fontWeight: 500, color: "#b5472a", background: "rgba(181,71,42,0.08)", border: "1px solid rgba(181,71,42,0.4)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>← Edit</button>
-          <button onClick={handleRedoChart} style={{ fontSize: "11px", fontWeight: 500, color: "#5c4e40", background: "rgba(92,78,64,0.08)", border: "1px solid rgba(92,78,64,0.35)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>↺ Redo</button>
+          <button disabled={redoBusy} onClick={handleRedoChart} style={{ fontSize: "11px", fontWeight: 500, color: "#5c4e40", background: "rgba(92,78,64,0.08)", border: "1px solid rgba(92,78,64,0.35)", padding: "6px 12px", cursor: redoBusy ? "wait" : "pointer", borderRadius: "6px", opacity: redoBusy ? 0.65 : 1 }}>{redoBusy ? "Archiving..." : session?.user?.id ? "↺ Archive & redo" : "↺ Redo"}</button>
           {Object.keys(dragOffsets).length > 0 && (
             <button onClick={() => setDragOffsets({})} style={{ fontSize: "11px", fontWeight: 500, color: "#4a7a72", background: "rgba(74,122,114,0.08)", border: "1px solid rgba(74,122,114,0.4)", padding: "6px 12px", cursor: "pointer", borderRadius: "6px" }}>↺ Reset layout</button>
           )}
         </div>
+        {redoError && <p style={{ fontSize: "11px", color: "#9b2a2a", margin: "8px 0 0" }}>{redoError}</p>}
       </div>
 
       {/* Chart + Side panel */}
