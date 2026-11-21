@@ -71,6 +71,7 @@ function GoalChart() {
   const hydratingUserIdRef = useRef(null);
   const hydratedUserIdRef = useRef(null);
   const localChartRef = useRef(readLocalState());
+  const previousAuthUserIdRef = useRef(null);
   useEffect(() => {
     const handler = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handler);
@@ -193,10 +194,14 @@ function GoalChart() {
 
   // Free users can view Plan tab in preview mode
 
-  // Auto-dismiss auth overlay when session is established
+  // Auto-dismiss only after a real sign-in transition. A persisted browser
+  // session must not instantly close a modal the user has just opened.
   useEffect(() => {
-    if (session && authPrompt) setAuthPrompt(null);
-  }, [session, authPrompt]);
+    const userId = session?.user?.id || null;
+    const justSignedIn = Boolean(userId && previousAuthUserIdRef.current !== userId);
+    if (justSignedIn && authPrompt) setAuthPrompt(null);
+    previousAuthUserIdRef.current = userId;
+  }, [session?.user?.id, authPrompt]);
 
   // Prompt logged-out users to save on the active screen (after goals are set up)
   useEffect(() => {
