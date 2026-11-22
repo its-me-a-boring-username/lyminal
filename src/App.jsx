@@ -105,6 +105,7 @@ function GoalChart() {
       const userId = activeSession.user.id;
       if (hydratedUserIdRef.current === userId || hydratingUserIdRef.current === userId) return;
       hydratingUserIdRef.current = userId;
+      const shouldOpenOverview = localStorage.getItem("lyminal_auth_destination") === "active";
 
       // Capture the local draft before any async cloud work can change UI state.
       // A chart made while logged out must survive the transition into an account.
@@ -144,6 +145,11 @@ function GoalChart() {
         applyChartData(data);
       }
 
+      if (shouldOpenOverview) {
+        setStep("active");
+        localStorage.removeItem("lyminal_auth_destination");
+      }
+
       hydratingUserIdRef.current = null;
       hydratedUserIdRef.current = userId;
     };
@@ -155,15 +161,15 @@ function GoalChart() {
       hydrateSessionData(session);
     });
 
-    // Only a real sign-in should hydrate chart data. Rehydrating on token refresh
-    // can replace in-progress local edits with an older cloud snapshot.
-    // Skip INITIAL_SESSION — already handled by getSession above
+    // INITIAL_SESSION can be the first event carrying a magic-link session. The
+    // hydration guards prevent duplicate cloud loads when getSession wins the race.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'INITIAL_SESSION') return;
       setSession(session);
-      if (event === "SIGNED_IN" && session?.user?.id) {
+      if ((event === "INITIAL_SESSION" || event === "SIGNED_IN") && session?.user?.id) {
         hydrateSessionData(session);
-        trackUserEvent(session, "signup_completed", {}, { onceScope: "local" });
+        if (event === "SIGNED_IN") {
+          trackUserEvent(session, "signup_completed", {}, { onceScope: "local" });
+        }
       } else if (event === "SIGNED_OUT") {
         hydratingUserIdRef.current = null;
         hydratedUserIdRef.current = null;

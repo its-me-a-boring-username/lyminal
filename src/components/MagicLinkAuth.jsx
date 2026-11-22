@@ -54,6 +54,13 @@ export function MagicLinkAuth({ context, isLoggedIn = false, session = null, onS
       setError(error.message);
       setLoading(false);
     } else {
+      if (context === "signin") {
+        try {
+          localStorage.setItem("lyminal_auth_destination", "active");
+        } catch {
+          // The session callback still hydrates normally if storage is unavailable.
+        }
+      }
       setSent(true);
       setLoading(false);
       if (onSuccess) onSuccess();
