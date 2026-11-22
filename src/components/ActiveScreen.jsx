@@ -41,6 +41,8 @@ export function ActiveScreen({
 
   const isDefault = selectedTheme === "warm_earth" || !selectedTheme;
   const priorityColor = allActive[0]?.sphereColor || "#b5472a";
+  const hasChart = spheres.length > 0;
+  const hasActiveGoals = allActive.length > 0;
 
   const handleTalkToLyme = async (ag) => {
     setChatContext(ag);
@@ -180,16 +182,52 @@ Do NOT introduce yourself or explain what you do — that has already been handl
         <div style={{ background: isDefault ? hexToRgba(priorityColor, 0.07) : "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: isDefault ? `1px solid ${hexToRgba(priorityColor, 0.12)}` : "1px solid rgba(var(--ly-accent-rgb), 0.12)", padding: "28px 24px 24px", marginBottom: "0" }}
           className="lg:px-16">
           {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />}
-          <p className="text-xs uppercase tracking-widest mb-1" style={{ color: isDefault ? priorityColor : "var(--ly-accent)", opacity: 0.8 }}>Your Active Goals</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", marginBottom: "6px" }}>What you're working on</h2>
+          <p className="text-xs uppercase tracking-widest mb-1" style={{ color: isDefault ? priorityColor : "var(--ly-accent)", opacity: 0.8 }}>
+            {hasChart ? "Your Active Goals" : "Your Goal Chart"}
+          </p>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.75rem", fontWeight: 600, color: "#1c1410", marginBottom: "6px" }}>
+            {!hasChart ? "Create your first chart" : hasActiveGoals ? "What you're working on" : "Choose what to work on"}
+          </h2>
           <p className="text-sm" style={{ color: "#5c4e40", fontWeight: 300 }}>
-            Select a goal to talk through your plan with Lyme, or add action items yourself.
+            {!hasChart
+              ? "Map the areas of your life, connect what matters, and turn your priorities into focused goals."
+              : hasActiveGoals
+                ? "Select a goal to talk through your plan with Lyme, or add action items yourself."
+                : "Your chart is ready. Choose a goal to bring into your active overview."}
           </p>
         </div>
 
         <div className="px-6 py-8 max-w-4xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
 
+          {!hasChart && (
+            <div style={{ background: "white", border: "1px solid #e8e0d5", borderLeft: "4px solid var(--ly-accent)", borderRadius: "8px", padding: isMobile ? "28px 22px" : "40px", textAlign: "center", maxWidth: "640px", margin: "16px auto 0" }}>
+              <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "rgba(var(--ly-accent-rgb), 0.1)", color: "var(--ly-accent)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 18px", fontSize: "22px" }}>+</div>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.35rem", color: "#1c1410", margin: "0 0 10px" }}>Start with the shape of your life</h3>
+              <p style={{ fontSize: "0.85rem", color: "#6e5c4a", lineHeight: 1.65, margin: "0 auto 24px", maxWidth: "450px", fontWeight: 300 }}>
+                Build a chart of your life areas, goals, and connections. Lyminal will help you see where your attention can make the biggest difference.
+              </p>
+              <button
+                onClick={() => setStep("intro-spheres")}
+                style={{ background: "var(--ly-accent)", color: "white", border: "none", borderRadius: "6px", padding: "12px 28px", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer" }}
+              >
+                Create my chart →
+              </button>
+            </div>
+          )}
+
+          {hasChart && (
+          <>
           <div className="space-y-4 mb-8">
+            {!hasActiveGoals && (
+              <div style={{ background: "white", border: "1px solid #e8e0d5", borderLeft: "4px solid var(--ly-accent)", borderRadius: "8px", padding: isMobile ? "24px 20px" : "30px", textAlign: "center" }}>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.2rem", color: "#1c1410", margin: "0 0 8px" }}>Choose your first active goal</h3>
+                <p style={{ fontSize: "0.8rem", color: "#6e5c4a", lineHeight: 1.6, margin: "0 0 20px", fontWeight: 300 }}>Pick a goal from your chart to start planning actions and tracking progress.</p>
+                <button onClick={() => setStep("goal-picker")} style={{ background: "var(--ly-accent)", color: "white", border: "none", borderRadius: "6px", padding: "10px 24px", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer" }}>
+                  Choose a goal →
+                </button>
+              </div>
+            )}
+
             {allActive.map((ag) => (
               <div key={ag.sphereId} style={{ borderLeft: `3px solid ${isDefault ? ag.sphereColor : "var(--ly-accent)"}`, background: "white" }}>
 
@@ -366,7 +404,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
             ))}
 
             {/* Add another goal — paid users under limit */}
-            {isPaid && allActive.length < 5 && (
+            {isPaid && hasActiveGoals && allActive.length < 5 && (
               <button
                 onClick={() => setStep("goal-picker")}
                 className="w-full text-left transition-all hover:opacity-90"
@@ -409,6 +447,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
 
           {/* Bottom actions */}
           <div className="flex gap-3 flex-col">
+            {hasActiveGoals && (
             <button
               onClick={handleDownloadReport}
               disabled={!!pdfLoading}
@@ -425,6 +464,7 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               {!isPaid && <span style={{ fontSize: "0.85rem" }}>🔒</span>}
               {pdfLoading === "full" ? "Generating your report..." : "↓ DOWNLOAD FULL REPORT"}
             </button>
+            )}
             <button
               onClick={() => setStep("chart-view")}
               className="w-full py-3 text-sm font-medium text-center"
@@ -433,6 +473,8 @@ Do NOT introduce yourself or explain what you do — that has already been handl
               View your chart
             </button>
           </div>
+          </>
+          )}
         </div>
         </div>{/* end fade wrapper */}
       </div>
