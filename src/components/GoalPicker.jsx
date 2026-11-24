@@ -70,8 +70,8 @@ export function GoalPicker({
       <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "#2c1f14" }} />
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-        {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
-        {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} />}
+        {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} hasChart={spheres.length > 0} />}
+        {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} hasChart={spheres.length > 0} />}
 
         <div className="px-6 py-10 max-w-2xl mx-auto w-full lg:px-16 pb-24 lg:pb-12">
 

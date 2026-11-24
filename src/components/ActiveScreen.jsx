@@ -175,13 +175,13 @@ Do NOT introduce yourself or explain what you do — that has already been handl
       <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: isDefault ? priorityColor : "var(--ly-accent)" }} />
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-        {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />}
+        {!isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} hasChart={hasChart} />}
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         {/* Page header with sphere tint */}
         <div style={{ background: isDefault ? hexToRgba(priorityColor, 0.07) : "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: isDefault ? `1px solid ${hexToRgba(priorityColor, 0.12)}` : "1px solid rgba(var(--ly-accent-rgb), 0.12)", padding: "28px 24px 24px", marginBottom: "0" }}
           className="lg:px-16">
-          {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />}
+          {isMobile && <Nav step="active" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} hasChart={hasChart} />}
           <p className="text-xs uppercase tracking-widest mb-1" style={{ color: isDefault ? priorityColor : "var(--ly-accent)", opacity: 0.8 }}>
             {hasChart ? "Your Active Goals" : "Your Goal Chart"}
           </p>

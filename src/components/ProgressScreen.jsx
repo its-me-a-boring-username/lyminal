@@ -439,7 +439,7 @@ export function ProgressScreen({
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-          <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />
+          <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} hasChart={spheres.length > 0} />
           <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16">
             <div style={{ border: "1px solid #e8e0d5", background: "white", padding: "40px 24px", textAlign: "center", borderRadius: "8px" }}>
@@ -469,7 +469,7 @@ export function ProgressScreen({
       <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: isDefault ? headerColor : "var(--ly-accent)" }} />
 
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-        <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />
+        <Nav step="progress" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} hasChart={spheres.length > 0} />
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         <div className="w-full pb-24 lg:pb-12">

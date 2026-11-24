@@ -4,6 +4,7 @@ import { trackUserEvent, mapStepToScreenName } from "../utils/events.js";
 const OCHRE = "var(--ly-accent)";
 const OCHRE_TINT = "rgba(var(--ly-accent-rgb), 0.08)";
 const INACTIVE = "#8a7a68";
+const DISABLED = "#c8c0b7";
 const BORDER = "#e8e0d5";
 const BG = "var(--ly-bg)";
 
@@ -47,9 +48,9 @@ const Icons = {
 
 const TABS = [
   { id: "active",     label: "Home",     icon: "home" },
-  { id: "plan",       label: "Plan",     icon: "plan",    locked: true },
-  { id: "progress",   label: "Progress", icon: "progress" },
-  { id: "chart-view", label: "My Chart", icon: "chart" },
+  { id: "plan",       label: "Plan",     icon: "plan",    locked: true, requiresChart: true },
+  { id: "progress",   label: "Progress", icon: "progress", requiresChart: true },
+  { id: "chart-view", label: "My Chart", icon: "chart", requiresChart: true },
   { id: "account",    label: "Account",  icon: "account" },
 ];
 
@@ -61,11 +62,12 @@ const TAB_TO_SCREEN = {
   account: "account",
 };
 
-export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [], session = null }) {
+export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [], session = null, hasChart = false }) {
   const navSteps = ["active", "plan", "progress", "chart-view", "account", "chat"];
   if (!navSteps.includes(step)) return null;
 
   const handleTab = (tab) => {
+    if (tab.requiresChart && !hasChart) return;
     trackUserEvent(session, "tab_clicked", {
       tab_name: TAB_TO_SCREEN[tab.id] || tab.id,
       from_screen: mapStepToScreenName(step),
@@ -78,7 +80,7 @@ export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [], session
     return step === tab.id;
   };
 
-  const tabStyle = (active) => ({
+  const tabStyle = (active, disabled) => ({
     flex: 1,
     display: "flex",
     flexDirection: "column",
@@ -86,19 +88,20 @@ export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [], session
     justifyContent: "center",
     gap: "5px",
     padding: "14px 8px",
-    background: active ? OCHRE_TINT : "none",
+    background: active && !disabled ? OCHRE_TINT : "none",
     border: "none",
-    cursor: "pointer",
-    borderBottom: active ? `3px solid ${OCHRE}` : "3px solid transparent",
+    cursor: disabled ? "not-allowed" : "pointer",
+    borderBottom: active && !disabled ? `3px solid ${OCHRE}` : "3px solid transparent",
+    opacity: disabled ? 0.42 : 1,
     transition: "background 0.15s, border-color 0.15s, color 0.15s",
   });
 
-  const labelStyle = (active) => ({
+  const labelStyle = (active, disabled) => ({
     fontSize: "12px",
     fontWeight: active ? 600 : 400,
     fontFamily: "'Inter', sans-serif",
     letterSpacing: "0.01em",
-    color: active ? OCHRE : INACTIVE,
+    color: disabled ? DISABLED : active ? OCHRE : INACTIVE,
     lineHeight: 1,
   });
 
@@ -112,10 +115,11 @@ export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [], session
       }}>
         {TABS.map(tab => {
           const active = isActive(tab);
+          const disabled = Boolean(tab.requiresChart && !hasChart);
           return (
-            <button key={tab.id} onClick={() => handleTab(tab)} style={tabStyle(active)}>
-              {React.cloneElement(Icons[tab.icon], { stroke: active ? OCHRE : INACTIVE })}
-              <span style={labelStyle(active)}>
+            <button key={tab.id} disabled={disabled} aria-disabled={disabled} title={disabled ? "Create a chart to unlock this page" : undefined} onClick={() => handleTab(tab)} style={tabStyle(active, disabled)}>
+              {React.cloneElement(Icons[tab.icon], { stroke: disabled ? DISABLED : active ? OCHRE : INACTIVE })}
+              <span style={labelStyle(active, disabled)}>
                 {tab.label}{tab.locked && !isPaid ? " 🔒" : ""}
               </span>
             </button>
@@ -137,14 +141,15 @@ export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [], session
     }}>
       {TABS.map(tab => {
         const active = isActive(tab);
+        const disabled = Boolean(tab.requiresChart && !hasChart);
         return (
-          <button key={tab.id} onClick={() => handleTab(tab)} style={{
-            ...tabStyle(active),
+          <button key={tab.id} disabled={disabled} aria-disabled={disabled} title={disabled ? "Create a chart to unlock this page" : undefined} onClick={() => handleTab(tab)} style={{
+            ...tabStyle(active, disabled),
             borderBottom: "none",
-            borderTop: active ? `3px solid ${OCHRE}` : "3px solid transparent",
+            borderTop: active && !disabled ? `3px solid ${OCHRE}` : "3px solid transparent",
           }}>
-            {React.cloneElement(Icons[tab.icon], { stroke: active ? OCHRE : INACTIVE })}
-            <span style={labelStyle(active)}>
+            {React.cloneElement(Icons[tab.icon], { stroke: disabled ? DISABLED : active ? OCHRE : INACTIVE })}
+            <span style={labelStyle(active, disabled)}>
               {tab.label}{tab.locked && !isPaid ? " 🔒" : ""}
             </span>
           </button>

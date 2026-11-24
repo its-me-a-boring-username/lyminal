@@ -240,6 +240,7 @@ function GoalChart() {
       isPaid={isPaid}
       activeGoals={activeGoals}
       session={session}
+      hasChart={spheres.length > 0}
     />
   ) : null;
 
@@ -288,6 +289,13 @@ function GoalChart() {
       localChartRef.current = nextState;
     }
   }, [spheres, connections, activeGoals, step, completedGoals, checkedItems]);
+
+  useEffect(() => {
+    if (spheres.length > 0) return;
+    if (["plan", "progress", "chart-view", "chart"].includes(step)) {
+      setStep("active");
+    }
+  }, [spheres.length, step]);
 
   useEffect(() => {
     if (!session?.user?.id) return;

@@ -175,7 +175,7 @@ Do not ask follow-up questions after proposing action items unless the user want
     <div className="flex flex-col overflow-hidden" style={{ height: "100dvh", paddingBottom: isMobile ? "60px" : 0, background: "#faf8f5", fontFamily: "'Inter', sans-serif", opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
       <style>{FONTS}</style>
       <DevReset />
-      {isMobile && <Nav step="chat" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />}
+      {isMobile && <Nav step="chat" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} hasChart={spheres.length > 0} />}
 
       {/* Header */}
       <div className="px-6 py-4 flex items-center gap-4" style={{ background: isDefault ? hexToRgba(chatContext?.sphereColor, 0.07) : "rgba(var(--ly-accent-rgb), 0.07)", borderBottom: isDefault ? `1px solid ${hexToRgba(chatContext?.sphereColor, 0.12)}` : "1px solid rgba(var(--ly-accent-rgb), 0.12)" }}>

@@ -875,7 +875,7 @@ export function PlanScreen({
         <style>{FONTS}</style>
         <div className="hidden lg:block flex-shrink-0" style={{ width: "350px", background: "var(--ly-accent)" }} />
         <div className="w-full lg:flex-1 lg:flex lg:flex-col">
-          <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />
+          <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} hasChart={spheres.length > 0} />
           <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
           <div className="px-6 py-10 max-w-4xl mx-auto w-full lg:px-16" style={{ textAlign: "center", paddingTop: "60px" }}>
             <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", color: "#1c1410", margin: "0 0 8px" }}>No active goals yet</p>
@@ -915,7 +915,7 @@ export function PlanScreen({
       {/* Right column — nav + header + body */}
       <div className="w-full lg:flex-1 lg:flex lg:flex-col">
 
-        <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} />
+        <Nav step="plan" setStep={setStep} isMobile={isMobile} isPaid={isPaid} activeGoals={activeGoals} session={session} hasChart={spheres.length > 0} />
         <div style={{ opacity: visible ? 1 : 0, transition: "opacity 0.3s ease-out" }}>
 
         {/* Plan header */}
