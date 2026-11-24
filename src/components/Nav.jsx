@@ -4,7 +4,7 @@ import { trackUserEvent, mapStepToScreenName } from "../utils/events.js";
 const OCHRE = "var(--ly-accent)";
 const OCHRE_TINT = "rgba(var(--ly-accent-rgb), 0.08)";
 const INACTIVE = "#8a7a68";
-const DISABLED = "#c8c0b7";
+const DISABLED = "#a79a8c";
 const BORDER = "#e8e0d5";
 const BG = "var(--ly-bg)";
 
@@ -92,7 +92,7 @@ export function Nav({ step, setStep, isMobile, isPaid, activeGoals = [], session
     border: "none",
     cursor: disabled ? "not-allowed" : "pointer",
     borderBottom: active && !disabled ? `3px solid ${OCHRE}` : "3px solid transparent",
-    opacity: disabled ? 0.42 : 1,
+    opacity: disabled ? 0.72 : 1,
     transition: "background 0.15s, border-color 0.15s, color 0.15s",
   });
 
